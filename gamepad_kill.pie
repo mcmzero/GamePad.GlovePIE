@@ -1,0 +1,5 @@
+﻿if (starting) {
+	Press(Key.alt and Key.control and Key.shift and Key.F2 and Key.F9);
+	Release(Key.alt and Key.control and Key.shift and Key.F2 and Key.F9);
+	ExitPIE;
+}

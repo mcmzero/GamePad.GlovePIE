@@ -1,0 +1,1577 @@
+﻿/////////////////////////////////////////////////////////////////////////////////
+// 디아블로3 필수!! 단축키 설정
+// F9(모든창 닫기), F10(강제 이동)
+//
+// 모드 설정 커맨드:
+// LB+LB: 법성 모드, LB+RB: 공부 모드, LB+LT: 황야바바 모드, LB+RT: 독침 모드
+// 모드 해제 커맨드: 설정 상태에서 다시 LB 한번
+//
+// 각종 안내창 열기: LB+A(프로필), LB+B(순위표), LB+X(커뮤니티), LB+Y(친구)
+//
+// 자동 수리 / 분해: 수리창 열린 상태에서 LB+UP
+// (대)균열 신청: LB+DOWN (가방 (7,4), (7,5), (8,5) 세칸의 석(파편,시험석,균열석)을 사용) - 좌상 기준 (0,0)칸 부터 시작
+//
+// 깃발: Down
+// 마을: Right 길게
+// 가방: Right 짧게
+// 엔터: Up (확인창 수락용)
+// 스킬/정복자스텟/추종자 스킬: Left 누르면 로테이션
+// 지도: Start (패드 가운데 왼쪽 버튼)
+// 메뉴: Back (패드 가운데 오른쪽 버튼)
+//
+// 1번 스킬: A
+// 2번 스킬: X
+// 3번 스킬: Y
+// 4번 스킬: RB
+// 기본 스킬 버튼은 일정시간 누르고 있으면 자동 발사 토글
+//
+// 마우스 왼쪽 스킬: RT
+// 마우스 오른쪽 스킬: LT
+// 케릭 이동: LS
+// 마우스 이동: RS
+// 물약: Left Thumb (왼쪽 스틱 클릭)
+// 마우스 포인트 위치 초기화: Right Thumb (왼쪽 스틱 클릭)
+// 모든창 닫기 및 아이템 루팅: B (누르고 케릭을 움직이면 아이템 루팅)
+
+if starting {
+	//BeepDefault;
+	var.piename = "gamepad_diablo3.pie";
+	var.joyResetTime = 20;
+
+	Keyboard.RepeatFakeKeys = False;
+	Keyboard.RepeatMultipleFakeKeys = False;
+
+	//var.debug = True;
+	var.classMeleeType = 11;		// range(1), melee(11)
+	var.classRangeType = 1;			// range(1), melee(11)
+	var.classDefaultType = var.classMeleeType;
+	var.classType = var.classDefaultType;				
+	var.testMode = False;
+	var.waitButton = 0.18;			// seconds
+
+	var.crusader = var.waitButton;
+	var.witchDoctor = 1.16;
+	var.witchDoctorHalf = 1.178;
+	var.classMode = var.crusader;
+	var.waitDog = var.classMode;
+
+	// wheel spin
+	var.spinSpeed = 5;						// 회전 속도
+	var.spinAngle = 180 - var.spinSpeed;	// 회전 각도(시작)
+
+	var.SmoothCount = 10;
+	var.attackSpeed = 2.00;			// 2.02 // 1.71 // Attack Speed setting
+	var.useVibration = 0;			// vibration on:1 , off:0
+	var.rootingType = 1; 			// 1: root all 0: root one by one
+	var.buttonKeepDown = 0.02;
+
+	var.btnRB = 0;
+	var.vib1RB = 0.3;
+	var.vib2RB = 0.5;
+	var.vibRB = 0.4;
+	var.vibRBSec = 3.0;
+
+	var.rumbleRBType = 0;
+	var.rumbleRB = False;
+
+	var.rumbleBTNType = 0;
+	var.rumbleBTN = False;
+
+	var.rumbleRTType = 0;
+	var.rumbleRT = False;
+
+	var.rumbleLTType = 0;
+	var.rumbleLT = False;
+
+	var.dzL = 0.2;					// 0.25;
+	var.dzLDelta4R = 0.2;			// var.dzL - 0.13
+	var.dzDelta = 0.2;				// var.dzL - 0.13
+	var.dzL4Root = 0.2;				// 0.20;
+	var.dzR = 0.1;					// 0.30;
+	var.dzTR = 0.2;
+
+	var.aDelayTime = (100 / var.attackSpeed) / 100;
+	var.aDelayTime1 = var.aDelayTime * 0.50;
+	var.aDelayTime2 = var.aDelayTime - var.aDelayTime1;
+
+	//var.toggleStick = False;
+	var.toggleSpring = False;
+	var.LBShift = False;
+}
+
+if (Window.Class != "ForegroundStaging") {
+	if ([var.INIT_WINDOW_W, var.INIT_WINDOW_H] != [Window.Left + Window.Width, Window.Top + Window.Height]) {
+		[var.INIT_WINDOW_W, var.INIT_WINDOW_H] = [Window.Left + Window.Width, Window.Top + Window.Height];
+
+		if (var.classMode == var.crusader) Display("diablo buff Crusader");
+		if (var.classMode == var.witchDoctor) Display("diablo full Witch doctor");
+		if (var.classMode == var.witchDoctorHalf) Display("diablo semi Witch doctor");
+
+		if (var.debug) DebugPrint("[" + Window.Class + "]: " + window.width + " x " + window.height);
+		var.leftborder = (window.Width - window.ClientWidth) / 2;
+		var.topborder = window.Height - window.ClientHeight - var.leftborder;
+		var.middleX = Round(window.Left + window.Width / 2);
+		var.middleY = Round(window.Top + window.Height - var.leftborder - window.ClientHeight / 2);
+		[var.cursorX, var.cursorY] = [var.middleX, var.middleY];
+		if (not Mouse.LeftButton) Mouse.CursorPos = [var.cursorX, var.cursorY];
+
+		var.scaleX = 1 / (2560 / window.width);
+		var.scaleY = 1 / (1440 / window.height);
+		if (var.debug) DebugPrint("ScaleX: " + var.scaleX + ", ScaleY: " + var.scaleY);
+		[var.bagSizeX, var.bagSizeY] = [var.scaleX * 70, var.scaleY * 70];
+		[var.bagX, var.bagY] = [Window.Left, Window.Top] + [var.scaleX * 1900, var.scaleY * 770];
+
+		// circle length (스킬 거리)
+		var.circleLTrigger = Round(var.scaleX * window.Width / 3.5);
+		var.rangeCircleRTrigger = Round(var.scaleX * window.Width / 3.0);
+		var.meleeCircleRTrigger = Round(var.scaleX * window.Width / 9.0);
+
+		var.circleShoulder = Round(var.scaleX * window.Width / 6.0);
+		var.circleButton = Round(var.scaleX * window.Width / 6.0);
+
+		var.circleAFShort = Round(var.scaleY * window.Height / 30.0);
+		var.circleAFLong = Round(var.scaleY * window.Height / 4.0);
+
+		var.circleMoving = Round(var.scaleY * window.Height / 30.0);	// 70
+		var.circleDealerMoving = Round(var.scaleY * window.Height / 10.0);	// 70
+		var.offsetMoving = Round(window.Height / 33.0);					// 33
+
+		var.circleRooting = Round(var.scaleY * window.Height / 100.0);	// 16    18
+		var.offsetRooting = Round(window.Height / 33.0);				// 33
+		var.offset = var.offsetRooting;
+
+		if (var.classType == var.classMeleeType) {
+			var.circleRTrigger = var.meleeCircleRTrigger;
+			var.toggleXY = True;	// True: 2+3
+		} else if (var.classType == var.classRangeType) {
+			var.circleRTrigger = var.rangeCircleRTrigger;
+			var.toggleXY = False;	// False: 2,3
+		}
+
+		// Turn on Yolomouse
+		Wait(1.5 s);
+		var.resetMouseColor = True;
+	}
+}
+
+if (Pressed(Key.F9 and Key.alt and Key.control and Key.LeftShift)) {
+	Release(Key.LeftShift);
+	Release(Mouse.LeftButton);
+	ExitPIE;
+}
+
+if (HeldDown(Window.Class != "D3 Main Window Class", 1)) {
+	if (Window.Class != "ForegroundStaging") {
+		BeepDefault;
+		Release(Key.LeftShift);
+		Release(Mouse.LeftButton);
+		Chain("gamepad_windows.pie");
+	}
+}
+
+//////////////////////////////////////////
+// Joystick Mapping
+//debug = Joystick.Count + " " + XInput1.Exists + " " + XInput2.Exists;
+if (XInput1.Exists == False and XInput2.Exists == False and XInput3.Exists == False and XInput4.Exists == False) {
+	if (var.XI_J1X or var.XI_J1Y or var.XI_J2X or var.XI_J2Y) var.joyResetCount = 0;
+	if (var.XI_A or var.XI_B or var.XI_X or var.XI_Y) var.joyResetCount = 0;
+	if (var.XI_LB or var.XI_RB or var.XI_LT or var.XI_RT) var.joyResetCount = 0;
+	if (var.XI_LThumb or var.XI_RThumb or var.XI_Back or var.XI_Start) var.joyResetCount = 0;
+	if (var.XI_Up or var.XI_Down or var.XI_Left or var.XI_Right) var.joyResetCount = 0;
+	if (Key.Control or Key.Shift or Key.Alt or Key.Space) var.joyResetCount = 0;
+	if (Key.Up or Key.Down or Key.Left or Key.Right) var.joyResetCount = 0;
+	if (Mouse.LeftButton or Mouse.RightButton) var.joyResetCount = 0;
+	if (var.joyResetCount > var.joyResetTime and var.AutoFireA = False and var.supportMode = False and var.dealerMode == False) {
+		Chain(var.piename);
+	} else {
+		Wait(1 s);
+		var.joyResetCount++;
+	}
+}
+if (Joystick.Count > 0) {
+	var.XI_J1X    = Joystick.X; 
+	var.XI_J1Y    = -Joystick.Y; 
+	var.XI_J2X    = Joystick.Z; 
+	var.XI_J2Y    = -Joystick.Roll; 
+	var.XI_A      = Joystick.button2;
+	var.XI_B      = Joystick.button3;
+	var.XI_X      = Joystick.button1;
+	var.XI_Y      = Joystick.button4;
+	var.XI_LB     = Joystick.button5;
+	var.XI_RB     = Joystick.button6;
+	var.XI_LThumb = Joystick.button11;
+	var.XI_RThumb = Joystick.button12;
+	var.XI_LT     = (Joystick.pitch + 1) / 2;
+	var.XI_RT     = (Joystick.yaw + 1) / 2;
+	var.XI_Up     = Joystick.Pov1 == 0 or Joystick.Pov1 == 45 or Joystick.Pov1 == 315;
+	var.XI_Down   = Joystick.Pov1 == 180 or Joystick.Pov1 == 135 or Joystick.Pov1 == 225;
+	var.XI_Left   = Joystick.Pov1 == 270 or Joystick.Pov1 == 315 or Joystick.Pov1 == 225;
+	var.XI_Right  = Joystick.Pov1 == 90 or Joystick.Pov1 == 135 or Joystick.Pov1 == 45;
+	var.XI_Back   = Joystick.button9 or Joystick.Button14;
+	var.XI_Start  = Joystick.button10 or Joystick.Button13;
+} else {
+	var.XI_J1X    = XInput.Joy1X;
+	var.XI_J1Y    = XInput.Joy1Y;
+	var.XI_J2X    = XInput.Joy2X;
+	var.XI_J2Y    = XInput.Joy2Y;
+	var.XI_A      = XInput.A;
+	var.XI_B      = XInput.B;
+	var.XI_X      = XInput.X;
+	var.XI_Y      = XInput.Y;
+	var.XI_LB     = XInput.LeftShoulder;
+	var.XI_RB     = XInput.RightShoulder;
+	var.XI_LThumb = XInput.LeftThumb;
+	var.XI_RThumb = XInput.RightThumb;
+	var.XI_LT     = XInput.LeftTrigger;
+	var.XI_RT     = XInput.RightTrigger;
+	var.XI_Up     = XInput.Up;
+	var.XI_Down   = XInput.Down;
+	var.XI_Left   = XInput.Left;
+	var.XI_Right  = XInput.Right;
+	var.XI_Back   = XInput.Back;
+	var.XI_Start  = XInput.Start;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Stick Moving
+//
+var.LRTrigger = var.XI_LT > var.dzTR and var.XI_RT > var.dzTR;
+var.LTrigger = var.XI_LT > var.dzTR;
+var.RTrigger = var.XI_RT > var.dzTR;
+var.Shoulder = var.XI_LB or var.XI_RB;
+var.Button = var.XI_A or var.XI_X or var.XI_Y;
+/*
+if (var.supportMode or var.dealerMode or var.classType == var.classMeleeType) {
+	var.toggleSpring = var.XI_LT > var.dzTR;
+} else {
+	var.toggleSpring = var.XI_RT > var.dzTR;
+}
+*/
+var.toggleSpring = var.XI_LT > var.dzTR;
+
+if (var.toggleRootingMode) {
+	var.circle = var.circleRooting;
+} else if (var.LTrigger) {
+	if (var.supportMode or var.dealerMode or var.classType == var.classMeleeType) {
+		var.circle = var.circleRTrigger;
+	} else {
+		var.circle = var.circleLTrigger;
+	}
+} else if (var.RTrigger) {
+	if ((var.supportMode and var.classMode == var.crusader) or var.dealerMode or var.classType == var.classMeleeType) {
+		var.circle = var.circleLTrigger;
+	} else if ((var.supportMode and var.classMode != var.crusader) or var.dealerMode or var.classType == var.classMeleeType) {
+		var.circle = var.circleRooting;
+	} else {
+		var.circle = var.circleRTrigger;
+	}
+} else if (var.dealerMode) {
+	if (var.classType == 1) {
+		var.circle = var.circleRTrigger;
+	} else if (var.classType == 11) {
+		var.circle = var.circleDealerMoving;
+	}
+} else if (var.Shoulder) {
+	var.circle = var.circleShoulder;
+} else if (var.Button) {
+	var.circle = var.circleButton / 3;
+} else if (var.autofireMode) {
+	if (var.supportMode) {
+		var.circle = var.circleAFShort;
+	} else {
+		var.circle = var.circleAFLong;
+	}
+} else {
+	var.circle = var.circleMoving;
+}
+if (var.supportMode and var.circle > var.circleMoving) var.circle = var.circle / 2;
+
+// reset mouse position
+if (Pressed(var.XI_Left or var.XI_Down or var.XI_B or Key.T)) {
+	var.resetCurPos = True;			// 마우스 포인터를 기본 위치로 이동
+}
+if (Pressed(var.resetCurPos)) {
+	var.resetCurPosOffset = var.scaleY * 180;
+	var.resetCurPos = False;
+	[var.cursorX, var.cursorY] = [var.middleX, var.middleY - var.resetCurPosOffset];
+	Mouse.cursorpos = [var.cursorX, var.cursorY];
+}
+
+// Stick Control
+if (var.toggleStick) {
+	// Charactor Moving
+	var.cjx = Smooth(Deadzone(var.XI_J2X,  var.dzL), 6);
+	var.cjy = Smooth(Deadzone(-var.XI_J2Y, var.dzL), 6);
+
+	// Pointer moving
+	var.pjx = Deadzone(var.XI_J1X, var.dzR);
+	var.pjy = Deadzone(-var.XI_J1Y, var.dzR);
+} else {
+	// Charactor Moving
+	var.cjx = Smooth(Deadzone(var.XI_J1X,  var.dzL), 6);
+	var.cjy = Smooth(Deadzone(-var.XI_J1Y, var.dzL), 6);
+
+	// Pointer moving
+	var.pjx = Deadzone(var.XI_J2X, var.dzR);
+	var.pjy = Deadzone(-var.XI_J2Y, var.dzR);
+}
+
+if (var.LBShift == False) {
+	if ((var.pjx or var.pjy) and not (var.cjx or var.cjy)) {
+		// Cursor Pointer Moving
+		var.toggleRootingMode = False;
+		var.distance = Min(1, Sqrt(Sqr(var.pjx - 0) + Sqr(var.pjy - 0)));
+		if (var.distance > 0.8) { 
+			var.pjr = EnsureMapRange(var.distance, 0.8, 1, 15, 20);
+		} else {
+			var.pjr = EnsureMapRange(var.distance, 0.5, 0.8, 0, 15);
+		}
+		var.pjx = Round(EnsureMapRange(var.pjx, -1, 1, -var.pjr, var.pjr));
+		var.pjy = Round(EnsureMapRange(var.pjy, -1, 1, -var.pjr, var.pjr));
+
+		if ([var.pjx, var.pjy] != [0, 0])	{
+			var.leftborder = (window.Width - window.ClientWidth) / 2;
+			var.topborder = window.Height - window.ClientHeight - var.leftborder;
+			if (not var.toggleSpring) Mouse.cursorpos = [var.cursorX, var.cursorY];
+			[var.pjx, var.pjy] = Mouse.cursorpos + [var.pjx, var.pjy];
+			var.pjx = Max(var.pjx, window.Left + var.leftborder + 10); // 좌
+			var.pjx = Min(var.pjx, window.Left + var.leftborder + window.ClientWidth - 10); // 우
+			var.pjy = Max(var.pjy, window.Top + var.topborder + 10); // 상
+			var.pjy = Min(var.pjy, window.Top + var.topborder + window.ClientHeight - 10); // 하
+
+			Mouse.cursorpos = [var.pjx, var.pjy];
+			[var.cursorX, var.cursorY] = Mouse.cursorpos;
+
+			var.OnStick = True;			// LeftStick + RightStick
+			var.OnRightStick = True;	// RightStick
+			var.RightStickLock = True;	// RightSticking
+		}
+	} else {
+		// Charactor Moving
+		if (var.cjx or var.cjy or ((var.toggleSpring or var.dealerMode) and var.RightStickLock == False)) {
+			[var.lastX, var.lastY] = [var.cjx, var.cjy];
+			if (var.toggleSpring or var.dealerMode) {
+				var.circleLength = Min(1, Sqrt(Sqr(var.cjx) + Sqr(var.cjy))) * var.circle;
+				var.angle = atan2(var.cjx, var.cjy);
+				//debug = var.circleLength;
+				//if (var.debug) DebugPrint(var.angle);
+				var.mx = Round(Sin(var.angle) * var.circleLength);
+				var.my = Round(Cos(var.angle) * var.circleLength);
+
+				// wheelwind
+				if (var.supportMode = False and var.classType == var.classMeleeType and var.mx == 0 and var.my == 0 and not (var.XI_RT > var.dzTR)) {
+					if (var.toggleChatMode == False and var.toggleRootingMode == False) {
+						var.spinLength = Max(var.spinSpeed * 8, 8);
+						if (var.toggleSpring or var.testMode) {
+							// 오른쪽 트리거를 누르거나 시험모드 일때
+							var.mx = Round(var.scaleX * var.spinLength * Sin(var.spinAngle - 180));
+							var.my = Round(var.scaleY * var.spinLength * Cos(var.spinAngle - 180));
+							var.spinAngle = var.spinAngle - var.spinSpeed;
+						} else {
+							var.spinLength /= 2;
+							if (var.spinAngle >= 0 and var.spinAngle < 180) {
+								var.my = Round(var.scaleY * var.spinLength * Cos(0));
+							} else {
+								var.my = Round(var.scaleY * var.spinLength * Cos(180));
+							}
+							var.mx = 0;
+							var.spinAngle += 10;
+						}
+						if (var.spinAngle < 0) var.spinAngle = var.spinAngle + 360;
+						if (var.spinAngle >= 360) var.spinAngle = var.spinAngle - 360;
+					}
+					// 오른쪽 스틱을 안움직일때 휠윈드 모드의 기본상태는 여기
+					if (var.RightStickLock == False) {
+						var.OnStick = False;
+						var.OnRightStick = False;
+					}
+					var.OnLeftStick = False;
+				} else {
+					var.OnStick = True;			// LeftStick + RightStick
+					var.OnLeftStick = True;		// LeftStick
+					var.RightStickLock = False;
+				}
+			} else {
+				var.angle = atan2(var.cjx, var.cjy);
+				var.mx = Round(Sin(var.angle) * var.circle);
+				var.my = Round(Cos(var.angle) * var.circle);
+
+				var.OnStick = True;			// LeftStick + RightStick
+				var.OnLeftStick = True;		// LeftStick
+				var.RightStickLock = False;
+			}
+			if (var.circle >= var.circleShoulder) var.mx = Round(var.mx * 1.5);
+
+			[var.mx, var.my] = [var.middleX, var.middleY - var.offset] + [var.mx, var.my];
+			if (var.supportMode == False and var.autofireMode and var.toggleSpring) var.my = var.my - 90 * var.scaleY;
+			var.mx = Max(var.mx, window.Left + var.leftborder + 10);					 	// 좌
+			var.mx = Min(var.mx, window.Left + var.leftborder + window.ClientWidth - 10);	// 우
+			var.my = Max(var.my, window.Top + var.topborder + 10);							// 상
+			var.my = Min(var.my, window.Top + var.topborder + window.ClientHeight - 260 * var.scaleY); // 하
+			var.mx = Round(var.mx);
+			var.my = Round(var.my);
+			if (Mouse.CursorPos != [var.mx, var.my]) Mouse.CursorPos = [var.mx, var.my];
+		} else {
+			[var.lastX, var.lastY] = [var.cjx, var.cjy];
+			if (var.RightStickLock == False) {
+				var.OnStick = False;
+				var.OnRightStick = False;
+			}
+			var.OnLeftStick = False;
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// character moving or mouse click
+//
+
+//if (Released(Mouse.LeftButton) or Released(Key.LeftShift)) var.pressMouseLeftButton = False;
+if (Released(Mouse.RightButton)) var.pressMouseLeftButton = False;
+
+if (var.toggleChatMode == False and var.LBShift == False) {
+	if (var.XI_RT > var.dzTR) {
+		if (Pressed(var.XI_RT > var.dzTR)) Release(Key.LeftShift);
+		Wait(25 ms);
+		Release(Key.F10);
+		  Press(Key.LeftShift);
+	} else if (var.XI_LT > var.dzTR) {
+		Release(Key.F10);
+	} else if (var.dealerMode and var.toggleRootingMode == False and var.toggleChatMode == False) {
+		// Dealer Mode
+		Release(Key.F10);
+		if (var.pressMouseLeftButton == False) {
+			//BeepHand;
+			var.pressMouseLeftButton = True;
+			//Press(Key.LeftShift);
+			  Press(Mouse.RightButton);
+		}
+	} else if (var.supportMode and var.autofireMode == False and var.OnLeftStick == False and var.toggleRootingMode == False) {
+		// Stun Mode
+		Release(Key.F10);
+		if (var.classMode >= var.witchDoctor) {
+			//Press(Key.LeftShift);
+			  Press(Mouse.RightButton);
+			Release(Mouse.RightButton);
+			//Release(Key.LeftShift);
+			Wait(var.waitDog / 2 s);
+			  Press(Key.Three);
+			Release(Key.Three);
+			Wait(var.waitDog / 2 s);
+		} else {
+			//Press(Key.LeftShift);
+			  Press(Mouse.RightButton);
+			Release(Mouse.RightButton);
+			//Release(Key.LeftShift);
+			Wait(var.waitDog s);
+		}
+	} else if (var.supportMode and var.autofireMode == True and var.OnLeftStick == False and var.toggleRootingMode == False) {
+		// Support Mode
+		Release(Key.F10);
+		if (not (var.classMode == var.crusader and var.XI_RT > var.dzTR)) {
+			if (var.classMode >= var.witchDoctor) {
+				if (var.OnRightStick) {
+					//Press(Key.LeftShift);
+					  Press(Mouse.RightButton);
+					Release(Mouse.RightButton);
+					//Release(Key.LeftShift);
+					Wait(var.waitDog / 2 s);
+					  Press(Key.Three);
+					Release(Key.Three);
+					Wait(var.waitDog / 2 s);
+				}
+			} else {
+				//Press(Key.LeftShift);
+				  Press(Mouse.RightButton);
+				Release(Mouse.RightButton);
+				//Release(Key.LeftShift);
+				Wait(var.waitDog s);
+			}
+		}
+	} else if (var.supportMode == False and var.autofireMode == True and var.OnLeftStick == False and var.toggleRootingMode == False) {
+		// Auto fire Mode
+		Release(Key.F10);
+		if (var.pressMouseLeftButton == False) {
+			//BeepHand;
+			var.pressMouseLeftButton = True;
+			  //Press(Key.LeftShift);
+			  Press(Mouse.RightButton);
+		}
+	} else {
+		// Rooting Mode
+		if (var.toggleStick) {
+			var.mxa    = Deadzone(var.XI_J2X, var.dzL);
+			var.mya    = Deadzone(-var.XI_J2Y, var.dzL);
+			var.mxaOff = Deadzone(var.XI_J2X, var.dzL4Root);
+			var.myaOff = Deadzone(-var.XI_J2Y, var.dzL4Root);
+		} else {
+			var.mxa    = Deadzone(var.XI_J1X, var.dzL);
+			var.mya    = Deadzone(-var.XI_J1Y, var.dzL);
+			var.mxaOff = Deadzone(var.XI_J1X, var.dzL4Root);
+			var.myaOff = Deadzone(-var.XI_J1Y, var.dzL4Root);
+		}
+		var.mxa    = Smooth(var.mxa, 6);
+		var.mya    = Smooth(var.mya, 6);
+		var.mxaOff = Smooth(var.mxaOff, 6);
+		var.myaOff = Smooth(var.myaOff, 6);
+		
+		var.mxa    = EnsureMapRange(var.mxa, -1.0, 1.0, -var.circleRooting, var.circleRooting);
+		var.mya    = EnsureMapRange(var.mya, -1.0, 1.0, -var.circleRooting, var.circleRooting);
+		var.mxaOff = EnsureMapRange(var.mxaOff, -1.0, 1.0, -var.circleRooting, var.circleRooting);
+		var.myaOff = EnsureMapRange(var.myaOff, -1.0, 1.0, -var.circleRooting, var.circleRooting);
+
+		if (var.toggleRootingMode) {
+			if (var.rootingType == 1) {
+				  Press(Mouse.LeftButton) = [var.mxa, var.mya];
+				Release(Mouse.LeftButton) = [var.mxaOff, var.myaOff];
+			} else {
+				if (var.toggleStick) {
+					  Press(Key.LeftControl) = var.XI_J2X < var.dzL4Root;
+					  Press(Key.LeftControl) = var.XI_J2Y < var.dzL4Root;
+					Release(Key.LeftControl) = var.XI_J2X > var.dzL4Root;
+					Release(Key.LeftControl) = var.XI_J2Y > var.dzL4Root;
+				} else {
+					  Press(Key.LeftControl) = var.XI_J1X < var.dzL4Root;
+					  Press(Key.LeftControl) = var.XI_J1Y < var.dzL4Root;
+					Release(Key.LeftControl) = var.XI_J1X > var.dzL4Root;
+					Release(Key.LeftControl) = var.XI_J1Y > var.dzL4Root;
+				}
+			}
+		}
+		if (var.toggleRootingMode and var.rootingType == 1) {
+			Release(Key.F10);
+		} else {
+			if ([var.mxa, var.mya] != [0, 0]) Press(Key.F10) = [var.mxa, var.mya];
+			if (Released([var.mxa, var.mya])) {
+				Release(Key.F10);
+				Release(Key.LeftShift);
+			}
+			//if (var.debug) DebugPrint(var.mxa + ", " + var.mya);
+		}
+	}
+}
+
+////////////////////////////////////////////////////
+// Toggle Shift mode
+//
+if (Pressed(var.resetMouseColor)) {
+	var.resetMouseColor = False;
+	  Press(Key.LeftControl);
+	  Press(Key.LeftShift);
+	  Press(Key.LeftAlt);
+	if (var.supportMode and var.classMode == var.crusader) {
+		  Press(Key.Seven);
+		Release(Key.Seven);
+	} else if (var.supportMode and var.classMode != var.crusader) {
+		  Press(Key.Eight);
+		Release(Key.Eight);
+	} else if (var.dealerMode and var.testMode == False) {
+		  Press(Key.Seven);
+		Release(Key.Seven);
+	} else if (var.dealerMode and var.testMode == True) {
+		  Press(Key.Eight);
+		Release(Key.Eight);
+	} else if (var.classType == var.classMeleeType) {
+		  Press(Key.One);
+		Release(Key.One);
+	} else if (var.classType >= var.classRangeType) {
+		  Press(Key.Two);
+		Release(Key.Two);
+	}
+	Release(Key.LeftAlt);
+	Release(Key.LeftShift);
+	Release(Key.LeftControl);
+}
+
+if (Pressed(var.classType == var.classMeleeType)) {
+	var.circleRTrigger = var.meleeCircleRTrigger;
+	var.toggleXY = True;	// True: 2+3
+} else if (Pressed(var.classType == var.classRangeType)) {
+	var.circleRTrigger = var.rangeCircleRTrigger;
+	var.toggleXY = False;	// False: 2,3
+}
+
+if (Pressed(HeldDown(var.XI_LB, 0.5))) {
+	if (var.classType == var.classRangeType) {
+		Display("Melee");
+		var.classDefaultType = var.classMeleeType;
+	} else if (var.classType == var.classMeleeType) {
+		Display("Range");
+		var.classDefaultType = var.classRangeType;
+	}
+	var.classType = var.classDefaultType;
+	var.resetMouseColor = True;
+} else if (Released(HeldDown(var.XI_LB, 0.5))) {
+	//var.LBShift = False;
+} else if (Released(var.XI_LB)) {
+	if (var.LBShift == False and (var.supportMode or var.dealerMode or var.autofireMode)) {
+		var.dealerMode = False;
+		var.supportMode = False;
+		var.autofireMode = False;
+		var.classType = var.classDefaultType;
+		if (var.OnLeftStick == False) {
+			Wait(0.2 s);
+			if (var.testMode) {
+				// 마을에서 부활
+				Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1300, var.scaleY * 1120];
+			} else {
+				Mouse.cursorpos = [var.middleX, var.middleY - var.resetCurPosOffset];
+			}
+			[var.cursorX, var.cursorY] = Mouse.cursorpos;
+			var.RightStickLock = True;
+		}
+	} else {
+		var.LBShift = not var.LBShift;
+		if (var.OnLeftStick == False) {
+			Mouse.cursorpos = [var.middleX, var.middleY + 50 * var.scaleY];	// 케릭 발밑으로 이동
+			[var.cursorX, var.cursorY] = Mouse.cursorpos;
+		}
+	}
+}
+if (var.LBShift) {
+	if (HeldDown(not var.XI_LB, 2)) {		// 타임 아웃 리셋
+		var.LBShift = False;
+		var.resetMouseColor = True;
+	}
+	
+	// LB 법성
+	if (Pressed(var.XI_LB)) {
+		var.classMode = var.crusader;
+		var.waitDog = var.classMode;
+		var.supportMode = True;
+		var.classType = var.classMeleeType;
+	} 
+	//if (Released(var.XI_LB)) var.LBShift = False;
+
+	// RB 공부
+	if (Pressed(var.XI_RB)) {
+		var.classMode = var.witchDoctor;
+		var.waitDog = var.classMode;
+		var.supportMode = True;
+		var.classType = var.classRangeType;
+	}
+	if (Released(var.XI_RB)) var.LBShift = False;
+	
+	// LT 바바
+	if (Pressed(var.XI_LT > var.dzTR)) {
+	}
+	if (Released(var.XI_LT > var.dzTR)) {
+		var.testMode = False;
+		var.dealerMode = True;
+		var.LBShift = False;
+	}
+
+	// RT 독침
+	if (Pressed(var.XI_RT > var.dzTR)) {
+	}
+	if (Released(var.XI_RT > var.dzTR)) {
+		var.autofireMode = True;
+		var.LBShift = False;
+	}
+	
+	// View(Back)
+	if (Pressed(var.XI_Back)) {
+		  Press(Key.Alt);
+		  Press(Key.Tab);
+	}
+	if (Released(var.XI_Back)) {
+		Release(Key.Tab);
+		Release(Key.Alt);
+		var.LBShift = False;
+	}
+
+	// Menu(Start)
+	if (Pressed(var.XI_Start)) {
+	}
+	if (Released(var.XI_Start)) var.LBShift = False;
+	
+	// A, B, X, Y
+	if (Pressed(var.XI_A)) {
+/*
+		  Press(Key.LeftShift);
+		  Press(Key.L);
+		Release(Key.L);
+		Release(Key.LeftShift);
+*/
+		var.goRift = True;
+	}
+	if (Released(var.XI_A)) var.LBShift = False;
+
+	if (Pressed(var.XI_B)) {
+		BeepHand;
+		  Press(Key.LeftShift);
+		  Press(Key.O);
+		Release(Key.O);
+		Release(Key.LeftShift);
+	} 
+	if (Released(var.XI_B)) var.LBShift = False;
+
+	if (Pressed(var.XI_X)) {
+/*
+		  Press(Key.LeftShift);
+		  Press(Key.P);
+		Release(Key.P);
+		Release(Key.LeftShift);
+*/
+		var.goRepair = True;
+	}
+	if (Released(var.XI_X)) var.LBShift = False;
+
+	if (Pressed(var.XI_Y)) {
+		  Press(Key.O);
+		Release(Key.O);
+	}
+	if (Released(var.XI_Y)) var.LBShift = False;
+	
+	// Up 황야 바바 대균 시험 모드
+	if (Pressed(var.XI_Up)) {
+		  Press(Mouse.LeftButton);		// 딜러 모드 시작시 살짝 이동
+		Release(Mouse.LeftButton);
+	}
+	if (Released(var.XI_Up)) {
+		var.testMode = True;
+		var.dealerMode = True;
+		var.LBShift = False;
+	}
+	
+	// Down 황야 바바 소용돌이 모드
+	if (Pressed(var.XI_Down)) {
+	}
+	if (Released(var.XI_Down)) {
+		var.testMode = False;
+		var.dealerMode = True;
+		var.LBShift = False;
+	}
+
+	// Left 법성
+	if (Pressed(var.XI_Left)) {
+		var.classMode = var.crusader;
+		var.waitDog = var.classMode;
+		var.supportMode = True;
+		var.classType = var.classMeleeType;
+	}
+	if (Released(var.XI_Left)) {
+		var.LBShift = False;
+	}
+
+	// Right 공부
+	if (Pressed(var.XI_Right)) {
+		var.classMode = var.witchDoctor;
+		var.waitDog = var.classMode;
+		var.supportMode = True;
+		var.classType = var.classRangeType;
+	}
+	if (Released(var.XI_Right)) {
+		var.LBShift = False;
+	}
+	
+/*
+	// LS Left, Right
+	if (abs(var.cjx) >= abs(var.cjy)) {
+		if (var.cjx < 0) {
+			if (var.keyLeft == False) {
+				var.keyLeft = True;
+				// reserved
+			}
+		} else if (var.cjx > 0) {
+			if (var.keyRight == False) {
+				var.keyRight = True;
+				// reserved
+			}
+		}
+	}
+	if (var.cjx == 0) {
+		if (var.keyLeft) {
+			var.keyLeft = False;
+			//
+			var.LBShift = False;
+		}
+		if (var.keyRight) {
+			var.keyRight = False;
+			//
+			var.LBShift = False;
+		}
+	}
+	
+	// LS Up, Down
+	if (abs(var.cjx) <= abs(var.cjy)) {
+		if (var.cjy < 0) {
+			if (var.keyUp == False) {
+				var.keyUp = True;
+				// Repair
+			}
+		} else if (var.cjy > 0) {
+			if (var.keyDown == False) {
+				var.keyDown = True;
+				// Rift
+			}
+		}
+	}
+	if (var.cjy == 0) {
+		if (var.keyUp) {
+			var.keyUp = False;
+			var.goRepair = True;
+			//
+			var.LBShift = False;
+		}
+		if (var.keyDown) {
+			var.keyDown = False;
+			var.goRift = True;
+			//
+			var.LBShift = False;
+		}
+	}
+*/
+} else {
+	////////////////////////////////////////////////////////////////////////////////
+	// button mapping
+	// F5(One), F6(Two), F7(Three), F8(Four): 1~4, F9: cloSing windows , F10: force moving
+	// F3(Say 따라오게)
+	//
+	if (Pressed(Mouse.MiddleButton)) {
+		if (var.debug) DebugPrint("[" + Round((Mouse.cursorposX - Window.Left) / var.ScaleX) + ", " + Round((Mouse.cursorposY - Window.Top) / var.ScaleY) + "]");
+	}
+	
+	if (Pressed(var.XI_RT > var.dzTR)) Press(Mouse.LeftButton);
+	if (Released(var.XI_RT > var.dzTR)) Release(Mouse.LeftButton);
+
+	if (Pressed(var.XI_LT > var.dzTR)) {
+		if (var.dealerMode) {
+			Wait(0.05 s);
+			  Press(Mouse.RightButton);
+		} else {
+			  Press(Mouse.RightButton);
+		}
+	}
+	if (Released(var.XI_LT > var.dzTR)) Release(Mouse.RightButton);
+	if (var.supportMode) {
+		if (var.XI_LT > var.dzTR) {
+			  Press(Mouse.RightButton);
+			Release(Mouse.RightButton);
+		}
+	}
+
+	if (Pressed(var.XI_A)) Press(Key.One);
+	if (Released(var.XI_A)) Release(Key.One);
+
+	if (Pressed(var.XI_X)) Press(Key.Two);
+	if (Released(var.XI_X)) Release(Key.Two);
+
+	if (var.toggleXY and Pressed(var.XI_X)) Press(Key.Three);
+	if (var.toggleXY and Released(var.XI_X)) Release(Key.Three);
+	
+	if (Pressed(var.XI_Y)) Press(Key.Three);
+	if (Released(var.XI_Y)) Release(Key.Three);
+	
+	if (Pressed(var.XI_RB)) Press(Key.Four);
+	if (Released(var.XI_RB)) Release(Key.Four);
+
+	if (Pressed(var.XI_B)) {
+		Release(Key.LeftShift);
+		  Press(Key.Escape);
+		Release(Key.Escape);
+		  Press(Key.F9);
+		Wait(0.05 s);
+		Release(Key.F9);
+		  Press(Key.PageDown);
+		Release(Key.PageDown);
+
+		var.leftCount = 0;
+		var.rightCount = 0;
+		var.startCount = 0;
+	}
+
+	if (Pressed(var.XI_Back)) Press(Key.Tab);
+	if (Released(var.XI_Back)) Release(Key.Tab);
+
+	if (Pressed(var.XI_Start)) {
+		var.startCount++;
+		if (var.startCount == 1) {
+			  Press(Key.F9);
+			Release(Key.F9);
+		} else {
+			var.startCount = 0;
+		}
+		var.leftCount = 0;
+		var.rightCount = 0;
+
+		Release(Key.LeftShift);
+		  Press(Key.Escape);
+		Release(Key.Escape);
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 440, var.scaleY * 660];;
+		[var.cursorX, var.cursorY] = [var.scaleX * 440, var.scaleY * 660];
+		var.RightStickLock = True;
+		if (var.debug) DebugPrint("cursorX: " + var.cursorX + ", cursorY: " + var.cursorY);
+	}
+	if (Pressed(var.XI_Right)) {
+		var.rightCount++;
+		if (var.rightCount == 1) {
+			  Press(Key.Escape);
+			Release(Key.Escape);
+			  Press(Key.F9);
+			Wait(0.05 s);
+			Release(Key.F9);
+		} else {
+			var.rightCount = 0;
+		}
+		var.leftCount = 0;
+		var.startCount = 0;
+	}
+	if (Pressed(var.XI_Left)) {
+		  Press(Key.Escape);
+		Release(Key.Escape);
+		  Press(Key.F9);
+		Wait(0.05 s);
+		Release(Key.F9);
+		var.leftCount++;
+		if (var.leftCount == 1) {
+			  Press(Key.P);
+			Release(Key.P);
+		} else if (var.leftCount == 2) {
+			  Press(Key.S);
+			Release(Key.S);
+		} else if (var.leftCount == 3) {
+			  Press(Key.F);
+			Release(Key.F);
+		} else if (var.leftCount == 4) {
+			  Press(Key.N);
+			Release(Key.N);
+		} else {
+			var.leftCount = 0;
+		}
+		var.rightCount = 0;
+		var.startCount = 0;
+	}
+
+	if (Pressed(var.XI_Up)) Press(Key.Enter);
+	if (Released(var.XI_Up)) Release(Key.Enter);
+
+	if (Pressed(var.XI_LThumb)) Press(Key.Q);
+	if (Released(var.XI_LThumb)) Release(Key.Q);
+
+	if (Pressed(var.XI_Right) and not HeldDown(var.XI_Right, 0.3)) Press(Key.I);
+	if (Released(var.XI_Right) and not HeldDown(var.XI_Right, 0.3)) Release(Key.I);
+	if (HeldDown(var.XI_Right, 0.3)) {
+		  Press(Key.T);
+		Release(Key.T);
+		  Press(Key.T);
+	}
+	if (Released(var.XI_Right)) Release(Key.T);
+
+	if (Pressed(var.XI_Down)) {
+		  Press(Key.F9);			// 모든창 닫기
+		Release(Key.F9);
+		  Press(Key.Enter);
+		Release(Key.Enter);
+		Release(Key.LeftShift);
+		TypeUnicode("/p 1");
+		  Press(Key.Enter);
+		Release(Key.Enter);
+		if (var.supportMode or var.dealerMode) {
+			  Press(Key.G);	// 깃발
+			Release(Key.G);	// 깃발
+			  Press(Key.G);	// 깃발
+		}
+	} else if (Released(var.XI_Down)) {
+		Release(Key.G);
+	}
+
+	if (Pressed(var.XI_RThumb)) {
+	/*
+		BeepAsterisk;
+		BeepExclamation;
+		BeepHand;
+		BeepQuestion;
+		BeepDefault;
+	*/
+		BeepHand;
+		var.toggleChatMode = True;
+		Release(Key.LeftShift);
+		  Press(Key.printscreen);
+		Release(Key.printscreen);
+		var.toggleChatMode = False;
+	}
+
+	////////////////////////////////////////////////////////////
+	// Toggle Mode
+	//
+	var.toggleSec = 0.5;
+	if (Pressed(HeldDown(var.XI_X, var.toggleSec) and HeldDown(var.XI_Y, var.toggleSec))) {
+		var.toggleXY = not var.toggleXY;
+	} else if (Released(HeldDown(var.XI_X, var.toggleSec) and HeldDown(var.XI_Y, var.toggleSec))) {
+		var.toggleX = False;
+		var.toggleY = False;
+	} else if (var.supportMode) {
+		if (var.classMode == var.crusader) {
+			if (HeldDown(var.XI_A, var.toggleSec)) {
+				var.toggleA = True;
+			} else if (Pressed(var.XI_A)) {
+				var.toggleA = False;
+			}
+		} else {
+			var.toggleA = var.toggleA xor Pressed(var.XI_A);
+		}
+		var.toggleX = var.toggleX xor Pressed(var.XI_X);
+		var.toggleY = var.toggleY xor Pressed(var.XI_Y);
+	} else if (var.dealerMode) {
+		var.toggleSec = 5;
+		var.toggleA = var.toggleA xor HeldDown(var.XI_A, var.toggleSec);
+		var.toggleX = var.toggleX xor HeldDown(var.XI_X, var.toggleSec);
+		var.toggleY = var.toggleY xor HeldDown(var.XI_Y, var.toggleSec);
+	} else {
+		if (HeldDown(var.XI_A, var.toggleSec)) {
+			var.toggleA = True;
+		} else if (Pressed(var.XI_A)) {
+			var.toggleA = False;
+		}
+		if (HeldDown(var.XI_X, var.toggleSec)) {
+			var.toggleX = True;
+		} else if (Pressed(var.XI_X)) {
+			var.toggleX = False;
+		}
+		if (HeldDown(var.XI_Y, var.toggleSec)) {
+			var.toggleY = True;
+		} else if (Pressed(var.XI_Y)) {
+			var.toggleY = False;
+		}
+	}
+	if (Pressed(HeldDown(var.XI_RB, var.toggleSec))) {
+		var.toggleRB = True;
+	} else if (Pressed(var.XI_RB) and (not HeldDown(var.XI_RB, var.toggleSec))) {
+		var.toggleRB = False;
+	}
+	if (DoubleClicked(var.XI_RB)) var.autofireMode = not var.autofireMode;
+
+	if (Pressed(Key.T)) {
+		if (var.toggleChatMode == False) {
+			var.dealerMode = False;
+			var.supportMode = False;
+		}
+	}
+
+	// rooting mode
+	if (var.XI_B) {
+		var.toggleRootingMode = True;
+	} else if (Released(var.XI_B)) {
+		Wait(0.1 s);
+		var.toggleRootingMode = False;
+	}
+
+	///////////////////////////////////////////////////////
+	// Chatting Mode
+	var.toggleChatMode = var.toggleChatMode xor Pressed(Key.Enter or var.XI_Up or var.XI_Back);
+	if (Pressed(Key.Escape or var.XI_B)) {
+		var.toggleChatMode = False;
+		var.RightStickLock = False;
+	}
+	if (abs(Deadzone(var.XI_J1X, var.dzR)) > var.dzDelta or abs(Deadzone(var.XI_J1Y, var.dzR)) > var.dzDelta) {
+		if (var.toggleChatMode) {
+			  Press(Key.Escape);
+			Release(Key.Escape);
+			  Press(Key.F9);
+			Release(Key.F9);
+			var.toggleChatMode = False;
+		}
+		var.RightStickLock = False;
+	}
+}	// (var.LBShift == False) 
+
+////////////////////////////////////////////////////////
+// auto fire
+//
+var.OnFire = (var.OnLeftStick == False) or var.toggleSpring or var.dealerMode;
+if (var.toggleChatMode == False) {
+	if (var.supportMode and var.autofireMode == False) {
+		//if (Pressed(var.OnLeftStick)) Release(Key.Three);
+	} else {
+		// normal mode
+		if (var.supportMode) {
+			if (not (var.classMode == var.crusader and var.XI_RT > var.dzTR)) {
+				if (var.OnFire and not var.XI_B) {
+					if (var.toggleA) {
+						if (var.waitButton > 0) Wait(var.waitButton + 0.03 s);
+						  Press(Key.One);
+						Release(Key.One);
+					}
+					if (var.toggleX) {
+						if (var.waitButton > 0) Wait(var.waitButton + 0.02 s);
+						  Press(Key.Two);
+						Release(Key.Two);
+					}
+					if (var.toggleX and var.toggleXY and var.classMode == var.crusader) {
+						if (var.waitButton > 0) Wait(var.waitButton + 0.01 s);
+						  Press(Key.Three);
+						Release(Key.Three);
+					} else if (var.toggleY) {
+						if (var.waitButton > 0) Wait(var.waitButton + 0.01 s);
+						  Press(Key.Three);
+						Release(Key.Three);
+					}
+				}
+				if (var.autofireMode or var.toggleRB) {
+					if (var.classMode >= var.witchDoctor or (var.OnFire and not var.XI_B)) {
+						if (var.waitButton > 0) Wait(var.waitButton s);
+						  Press(Key.Four);
+						Release(Key.Four);
+					}
+				}
+			}
+		} else {	// not var.supportMode
+			if (var.OnFire and not var.XI_B) {
+				if (1 or var.OnLeftStick == false) {
+					if (var.toggleA) {
+						if (var.waitButton > 0) Wait(var.waitButton + 0.03 s);
+						  Press(Key.One);
+						Release(Key.One);
+						if (var.waitDealerMode > 0) Wait(var.waitDealerMode s); // 60초 주기
+					}
+					if (var.toggleX) {
+						if (var.waitButton > 0) Wait(var.waitButton + 0.02 s);
+						  Press(Key.Two);
+						Release(Key.Two);
+					}
+				}
+				if (var.toggleX and var.toggleXY) {
+					if (var.waitButton > 0) Wait(var.waitButton + 0.01 s);
+					  Press(Key.Three);
+					Release(Key.Three);
+				} else if (var.toggleY) {
+					if (var.waitButton > 0) Wait(var.waitButton + 0.01 s);
+					  Press(Key.Three);
+					Release(Key.Three);
+				}
+				if (var.dealerMode and var.autofireMode and var.OnLeftStick == False) {
+					if (var.waitButton > 0) Wait(var.waitButton + 0.04 s);
+					  Press(Mouse.RightButton);
+					Release(Mouse.RightButton);
+				}
+			}
+			if (var.classMode >= var.witchDoctor or (var.OnFire and not var.XI_B)) {
+				if (var.toggleRB) {
+					if (var.waitButton > 0) Wait(var.waitButton s);
+					  Press(Key.Four);
+					Release(Key.Four);
+				}
+			}
+		}
+	}
+}
+
+//////////////////////////////////////////////////
+// Pressed / Released: feedback, virbration
+//
+if (Pressed(var.supportMode)) {
+	if (var.classMode == var.crusader) {
+		Display("Crusader Support mode");
+	} else if (var.classMode == var.witchDoctor) {
+		Display("Witch Doctor Support mode");
+	} else if (var.classMode == var.witchDoctorHalf) {
+		Display("Half Witch Support mode");
+	}
+	var.autofireMode = True;
+	var.toggleRootingMode = False;
+	var.resetMouseColor = True;
+	if (var.classMode == var.crusader) {
+		var.toggleA = True;
+		var.toggleX = True;
+		var.toggleY = True;
+	}
+} else if (Released(var.supportMode)) {
+	Display("Normal mode");
+	var.toggleA = False;
+	var.toggleX = False;
+	var.toggleY = False;
+	var.toggleRB = False;
+	var.autofireMode = False;
+	var.resetMouseColor = True;
+	Release(Mouse.LeftButton);
+	Release(Mouse.RightButton);
+	Release(Key.LeftShift);
+}
+if (Pressed(var.dealerMode)) {
+	Display("Dealer mode");
+	var.resetCurPos = True;			// 마우스 포인터를 기본 위치로 이동
+	var.RightStickLock = False;
+	var.toggleRootingMode = False;
+	var.toggleA = True;
+	var.toggleX = True;
+	var.toggleY = True;
+	var.toggleRB = True;
+	if (var.classType == 11) var.waitDealerMode = 60;
+	var.resetMouseColor = True;
+} else if (Released(var.dealerMode)) {
+	Display("Normal mode");
+	var.toggleA = False;
+	var.toggleX = False;
+	var.toggleY = False;
+	var.toggleRB = False;
+	var.autofireMode = False;
+	Release(Mouse.LeftButton);
+	Release(Mouse.RightButton);
+	Release(Key.LeftShift);
+	if (var.classType == 11) var.waitDealerMode = 0;
+	var.resetMouseColor = True;
+}
+
+// Release keys
+if (Pressed(var.toggleRootingMode)) {
+	Release(Mouse.LeftButton);
+	Release(Mouse.RightButton);
+	Release(Key.LeftShift);
+}
+if (Pressed(var.toggleChatMode)) {
+	Release(Mouse.LeftButton);
+	Release(Mouse.RightButton);
+	Release(Key.LeftShift);
+	Release(Key.One);
+	Release(Key.Two);
+	Release(Key.Three);
+	Release(Key.Four);
+}
+
+if (KeepDown(Pressed(var.supportMode), 0.3)) {
+	var.support_vib1off = True;
+	XInput.Vibration1 = 0.3;
+	XInput.Vibration2 = 0.9;
+} else if (Released(var.supportMode)) {
+	var.toggleRootingMode = False;
+	var.support_vib2off = True;
+} else if (var.support_vib1off == True) {
+	var.support_vib1off = False;
+	XInput.Vibration1 = 0;
+	XInput.Vibration2 = 0;
+} else if (var.support_vib2off == True) {
+	var.support_vib2off = False;
+	XInput.Vibration1 = 0;
+	XInput.Vibration2 = 0;
+}
+
+if (KeepDown(Pressed(var.autofireMode), 0.3)) {
+	if (var.supportMode == False) Display("Auto fire mode");
+	var.AF_vib1off = True;
+	XInput.Vibration1 = 0.3;
+	XInput.Vibration2 = 0.9;
+} else if (Released(var.autofireMode)) {
+	if (var.supportMode) {
+		Display("stun mode");
+		var.resetCurPos = True;			// 마우스 포인터를 기본 위치로 이동
+	} else {
+		Display("default mode");
+	}
+	Release(Mouse.LeftButton);
+	Release(Mouse.RightButton);
+	Release(Key.LeftShift);
+
+	var.AF_vib2off = True;
+} else if (var.AF_vib1off == True) {
+	var.AF_vib1off = False;
+	XInput.Vibration1 = 0;
+	XInput.Vibration2 = 0;
+} else if (var.AF_vib2off == True) {
+	var.AF_vib2off = False;
+	XInput.Vibration1 = 0;
+	XInput.Vibration2 = 0;
+}
+
+if (var.supportMode == False) {
+	if (KeepDown(Pressed(var.toggleA), 0.2)) {
+		var.A_vib1off = True;
+		XInput.Vibration1 = 0.2;
+		XInput.Vibration2 = 0.8;
+	} else if (var.A_vib1off == True) {
+		var.A_vib1off = False;
+		XInput.Vibration1 = 0;
+		XInput.Vibration2 = 0;
+	}
+	if (KeepDown(Pressed(var.toggleX), 0.2)) {
+		var.X_vib1off = True;
+		XInput.Vibration1 = 0.2;
+		XInput.Vibration2 = 0.8;
+	} else if (var.X_vib1off == True) {
+		var.X_vib1off = False;
+		XInput.Vibration1 = 0;
+		XInput.Vibration2 = 0;
+	}
+	if (KeepDown(Pressed(var.toggleY), 0.2)) {
+		var.Y_vib1off = True;
+		XInput.Vibration1 = 0.2;
+		XInput.Vibration2 = 0.8;
+	} else if (var.Y_vib1off == True) {
+		var.Y_vib1off = False;
+		XInput.Vibration1 = 0;
+		XInput.Vibration2 = 0;
+	}
+}
+
+if (KeepDown(Pressed(var.toggleXY), 0.2)) {
+	var.XY_vib1off = True;
+	XInput.Vibration1 = 0.2;
+	XInput.Vibration2 = 0.8;
+} else if (Released(var.toggleXY)) {
+	var.XY_vib2off = True;
+} else if (var.XY_vib1off == True) {
+	var.XY_vib1off = False;
+	XInput.Vibration1 = 0;
+	XInput.Vibration2 = 0;
+} else if (var.XY_vib2off == True) {
+	var.XY_vib2off = False;
+	XInput.Vibration1 = 0;
+	XInput.Vibration2 = 0;
+}
+
+if (KeepDown(Pressed(var.toggleRB), 0.2)) {
+	var.RB_vib1off = True;
+	XInput.Vibration1 = 0.2;
+	XInput.Vibration2 = 0.8;
+} else if (Released(var.toggleRB)) {
+	var.RB_vib2off = True;
+} else if (var.RB_vib1off == True) {
+	var.RB_vib1off = False;
+	XInput.Vibration1 = 0;
+	XInput.Vibration2 = 0;
+} else if (var.RB_vib2off == True) {
+	var.RB_vib2off = False;
+	XInput.Vibration1 = 0;
+	XInput.Vibration2 = 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+if (var.useVibration == 1) {
+	if (KeepDown(var.XI_RT > var.dzTR, 0.5)) {
+		if (var.rumbleRT == False) {
+			var.rumbleRT = True;
+			Wait(var.aDelayTime1 s);
+			var.rumbleRT = False;
+			Wait(var.aDelayTime2 s);
+		}
+	}
+	if (var.rumbleRT) {
+		var.rumbleRTType++;
+		if (var.rumbleRTType == 0) {
+			XInput.Vibration1 = 0.1;
+			XInput.Vibration2 = 0.2;
+		} else if (var.rumbleRTType == 1) {
+			XInput.Vibration1 = 0.2;
+			XInput.Vibration2 = 0.1;
+		} else {
+			var.rumbleRTType = 0;
+			XInput.Vibration1 = 0.1;
+			XInput.Vibration2 = 0.1;
+		}
+	} else {
+		if (var.rumbleRTType < 1000) {
+			var.rumbleRTType = 1000;
+			XInput.Vibration1 = 0;
+			XInput.Vibration2 = 0;
+		}
+	}
+
+	var.rumbleLT = Pressed(var.XI_LT > var.dzTR);
+	if (KeepDown(var.rumbleLT, 0.3)) {
+		var.rumbleLTType++;
+		if (var.rumbleLTType == 0) {
+			XInput.Vibration1 = 0.3;
+			XInput.Vibration2 = 0.1;
+		} else if (var.rumbleLTType == 1) {
+			XInput.Vibration1 = 0.3;
+			XInput.Vibration2 = 0.1;
+		} else if (var.rumbleLTType == 2) {
+			XInput.Vibration1 = 0.3;
+			XInput.Vibration2 = 0.1;
+		} else if (var.rumbleLTType == 3) {
+			XInput.Vibration1 = 0.1;
+			XInput.Vibration2 = 0.3;
+		} else if (var.rumbleLTType == 4) {
+			XInput.Vibration1 = 0.1;
+			XInput.Vibration2 = 0.3;
+		} else if (var.rumbleLTType == 5) {
+			XInput.Vibration1 = 0.1;
+			XInput.Vibration2 = 0.3;
+		} else {
+			var.rumbleLTType = 0;
+			XInput.Vibration1 = 0.2;
+			XInput.Vibration2 = 0.2;
+		}
+	} else {
+		if (var.rumbleLTType < 1000) {
+			var.rumbleLTType = 1000;
+			XInput.Vibration1 = 0;
+			XInput.Vibration2 = 0;
+		}
+	}
+}
+
+var.rumbleBTN = Pressed(var.XI_LThumb or var.XI_RThumb);
+var.rumbleBTN = var.rumbleBTN or Pressed(var.XI_Down or var.XI_Left or var.XI_Right);
+//var.rumbleBTN = var.rumbleBTN or Pressed(var.XI_A or var.XI_X);
+//var.rumbleBTN = var.rumbleBTN or Pressed(var.XI_LB or var.XI_RB);
+if (KeepDown(var.rumbleBTN, 0.2)) {
+	var.rumbleBTNType++;
+	if (var.rumbleBTNType == 0) {
+		XInput.Vibration1 = 0.2;
+		XInput.Vibration2 = 0.2;
+	} else if (var.rumbleBTNType == 1) {
+		XInput.Vibration1 = 0.1;
+		XInput.Vibration2 = 0.2;
+	} else if (var.rumbleBTNType == 2) {
+		XInput.Vibration1 = 0.2;
+		XInput.Vibration2 = 0.1;
+	} else if (var.rumbleBTNType == 3) {
+		XInput.Vibration1 = 0.1;
+		XInput.Vibration2 = 0.2;
+	} else if (var.rumbleBTNType == 4) {
+		XInput.Vibration1 = 0.2;
+		XInput.Vibration2 = 0.1;
+	} else {
+		var.rumbleBTNType = 0;
+		XInput.Vibration1 = 0.1;
+		XInput.Vibration2 = 0.1;
+	}
+} else {
+	if (var.rumbleBTNType < 1000) {
+		var.rumbleBTNType = 1000;
+		XInput.Vibration1 = 0;
+		XInput.Vibration2 = 0;
+	}
+}
+
+////////////////////////////////////////////////////////
+// Auto mouse control
+//
+var.repairWaitTime = 0.03;
+if (not (var.dealerMode or var.supportMode)) {
+	if (Pressed(var.goRift)) {
+		var.goRift = False;
+		var.RightStickLock = True;
+		Release(Key.LeftShift);
+
+		// size:70x70 가방칸(0,0):1900,770
+		Mouse.cursorpos = [var.bagX, var.bagY] + [var.bagSizeX * 0, var.bagSizeY * 0];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.RightButton);
+		Release(Mouse.RightButton);
+		Wait(var.repairWaitTime s);
+
+		// 가방칸(7, 4)
+		Mouse.cursorpos = [var.bagX, var.bagY] + [var.bagSizeX * 7, var.bagSizeY * 4];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.RightButton);
+		Release(Mouse.RightButton);
+		Wait(var.repairWaitTime s);
+
+		// 가방칸(7, 5)
+		Mouse.cursorpos = [var.bagX, var.bagY] + [var.bagSizeX * 7, var.bagSizeY * 5];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.RightButton);
+		Release(Mouse.RightButton);
+		Wait(var.repairWaitTime s);
+
+		// 가방칸(8, 5)
+		Mouse.cursorpos = [var.bagX, var.bagY] + [var.bagSizeX * 8, var.bagSizeY * 5];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.RightButton);
+		Release(Mouse.RightButton);
+		Wait(var.repairWaitTime s);
+
+		// 수락
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 80, var.scaleY * 1125];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		var.resetCurPos = True;			// 마우스 포인터를 기본 위치로 이동
+	}
+
+	if (Pressed(var.goRepair)) {
+		var.goRepair = False;
+		var.RightStickLock = True;
+		Release(Key.LeftShift);
+
+		// 수리
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 685, var.scaleY * 822];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 363, var.scaleY * 789];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		// 노랑 분해
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 522, var.scaleY * 385];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1134, var.scaleY * 500];
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		// 파랑 분해
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 424, var.scaleY * 385];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1134, var.scaleY * 500];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		// 하양 분해
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 337, var.scaleY * 385];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1134, var.scaleY * 500];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		// 전설 분해
+		Wait(var.repairWaitTime * 15 s);
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 227, var.scaleY * 387];
+		Wait(var.repairWaitTime s);
+		  Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(var.repairWaitTime s);
+
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1900, var.scaleY * 770];
+		[var.cursorX, var.cursorY] = Mouse.cursorpos;
+	}
+}

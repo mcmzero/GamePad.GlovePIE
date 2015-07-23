@@ -1,0 +1,535 @@
+if starting {
+	//var.debug = True;
+	var.mapleStory2 = True;
+	var.enableAutoFire = True;
+	//var.enableAutoDirection = True;
+	var.toggleTabMode = True;
+
+	var.dzL = 0.2;
+	var.dzR = 0.2;
+	var.dzTR = 0.2;
+
+	Keyboard.RepeatFakeKeys = False;
+	Keyboard.RepeatMultipleFakeKeys = False;
+
+	XInput.Vibration1 = 0;
+	XInput.Vibration2 = 0;
+
+	var.Keywaitsec = 0.05;
+	var.rumbleBTNType = 0;
+	var.rumbleBTN = False;
+	var.heldDownTime = 0.3;
+
+	[var.cursorX, var.cursorY] = mouse.cursorpos;
+}
+
+if (Pressed(Key.F9 and Key.alt and Key.control and Key.LeftShift)) {
+	ExitPIE;
+}
+
+if (Window.Class != "MapleStory2") {
+	chain("gamepad_windows.pie");
+}
+
+if (var.mapleStory2) {
+	// 초기화
+	if (Window.Class != "ForegroundStaging") {
+		if ([var.INIT_WINDOW_W, var.INIT_WINDOW_H] != [Window.Left + Window.Width, Window.Top + Window.Height]) {
+			[var.INIT_WINDOW_W, var.INIT_WINDOW_H] = [Window.Left + Window.Width, Window.Top + Window.Height];
+
+			Display("Maplestory2");
+			Wait(0.2 s);
+
+			if (var.debug) DebugPrint("[" + Window.Class + "]: " + window.width + " x " + window.height);
+			var.leftborder = (window.Width - window.ClientWidth) / 2;
+			var.topborder = window.Height - window.ClientHeight - var.leftborder;
+			var.middleX = Round(window.Left + window.Width / 2);
+			var.middleY = Round(window.Top + window.Height - var.leftborder - window.ClientHeight / 2);
+			var.scaleX = 1 / (2560 / window.width);
+			var.scaleY = 1 / (1440 / window.height);
+			if (var.debug) DebugPrint("ScaleX: " + var.scaleX + ", ScaleY: " + var.scaleY);
+			[var.cursorX, var.cursorY] = [var.middleX, var.middleY + var.scaleY * 240];
+		}
+	}
+
+	// 마우스 커서 위치 조정
+	if (Pressed(var.resetCurPos)) {
+		var.resetCurPos = False;
+		Mouse.cursorpos = [var.cursorX, var.cursorY];
+	}
+	if (Pressed(var.defaultCurPos)) {
+		var.defaultCurPos = False;
+		Mouse.cursorpos = [var.middleX, var.middleY + var.scaleY * 540];
+	}
+
+	// 스틱 이동
+	// joy2scroll, joy2arrow
+	var.jlx = Smooth(Deadzone(XInput.Joy1X,  var.dzL), 6);
+	var.jly = Smooth(Deadzone(-XInput.Joy1Y, var.dzL), 6);
+	// joy2Mouse
+	var.jrx = Deadzone(XInput.Joy2X, var.dzR);
+	var.jry = Deadzone(-XInput.Joy2Y, var.dzR);
+
+	// 왼쪽 스틱을 움직일때
+	var.OnLeftStick = abs(var.jlx) > 0 or abs(var.jly) > 0;
+	if (Pressed(var.OnLeftStick)) {
+		var.defaultCurPos = True;
+		if (var.AutoFireA) {
+			Release(Key.A);
+			Release(Key.S);
+			Release(Key.D);
+			Release(Key.F);
+			Release(Key.Q);
+			Release(Key.W);
+			Release(Key.E);
+			Release(Key.R);
+			Release(Key.Up);
+			Release(Key.Down);
+			Release(Key.Left);
+			Release(Key.Right);
+		}
+	} else if (Released(var.OnLeftStick)) {
+	}
+
+	// 오른쪽 스틱을 움직일때
+	var.OnRightStick = abs(var.jrx) > 0 or abs(var.jry) > 0;
+	if (Pressed(var.OnRightStick)) {
+		Mouse.cursorpos = [var.cursorX, var.cursorY];
+	} else if (Released(var.OnRightStick)) {
+	}
+
+	if (var.OnRightStick) {
+		// [Sqr(x) 제곱(스퀘어), Sqrt(x) 제곱근(스퀘어루트), power(x, y) x의 y승(파워)]
+		// 좌표 0,0에서 var.jrx, var.jry까지의 거리 = Sqrt(Sqr(var.x1 - var.x2) + Sqr(var.y1 - var.y2))
+		var.distance = Min(1, Sqrt(Sqr(var.jrx - 0) + Sqr(var.jry - 0)));
+		if (var.distance > 0.8) { 
+			var.jrr = EnsureMapRange(var.distance, 0.8, 1, 5, 15);
+		} else {
+			var.jrr = EnsureMapRange(var.distance, 0.5, 0.8, 0, 5);
+		}
+		var.jrx = EnsureMapRange(var.jrx, -1, 1, -var.jrr, var.jrr);
+		var.jry = EnsureMapRange(var.jry, -1, 1, -var.jrr, var.jrr);
+		if (var.shiftMode) {
+			if (abs(var.jrx) < abs(var.jry)) {
+				if (var.jry != 0) Mouse.DirectInputZ -= var.jry;
+				Wait(0.1 s);
+			} else if (abs(var.jrx) > abs(var.jry)) {
+				if (Pressed(var.jrx > 0)) {
+					XInput.Vibration2 = 0.6;
+					Press(Key.Escape);
+					Wait(0.2 s);
+					Release(Key.Escape);
+					XInput.Vibration2 = 0;
+				} else if (var.jrx < 0) {
+					XInput.Vibration2 = 0.6;
+					Press(Key.Space);
+					Wait(0.1 s);
+					Release(Key.Space);
+					XInput.Vibration2 = 0;
+					Wait(0.2 s);
+				}
+			}
+		} else if ([var.jrx, var.jry] != [0, 0]) {
+			mouse.cursorpos += [var.jrx, var.jry];
+			[var.cursorX, var.cursorY] = mouse.cursorpos;
+		}
+	}
+
+	// Left
+	if (var.jlx < 0) {
+		var.KeyLeft = True;
+		if (Not Key.Left) Press(Key.Left);
+	} else {
+		if (var.KeyLeft) {
+			var.KeyLeft = False;
+			if (Key.Left) Release(Key.Left);
+		}
+	}		
+	// Right
+	if (var.jlx > 0) {
+		var.KeyRight = True;
+		if (Not Key.Right) Press(Key.Right);
+	} else {
+		if (var.KeyRight) {
+			var.KeyRight = False;
+			if (Key.Right) Release(Key.Right);
+		}
+	}
+	// Up
+	if (var.jly < 0) {
+		var.KeyUp = True;
+		if (Not Key.Up) Press(Key.Up);
+	} else {
+		if (var.KeyUp) {
+			var.KeyUp = False;
+			if (Key.Up) Release(Key.Up);
+		}
+	}
+	// Down
+	if (var.jly > 0) {
+		var.KeyDown = True;
+		if (Not Key.Down) Press(Key.Down);
+	} else {
+		if (var.KeyDown) {
+			var.KeyDown = False;
+			if (Key.Down) Release(Key.Down);
+		}
+	}
+
+	// 스킬 버튼
+	var.ShiftMode = XInput.LeftTrigger > var.dzTR;
+	if (Pressed(XInput.LeftTrigger > var.dzTR)) {
+		Press(Mouse.RightButton);
+	} else if (Released(XInput.LeftTrigger > var.dzTR)) {
+		if (Mouse.RightButton) Release(Mouse.RightButton);
+	}
+
+	if (Pressed(XInput.RightTrigger > var.dzTR)) {
+		var.turnOnTab = False;
+		if (XInput.LeftTrigger == False) var.AutoFireA = False;
+
+		if (Not Mouse.LeftButton) Press(Mouse.LeftButton);
+		if (var.ShiftMode) {
+			if (Not Key.Q) Press(Key.Q);
+		} else {
+			if (Not Key.A) Press(Key.A);
+		}
+	} else if (Released(XInput.RightTrigger > var.dzTR)) {
+		if (XInput.LeftTrigger == False) var.AutoFireA = False;
+		if (Mouse.LeftButton) Release(Mouse.LeftButton);
+		if (Key.Q) Release(Key.Q);
+		if (Key.A and var.AutoFireA == False) Release(Key.A);
+	}
+
+	if (Pressed(HeldDown(XInput.LeftShoulder, 0.15))) {
+		var.AutoFireA = False;
+		if (Key.A) Release(Key.A);
+		if (var.ShiftMode) {
+			if (Not Key.Three) Press(Key.Three);
+		} else {
+			if (Not Key.One) Press(Key.One);
+		}
+	} else if (DoubleClicked(XInput.LeftShoulder)) {
+		var.AutoFireA = False;
+		if (Key.A) Release(Key.A);
+		if (Not Key.Two) Press(Key.Two);
+	} else if (Pressed(XInput.LeftShoulder)) {
+		var.AutoFireA = False;
+		if (Key.A) Release(Key.A);
+		if (var.ShiftMode) {
+			if (Not Key.Three) Press(Key.Three);
+		} else {
+			//if (Not Key.One) Press(Key.One);
+		}
+	} else if (Released(XInput.LeftShoulder)) {
+		if (Key.One) Release(Key.One);
+		if (Key.Two) Release(Key.Two);
+		if (Key.Three) Release(Key.Three);
+		if (var.AutoFireA) Press(Key.A);
+	}
+
+	if (Pressed(HeldDown(XInput.RightShoulder, 0.15))) {
+		var.AutoFireA = False;
+		if (Key.A) Release(Key.A);
+		if (var.ShiftMode) {
+			if (Not Key.Seven) Press(Key.Seven);
+		} else {
+			if (Not Key.Five) Press(Key.Five);
+		}
+	} else if (DoubleClicked(XInput.RightShoulder)) {
+		var.AutoFireA = False;
+		if (Key.A) Release(Key.A);
+		if (Not Key.Six) Press(Key.Six);
+	} else if (Pressed(XInput.RightShoulder)) {
+		var.AutoFireA = False;
+		if (Key.A) Release(Key.A);
+		if (var.ShiftMode) {
+			if (Not Key.Seven) Press(Key.Seven);
+		} else {
+			//if (Not Key.Five) Press(Key.Five);
+		}
+	} else if (Released(XInput.RightShoulder)) {
+		if (Key.Five) Release(Key.Five);
+		if (Key.Six) Release(Key.Six);
+		if (Key.Seven) Release(Key.Seven);
+		if (var.AutoFireA) Press(Key.A);
+	}
+
+	if (Pressed(XInput.LeftThumb)) {
+		var.resetCurPos = True;
+		if (var.shiftMode) {
+			Press(Key.Escape);
+		} else {
+			Press(Key.Four);
+		}
+	} else if (Released(XInput.LeftThumb)) {
+		if (Key.Four) Release(Key.Four);
+		if (Key.Escape) Release(Key.Escape);
+	}
+
+	if (Pressed(XInput.RightThumb)) {
+		var.resetCurPos = True;
+		Press(Key.Eight);
+	} else if (Released(XInput.RightThumb)) {
+		if (Key.Eight) Release(Key.Eight);
+	}
+
+	if (Pressed(HeldDown(XInput.B, 0.3))) {
+		if (Key.A) Release(Key.A);
+		if (Not Key.X) Press(Key.X);
+		var.vib02 = True;
+	} else if (Pressed(XInput.B)) {
+		var.defaultCurPos = True;
+		//var.turnOnTab = False;
+		if (Key.A) Release(Key.A);
+		if (var.ShiftMode) {
+			if (Not Key.Escape) Press(Key.Escape);
+		} else {
+			if (Not Key.Z) Press(Key.Z);
+		}
+	} else if (Released(XInput.B)) {
+		if (Key.Escape) Release(Key.Escape);
+		if (Key.Z) Release(Key.Z);
+		if (Key.X) Release(Key.X);
+
+		if (var.shiftMode == False) {
+			if (Not Key.C) Press(Key.C);
+			Wait(0.1 s);
+			if (Key.C) Release(Key.C);
+		}
+
+		if (var.AutoFireA) {
+			Wait(0.1 s);
+			if (Not Key.A) Press(Key.A);
+		}
+	}
+
+	if (var.enableAutoFire) {
+		var.AutoFireA = var.AutoFireA xor (XInput.LeftTrigger and DoubleClicked(XInput.RightTrigger));
+	}
+	if (Pressed(Key.Enter)) {
+		Var.AutoFireA = False;
+	}
+	if (Pressed(var.AutoFireA)) {
+		XInput.Vibration2 = 0.6;
+		Wait(0.5 s);
+		XInput.Vibration2 = 0.0;
+	} else if (Released(var.AutoFireA)) {
+		Release(Key.A);
+		Release(Key.S);
+		Release(Key.D);
+		Release(Key.F);
+		Release(Key.Q);
+		Release(Key.W);
+		Release(Key.E);
+		Release(Key.R);
+		Release(Key.Up);
+		Release(Key.Down);
+		Release(Key.Left);
+		Release(Key.Right);
+		XInput.Vibration2 = 0.4;
+		Wait(0.2 s);
+		XInput.Vibration2 = 0.0;
+	}
+
+	if (var.AutoFireA and var.OnLeftStick == False and var.OnRightStick == False) {
+		if (Not (XInput.A or XInput.B or XInput.X or XInput.Y)) {
+			if (var.enableAutoDirection == True) {
+				//Left
+				Press(Key.A);
+				Wait(0.2 s);
+				Release(Key.A);
+				Press(Key.Left); 
+				Wait(0.2 s);
+				Release(Key.Left);
+				Press(Key.E);
+				Wait(0.4 s);
+				Release(Key.E);
+				Press(Key.D);
+				Wait(0.4 s);
+				Release(Key.D);
+				Wait(0.2 s);
+				//Right
+				Press(Key.A);
+				Wait(0.2 s);
+				Release(Key.A);
+				Press(Key.Right);
+				Wait(0.2 s);
+				Release(Key.Right);
+				Press(Key.E);
+				Wait(0.4 s);
+				Release(Key.E);
+				Press(Key.D);
+				Wait(0.4 s);
+				Release(Key.D);
+			} else {
+				Press(Key.A);
+				Wait(0.2 s);
+				Release(Key.A);
+				Wait(0.2 s);
+			}
+		}
+	}
+
+	if (Pressed(HeldDown(XInput.A, 0.15))) {
+		if (Key.A) Release(Key.A);
+		if (var.ShiftMode) {
+			if (Not Key.W) Press(Key.W);
+		} else {
+			if (Not Key.S) Press(Key.S);
+		}
+	} else if (Pressed(XInput.A)) {
+		var.turnOnTab = False;
+		if (Key.A) Release(Key.A);
+		if (var.ShiftMode) {
+			if (Not Key.Space) Press(Key.Space);
+		} else {
+			if (Not Key.S) Press(Key.S);
+		}
+	} else if (Released(XInput.A)) {
+		if (Key.Space) Release(Key.Space);
+		if (Key.W) Release(Key.W);
+		if (Key.S) Release(Key.S);
+		if (var.AutoFireA) Press(Key.A);
+	}
+
+	if (Pressed(XInput.X)) {
+		var.turnOnTab = False;
+		if (Key.A) Release(Key.A);
+		if (var.ShiftMode) {
+			if (Not Key.E) Press(Key.E);
+		} else {
+			if (Not Key.D) Press(Key.D);
+		}
+	} else if (Released(XInput.X)) {
+		if (Key.E) Release(Key.E);
+		if (Key.D) Release(Key.D);
+		if (var.AutoFireA) Press(Key.A);
+	}
+
+	if (Pressed(XInput.Y)) {
+		var.turnOnTab = False;
+		if (Key.A) Release(Key.A);
+		if (var.ShiftMode) {
+			if (Not Key.R) Press(Key.R);
+		} else {
+			if (Not Key.F) Press(Key.F);
+		}
+	} else if (Released(XInput.Y)) {
+		if (Key.R) Release(Key.R);
+		if (Key.F) Release(Key.F);
+		if (var.AutoFireA) Press(Key.A);
+	}
+	
+	// 메뉴 호출
+	if (Pressed(HeldDown(XInput.Back, 0.3))) {
+	} else if (DoubleClicked(XInput.Back)) {
+	} else if (Pressed(XInput.Back)) {
+		var.resetCurPos = True;
+		if (var.ShiftMode == False) {
+			if (Not M) Press(Key.M);
+		} else {
+			if (var.toggleTabMode) {
+				var.turnOnTab = Not var.turnOnTab;
+			} else {
+				if (Not Key.Tab) Press(Key.Tab);
+			}
+		}
+	} else if (Released(XInput.Back)) {
+		var.AutoFireA = False;
+		if (var.toggleTabMode == False and Key.Tab) Release(Key.Tab);
+		if (Key.M) Release(Key.M);
+	}
+
+	// 미니맵 확대 전환
+	if (Pressed(var.turnOnTab)) {
+		if (Not Tab) Press(Key.Tab);
+	} else if (Released(var.turnOnTab)) {
+		if (Key.Tab) Release(Key.Tab);
+	}
+	
+	if (Pressed(HeldDown(XInput.Start, 0.3))) {
+		Press(Key.N);
+	} else if (Pressed(XInput.Start)) {
+		var.resetCurPos = True;
+		if (var.ShiftMode) {
+			Press(Key.J);
+		} else {
+			Press(Key.Y);
+		}
+	} else if (Released(XInput.Start)) {
+		if (Key.J) Release(Key.J);
+		if (Key.Y) Release(Key.Y);
+		if (Key.N) Release(Key.N);
+		var.AutoFireA = False;
+	}
+
+	if (Pressed(HeldDown(XInput.Up, 0.3))) {
+		if (Not Key.T) Press(Key.T);
+	} else if (Pressed(XInput.Up)) {
+		var.resetCurPos = True;
+		if (var.ShiftMode) {
+			if (Not Key.O) Press(Key.O);
+		} else {
+			if (Not Key.Space) Press(Key.Space);
+		}
+	} else if (Released(XInput.Up)) {
+		if (Key.Space) Release(Key.Space);
+		if (Key.O) Release(Key.O);
+		if (Key.T) Release(Key.T);
+		var.AutoFireA = False;
+	}
+
+	if (Pressed(HeldDown(XInput.Down, 0.3))) {
+		if (Not Key.G) Press(Key.G);
+	} else if (Pressed(XInput.Down)) {
+		var.resetCurPos = True;
+		if (var.ShiftMode) {
+			if (Not Key.U) Press(Key.U);
+		} else {
+			if (Not Key.Escape) Press(Key.Escape);
+		}
+	} else if (Released(XInput.Down)) {
+		if (Key.Escape) Release(Key.Escape);
+		if (Key.G) Release(Key.G);
+		if (Key.U) Release(Key.U);
+		var.AutoFireA = False;
+	}
+
+	if (Pressed(HeldDown(XInput.Left, 0.3))) {
+		if (Not Key.K) Press(Key.K);
+	} else if (Pressed(XInput.Left)) {
+		var.resetCurPos = True;
+		if (var.ShiftMode) {
+			if (Not Key.K) Press(Key.K);
+		} else {
+			if (Not Key.P) Press(Key.P);
+		}
+	} else if (Released(XInput.Left)) {
+		if (Key.P) Release(Key.P);
+		if (Key.K) Release(Key.K);
+		//var.AutoFireA = False;
+	}
+
+	if (Pressed(HeldDown(XInput.Right, 0.3))) {
+		if (Not Key.L) Press(Key.L);
+	} else if (Pressed(XInput.Right)) {
+		var.resetCurPos = True;
+		if (var.ShiftMode) {
+			if (Not Key.L) Press(Key.L);
+		} else {
+			if (Not Key.I) Press(Key.I);
+		}
+	} else if (Released(XInput.Right)) {
+		if (Key.I) Release(Key.I);
+		if (Key.L) Release(Key.L);
+		//var.AutoFireA = False;
+	}
+	
+	if (Pressed(var.vib02)) {
+		var.vib02 = False;
+		XInput.Vibration2 = 0.6;
+		Wait(0.2 s);
+		XInput.Vibration2 = 0.0;
+	}
+}				// (var.mapleStory2)

@@ -1,0 +1,916 @@
+﻿if starting {
+	//BeepDefault;
+	var.piename = "gamepad_windows.pie";
+	var.joyResetTime = 20;
+	
+	//var.debug = True;
+	if (var.debug) DebugPrint("windows pie");
+
+	var.dzL = 0.2;
+	var.dzR = 0.1;
+	var.dzTR = 0.7;
+
+	Keyboard.RepeatFakeKeys = False
+	Keyboard.RepeatMultipleFakeKeys = False
+	
+	XInput.Vibration1 = 0;
+	XInput.Vibration2 = 0;
+
+	var.Keywaitsec = 0.05;
+	var.rumbleBTNType = 0;
+	var.rumbleBTN = False;
+	var.heldDownTime = 0.3;
+}
+
+if (Pressed(Key.F2 and Key.F9 and Key.alt and Key.control and Key.shift)) {
+	BeepDefault;
+	ExitPIE;
+}
+
+if (Pressed(Key.F4 and Key.shift)) {
+	display("");
+	display("reload glove pie");
+	Wait(1 s);
+	Chain("gamepad_windows.pie");
+}
+
+if (Pressed(Mouse.MiddleButton)) Debug = Window.Class + "[" + Window.AppName + "]";
+if (var.windowClass != Window.Class) {
+	var.windowClass = Window.Class;
+	if (Window.Class != "TEditorForm" and Window.Class != "Notepad++" and Window.Class != "MultitaskingViewFrame") {
+		if (Window.Class != "Shell_TrayWnd" and Window.Class != "WorkerW") {
+			if (Window.Class != "USurface_390961453") {
+				Debug = Window.Class + "[" + Window.AppName + "]";
+			}
+		}
+	}
+	if (var.debug) {
+		if (Window.Class + 1 != 1) DebugPrint("Class: " + Window.Class);
+		if (Window.AppName + 1 != 1) DebugPrint("AppName: " + Window.AppName);
+	}
+
+	if (Window.Class == "D3 Main Window Class") {
+		Chain("gamepad_diablo3.pie");
+	} else if (Window.Class == "GxWindowClass") {
+		Chain("gamepad_wow.pie");
+	} else if (Window.Class == "MapleStory2") {
+		Chain("gamepad_maplestory2.pie");
+	}
+	if (Window.Class == "ForegroundStaging") {
+		var.dummyMode = True;
+	} else if (Window.Class == "WndClassTheCrew") {				// The crew	
+		var.dummyMode = True;
+	} else if (Window.Class == "ScimitarEngineWindowClass") {	// AssaSin creed unity
+		var.dummyMode = True;
+	} else if (Window.Class == "FledgeRenderWindowDX11") {		// Lords of the Fallen
+		var.dummyMode = True;
+	} else if (Window.Class == "TOMBRAIDER_WINDOW") {			// Tomb raider
+		var.dummyMode = True;
+	} else if (Window.Class == "UnrealWindow") {				// Tomb raider
+		var.dummyMode = True;
+	} else if (Window.Class == "PlatformViewClassSession0") {
+		var.dummyMode = False;
+	} else {
+		var.dummyMode = False;
+	}
+}
+
+if (var.dummyMode == False) {
+	var.webMode = (Window.Class == "Chrome_WidgetWin_1" or Window.Class == "IEFrame" or Window.Class == "MozillaWindowClass" or Window.Class == "ApplicationFrameWindow");
+	var.startmode = (Window.Class == "Windows.UI.Core.CoreWindow");
+
+	//////////////////////////////////////////
+	// Joystick Mapping
+	// debug = Joystick.Count + " " + XInput1.Exists + " " + XInput2.Exists;
+	if (XInput1.Exists == False and XInput2.Exists == False and XInput3.Exists == False and XInput4.Exists == False) {
+		if (var.XI_J1X or var.XI_J1Y or var.XI_J2X or var.XI_J2Y) var.joyResetCount = 0;
+		if (var.XI_A or var.XI_B or var.XI_X or var.XI_Y) var.joyResetCount = 0;
+		if (var.XI_LB or var.XI_RB or var.XI_LT or var.XI_RT) var.joyResetCount = 0;
+		if (var.XI_LThumb or var.XI_RThumb or var.XI_Back or var.XI_Start) var.joyResetCount = 0;
+		if (var.XI_Up or var.XI_Down or var.XI_Left or var.XI_Right) var.joyResetCount = 0;
+		if (Key.Control or Key.Shift or Key.Alt or Key.Space) var.joyResetCount = 0;
+		if (Key.Up or Key.Down or Key.Left or Key.Right) var.joyResetCount = 0;
+		if (Mouse.LeftButton or Mouse.RightButton) var.joyResetCount = 0;
+		if (var.joyResetCount > var.joyResetTime and var.AutoFireA = False and var.supportMode = False and var.dealerMode == False) {
+			Chain(var.piename);
+		} else {
+			Wait(1 s);
+			var.joyResetCount++;
+		}
+	}
+	if (Joystick.Count > 0) {
+		var.XI_J1X    = Joystick.X; 
+		var.XI_J1Y    = -Joystick.Y; 
+		var.XI_J2X    = Joystick.Z; 
+		var.XI_J2Y    = -Joystick.Roll; 
+		var.XI_A      = Joystick.button2;
+		var.XI_B      = Joystick.button3;
+		var.XI_X      = Joystick.button1;
+		var.XI_Y      = Joystick.button4;
+		var.XI_LB     = Joystick.button5;
+		var.XI_RB     = Joystick.button6;
+		var.XI_LThumb = Joystick.button11;
+		var.XI_RThumb = Joystick.button12;
+		var.XI_LT     = (Joystick.pitch + 1) / 2;
+		var.XI_RT     = (Joystick.yaw + 1) / 2;
+		var.XI_Up     = Joystick.Pov1 == 0; // or Joystick.Pov1 == 45 or Joystick.Pov1 == 315;
+		var.XI_Down   = Joystick.Pov1 == 180; // or Joystick.Pov1 == 135 or Joystick.Pov1 == 225;
+		var.XI_Left   = Joystick.Pov1 == 270; // or Joystick.Pov1 == 315 or Joystick.Pov1 == 225;
+		var.XI_Right  = Joystick.Pov1 == 90; // or Joystick.Pov1 == 135 or Joystick.Pov1 == 45;
+		var.XI_Back   = Joystick.button9 or Joystick.Button14;
+		var.XI_Start  = Joystick.button10 or Joystick.Button13;
+	} else {
+		var.XI_J1X    = XInput.Joy1X;
+		var.XI_J1Y    = XInput.Joy1Y;
+		var.XI_J2X    = XInput.Joy2X;
+		var.XI_J2Y    = XInput.Joy2Y;
+		var.XI_A      = XInput.A;
+		var.XI_B      = XInput.B;
+		var.XI_X      = XInput.X;
+		var.XI_Y      = XInput.Y;
+		var.XI_LB     = XInput.LeftShoulder;
+		var.XI_RB     = XInput.RightShoulder;
+		var.XI_LThumb = XInput.LeftThumb;
+		var.XI_RThumb = XInput.RightThumb;
+		var.XI_LT     = XInput.LeftTrigger;
+		var.XI_RT     = XInput.RightTrigger;
+		var.XI_Up     = XInput.Up;
+		var.XI_Down   = XInput.Down;
+		var.XI_Left   = XInput.Left;
+		var.XI_Right  = XInput.Right;
+		var.XI_Back   = XInput.Back;
+		var.XI_Start  = XInput.Start;
+	}
+
+	//////////////////////////////////////////
+	// Analog Stick
+	var.desktopMode = Window.Class == "WorkerW" or Window.Class == "Shell_TrayWnd";
+	if (var.toggleStick) {
+		// joy2scroll, joy2arrow
+		var.jlx = Smooth(Deadzone(var.XI_J2X,  var.dzL), 6);
+		var.jly = Smooth(Deadzone(-var.XI_J2Y, var.dzL), 6);
+
+		// joy2Mouse
+		var.jrx = Deadzone(var.XI_J1X,  var.dzR);
+		var.jry = Deadzone(-var.XI_J1Y, var.dzR);
+		if (var.desktopMode) {
+			if (abs(var.jrx) <= 0.1) var.jrx = Deadzone(var.XI_J2X,  var.dzR);
+			if (abs(var.jry) <= 0.1) var.jry = Deadzone(-var.XI_J2Y, var.dzR);
+		}
+	} else {
+		// joy2scroll, joy2arrow
+		var.jlx = Smooth(Deadzone(var.XI_J1X,  var.dzL), 6);
+		var.jly = Smooth(Deadzone(-var.XI_J1Y, var.dzL), 6);
+
+		// joy2Mouse
+		var.jrx = Deadzone(var.XI_J2X,  var.dzR);
+		var.jry = Deadzone(-var.XI_J2Y, var.dzR);
+		if (var.desktopMode) {
+			if (abs(var.jrx) <= 0.1) var.jrx = Deadzone(var.XI_J1X,  var.dzR);
+			if (abs(var.jry) <= 0.1) var.jry = Deadzone(-var.XI_J1Y, var.dzR);
+		}
+	}
+
+	if (var.jrx or var.jry) {
+		// [Sqr(x) 제곱(스퀘어), Sqrt(x) 제곱근(스퀘어루트), power(x, y) x의 y승(파워)]
+		// 좌표 0,0에서 var.jrx, var.jry까지의 거리 = Sqrt(Sqr(var.x1 - var.x2) + Sqr(var.y1 - var.y2))
+		var.distance = Min(1, Sqrt(Sqr(var.jrx - 0) + Sqr(var.jry - 0)));
+		if (var.distance > 0.8) { 
+			var.jrr = EnsureMapRange(var.distance, 0.8, 1, 5, 15);
+		} else {
+			var.jrr = EnsureMapRange(var.distance, 0.5, 0.8, 0, 5);
+		}
+		var.jrx = EnsureMapRange(var.jrx, -1, 1, -var.jrr, var.jrr);
+		var.jry = EnsureMapRange(var.jry, -1, 1, -var.jrr, var.jrr);
+		if (var.shiftMode) {
+			if (var.jry > 0) {
+				Press(Key.Control);
+				Mouse.DirectInputZ -= 1;
+				Release(Key.Control);;
+				var.shiftMode = False;
+				Wait(0.5 s);
+			} else if (var.jry < 0) {
+				Press(Key.Control);
+				Mouse.DirectInputZ += 1;
+				Release(Key.Control);;
+				var.shiftMode = False;
+				Wait(0.5 s);
+			}
+		} else {
+			if ([var.jrx, var.jry] != [0, 0]) mouse.cursorpos += [var.jrx, var.jry];
+		}
+	}
+
+	if (var.webMode) {
+		// Left, Right
+		if (abs(var.jlx) >= abs(var.jly)) {
+			if (var.jlx <= -0.7) {
+				if (var.KeyLeft != True) {
+					var.KeyLeft = True;
+					if (var.shiftMode) {
+						  Press(Key.Shift);
+						  Press(Key.Control);
+						  Press(Key.Tab);
+						Release(Key.Tab);
+						Release(Key.Control);;
+						Release(Key.Shift);
+						var.shiftMode = False;
+					} else if (HeldDown(var.jlx < 0, 0.5)) {
+						  Press(Key.Left);
+						Release(Key.Left);
+					} else {
+						  Press(Key.Left);
+						Release(Key.Left);
+					}
+				}
+			} else if (var.jlx >= 0.7) {
+				if (var.KeyRight != True) {
+					var.KeyRight = True;
+					if (var.shiftMode) {
+						  Press(Key.Control);
+						  Press(Key.Tab);
+						Release(Key.Tab);
+						Release(Key.Control);;
+						var.shiftMode = False;
+					} else if (HeldDown(var.jlx > 0, 0.5)) {
+						  Press(Key.Right);
+						Release(Key.Right);
+					} else {
+						  Press(Key.Right);
+						Release(Key.Right);
+					}
+				}
+			} else if (var.jlx < 0 and var.jlx > -0.9) {
+				if (var.wheelLeft != True) {
+					var.wheelLeft = True;
+					mouse.WheelLeft = True;
+					mouse.wheelLeft = False;
+				}
+			} else if (var.jlx > 0 and var.jlx < 0.9) {
+				if (var.wheelRight != True) {
+					var.wheelRight = True;
+					mouse.wheelRight = True;
+					mouse.wheelRight = False;
+				}
+			} else {
+				if (var.KeyLeft) var.KeyLeft = False;
+				if (var.KeyRight) var.KeyRight = False;
+				if (var.wheelLeft) var.wheelLeft = False;
+				if (var.wheelRight) var.wheelRight = False;
+			}
+		}
+
+		// Up, Down
+		if (abs(var.jlx) <= abs(var.jly)) {
+			if (var.jly < 0) {
+				if (var.shiftMode) {
+					var.resetCursorPos = True;
+					  Press(Key.Control);
+					  Press(Key.R);
+					Release(Key.R);
+					Release(Key.Control);;
+					Wait(0.5 s);
+					var.shiftMode = False;
+				}
+			} else if (var.jly > 0) {
+				if (var.shiftMode) {
+					  Press(Key.Space);
+					Release(Key.Space);
+					Wait(0.5 s);
+					var.shiftMode = False;
+				}
+			}
+			if (var.jly) {
+				if (var.shiftMode == False) {
+					if (abs(var.jly) > 0.8) {
+						var.jlr = EnsureMapRange(abs(var.jly), 0.8, 1, 50, 200);
+					} else {
+						var.jlr = EnsureMapRange(abs(var.jly), 0, 0.8, 0, 50);
+					}
+					var.jly = EnsureMapRange(var.jly, -1, 1, -var.jlr, var.jlr);	
+					if (HeldDown(var.jly, 0.5)) {
+						if (var.jly != 0) Mouse.DirectInputZ -= var.jly;
+					} else {
+						if (var.jly != 0) Mouse.DirectInputZ -= var.jly;
+						Wait(var.Keywaitsec s);
+					}
+				}
+			}
+		}
+
+	} else if (var.webMode == False) {
+		// Left, Right
+		if (var.jlx < 0) {
+			if (abs(var.jlx) >= abs(var.jly)) {
+				if (var.KeyLeft == False) {
+					var.KeyLeft = True;
+					if (Window.AppName == "Task View") {
+						  Press(Key.Windows);
+						  Press(Key.Control);
+						  Press(Key.Left);
+						var.resetLeft = True;
+					} else if (var.shiftMode) {
+						  Press(Key.Windows);
+						  Press(Key.Three);
+						var.resetLeft = True;
+					} else if (HeldDown(var.jlx < 0, 0.5)) {
+						  Press(Key.Left);
+						Release(Key.Left);
+					} else {
+						  Press(Key.Left);
+						Release(Key.Left);
+						Wait(var.Keywaitsec s);
+					}
+				}
+			}
+		} else {
+			if (var.KeyLeft) {
+				var.KeyLeft = False;
+				if (var.resetLeft) {
+					var.resetLeft = False;
+					if (var.shiftMode) {
+						Release(Key.Windows);
+						Release(Key.Three);
+						var.resetCursorPos = True;
+						var.shiftMode = False;
+					} else {
+						Release(Key.Left);
+						Release(Key.Control);;
+						Release(Key.Windows);
+					}
+				}
+			}
+		}
+			
+		if (var.jlx > 0) {
+			if (abs(var.jlx) >= abs(var.jly)) {
+				if (var.KeyRight == False) {
+					var.KeyRight = True;
+					if (Window.AppName == "Task View") {
+						  Press(Key.Windows);
+						  Press(Key.Control);
+						  Press(Key.Right);
+						var.resetRight = True;
+					} else if (var.shiftMode) {
+						  Press(Key.Windows);
+						  Press(Key.Four);
+						var.resetRight = True;
+					} else if (HeldDown(var.jlx > 0, 0.5)) {
+						  Press(Key.Right);
+						Release(Key.Right);
+					} else {
+						  Press(Key.Right);
+						Release(Key.Right);
+						Wait(var.Keywaitsec s);
+					}
+				}
+			}
+		} else {
+			if (var.KeyRight) {
+				var.KeyRight = False;
+				if (var.resetRight) {
+					var.resetRight = False;
+					if (var.shiftMode) {
+						Release(Key.Windows);
+						Release(Key.Four);
+						var.resetCursorPos = True;
+						var.shiftMode = False;
+					} else {
+						Release(Key.Right);
+						Release(Key.Control);;
+						Release(Key.Windows);
+					}
+				}
+			}
+		}
+
+		// Up, Down
+		if (Window.Class == "PotPlayer" or Window.Class == "PotPlayer64") {
+			if (var.shiftMode) {
+				if (var.jly < 0) {
+					if (abs(var.jlx) <= abs(var.jly)) {
+						var.shiftMode = False;
+					}
+				}
+				if (var.jly > 0) {
+					if (abs(var.jlx) <= abs(var.jly)) {
+						var.shiftMode = False;
+					}
+				}
+			} else {
+				if (var.jly) {
+					if (abs(var.jly) > 0.8) {
+						var.jlr = EnsureMapRange(abs(var.jly), 0.8, 1, 50, 200);
+					} else {
+						var.jlr = EnsureMapRange(abs(var.jly), 0, 0.8, 0, 50);
+					}
+					var.jly = EnsureMapRange(var.jly, -1, 1, -var.jlr, var.jlr);
+					if (HeldDown(var.jly, 0.5)) {
+						if (var.jly != 0) Mouse.DirectInputZ -= var.jly;
+					} else {
+						if (var.jly != 0) Mouse.DirectInputZ -= var.jly;
+						Wait(var.Keywaitsec s);
+					}
+				}
+			}
+		} else {	// Window.Class != "PotPlayer"
+			if (var.jly < 0) {
+				if (abs(var.jlx) <= abs(var.jly)) {
+					if (var.KeyUp == False) {
+						var.KeyUp = True;
+						if (Window.AppName == "Task View") {
+							  Press(Key.Windows);			
+							  Press(Key.Tab);
+							var.resetUp = True;
+						} else if (var.shiftMode) {
+							  Press(Key.Windows);
+							  Press(Key.One);
+							var.resetUp = True;
+						} else if (HeldDown(var.jly < 0, 0.5)) {
+							  Press(Key.Up);
+							Release(Key.Up);
+							Wait(var.0.02 s);
+							var.resetUp = True;
+						} else {
+							  Press(Key.Up);
+							Release(Key.Up);
+							Wait(var.Keywaitsec s);
+							var.resetUp = True;
+						}
+					}
+				}
+			} else {
+				if (var.KeyUp) {
+					var.KeyUp = False;
+					if (var.resetUp) {
+						var.resetUp = False;
+						if (Window.AppName == "Task View") {
+							Release(Key.Tab);
+							Release(Key.Windows);
+						} else if (var.shiftMode) {
+							Release(Key.One);
+							Release(Key.Windows);
+							var.resetCursorPos = True;
+							var.shiftMode = False;
+						} else {
+							if (Key.Up) Release(Key.Up);
+						}
+					}
+				}
+			}
+
+			if (var.jly > 0) {
+				if (abs(var.jlx) <= abs(var.jly)) {
+					if (var.KeyDown == False) {
+						var.KeyDown = True;
+						if (Window.AppName == "Task View") {
+							  Press(Key.Windows);			
+							  Press(Key.Tab);
+							var.resetDown = True;
+						} else if (var.shiftMode) {
+							var.resetDown = True;
+						} else if (HeldDown(var.jly > 0, 0.5)) {
+							  Press(Key.Down);
+							Release(Key.Down);
+							Wait(var.0.02 s);
+						} else {
+							  Press(Key.Down);
+							Release(Key.Down);
+							Wait(var.Keywaitsec s);
+						}
+					}
+				}
+			} else {
+				if (var.KeyDown) {
+					var.KeyDown = False;
+					if (var.resetDown) {
+						var.resetDown = False;
+						if (Window.AppName == "Task View") {
+							Release(Key.Tab);
+							Release(Key.Windows);
+						} else if (var.shiftMode) {
+							Execute("C:\Users\chang\OneDrive\Game\GlovePIE_gamepad_diablo3\gamepad_video.cmd");
+							var.resetCursorPos = True;
+							var.shiftMode = False;
+						} else {
+							if (Key.Down) Release(Key.Down);
+						}
+					}
+				}
+			}
+		}
+
+		if (Window.AppName != "Task View" and Window.Class != "WorkerW") {
+			if (var.shiftMode == False) {
+				if (var.KeyLeft or var.KeyRight or var.Keyup or var.Keydown) {
+					// repeat Key
+					var.KeyLeft = False;
+					var.KeyRight = False;
+					var.Keyup = False;
+					var.Keydown = False;
+				}
+			}
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////
+	// Button Mapping
+	var.Bumper = var.XI_LB or var.XI_RB;
+	if (Released(var.Bumper)) {
+		if (Window.Class == "MultitaskingViewFrame") {
+		} else if (Window.Class == "Windows.UI.Core.CoreWindow") {
+			  Press(Key.Escape);
+			Release(Key.Escape);
+		} else {
+			var.shiftMode = not var.shiftMode;
+		}
+		if (Window.AppName == "Task View") {
+			  Press(Key.Enter);
+			Release(Key.Enter);
+		}
+		if (Key.Alt) Release(Key.Alt);
+	}
+
+	if (keepDown(Pressed(var.shiftMode), 0.5)) {
+		var.viboff = True;
+		XInput.Vibration2 = 0.3;
+	} else if (keepDown(Released(var.shiftMode), 0.2)) {
+		var.viboff = True;
+		XInput.Vibration2 = 0.2;
+	} else if (var.viboff == True) {
+		var.viboff = False;
+		XInput.Vibration2 = 0;
+	}
+
+	if (var.shiftMode) {
+		if (HeldDown(not var.Bumper, 0.5)) {
+			BeepHand;
+			var.shiftMode = False;
+		}
+		if (DoubleClicked(var.Bumper)) {
+			  Press(Key.F11);
+			Release(Key.F11);
+		}
+		
+		if (Pressed(var.XI_LT > var.dzTR or var.XI_RT > var.dzTR)) {
+			  Press(mouse.MiddleButton);
+		}
+		if (Released(var.XI_LT > var.dzTR) or Released(var.XI_RT > var.dzTR)) {
+			Release(mouse.MiddleButton);
+			var.shiftMode = False;
+		}
+		
+		if (Pressed(var.XI_Back)) {
+			  Press(Key.Windows);
+		}
+		if (Released(var.XI_Back)) {
+			Release(Key.Windows);
+			var.resetCursorPos = True;
+			var.shiftMode = False;
+		}
+		
+		if (Pressed(var.XI_Start)) {
+			  Press(Key.Windows);
+			  Press(Key.D);
+		}
+		if (Released(var.XI_Start)) {
+			Release(Key.D);
+			Release(Key.Windows);
+			var.shiftMode = False;
+		}
+
+		if (Pressed(var.XI_LThumb or var.XI_RThumb)) {
+			if (Window.Class == "PotPlayer" or Window.Class == "PotPlayer64") {
+				if (var.numCount <= 0) {
+					  Press(Key.One);
+					Release(Key.One);
+					var.numCount = 5;
+				} else if (var.numCount == 1) {
+					  Press(Key.Two);
+					Release(Key.Two);
+				} else if (var.numCount == 2) {
+					  Press(Key.Three);
+					Release(Key.Three);
+				} else if (var.numCount == 3) {
+					  Press(Key.Four);
+					Release(Key.Four);
+				} else if (var.numCount == 4) {
+					  Press(Key.Six);
+					Release(Key.Six);
+				}
+				var.numCount--;
+			} else {
+				  Press(Key.Control);
+				Mouse.WheelDown = True;
+				Mouse.WheelDown = False;
+				Release(Key.Control);;
+			}
+		}
+		if (Released(var.XI_LThumb) or Released(var.XI_RThumb)) var.shiftMode = False;
+
+		if (Pressed(var.XI_Up or var.XI_Y)) {
+			if (Key.Alt) Release(Key.Alt);
+			if (Window.Class == "PotPlayer" or Window.Class == "PotPlayer64") {
+				  Press(Key.Space);
+				Release(Key.Space);
+			} else {
+				  Press(Key.Windows);
+				  Press(Key.Up);
+				Release(Key.Up);
+				Release(Key.Windows);
+				var.resetCursorPos = True;
+			}
+		}
+		if (Released(var.XI_Up) or Released(var.XI_Y)) {
+			var.shiftMode = False;
+		}
+
+		if (Pressed(var.XI_Down or var.XI_A)) {
+			if (Key.Alt) Release(Key.Alt);
+			if (Window.Class == "PotPlayer" or Window.Class == "PotPlayer64") {
+				  Press(Key.F3);
+				Release(Key.F3);
+			} else {
+				  Press(Key.Windows);
+				  Press(Key.Down);
+				Release(Key.Down);
+				Release(Key.Windows);
+				var.resetCursorPos = True;
+			}
+		}
+		if (Released(var.XI_Down) or Released(var.XI_A)) var.shiftMode = False;
+
+		if (Pressed(var.XI_Left or var.XI_X)) {
+			if (Key.Alt) Release(Key.Alt);
+			if (Window.Class == "PotPlayer" or Window.Class == "PotPlayer64") {
+				  Press(Key.PageUp);
+				Release(Key.PageUp);
+			} else {
+				  Press(Key.Windows);
+				  Press(Key.Left);
+				Release(Key.Left);
+				Release(Key.Windows);
+				var.resetCursorPos = True;
+			}
+		}
+		if (Released(var.XI_Left) or Released(var.XI_X)) var.shiftMode = False;
+
+		if (Pressed(var.XI_Right or var.XI_B)) {
+			if (Key.Alt) Release(Key.Alt);
+			if (Window.Class == "PotPlayer" or Window.Class == "PotPlayer64") {
+				  Press(Key.PageDown);
+				Release(Key.PageDown);
+			} else {
+				  Press(Key.Windows);
+				  Press(Key.Right);
+				Release(Key.Right);
+				Release(Key.Windows);
+				var.resetCursorPos = True;
+			}
+		}
+		if (Released(var.XI_Right) or Released(var.XI_B)) var.shiftMode = False;
+
+	} else {	// var.shiftMode == False
+		if (Pressed(var.XI_LT > var.dzTR or var.XI_RT > var.dzTR)) {
+			  Press(mouse.LeftButton);
+		} else if (Released(var.XI_LT > var.dzTR or var.XI_RT > var.dzTR)) {
+			if (Key.Alt) Release(Key.Alt);
+			Release(mouse.LeftButton);
+		}
+		if (Pressed(var.XI_Back)) {
+		} else if (Released(var.XI_Back)) {
+				  Press(Key.Alt);
+				  Press(Key.Shift);
+				  Press(Key.Tab);
+				Release(Key.Tab);
+				Release(Key.Shift);
+				Wait(0.1 s);
+				Release(Key.Alt);
+				var.resetCursorPos = True;
+		}
+		if (Pressed(var.XI_Start)) {
+			if (Window.Class != "Qt5QWindowGLOwnDCIcon") {
+				  Press(Key.Alt);
+				  Press(Key.Shift);
+				  Press(Key.Tab);
+				Release(Key.Tab);
+				Release(Key.Shift);
+				Wait(0.1 s);
+				Release(Key.Alt);
+			}
+		}
+		if (Pressed(var.XI_LThumb or var.XI_RThumb)) {
+			if (Window.Class == "PotPlayer" or Window.Class == "PotPlayer64") {
+				if (var.numCount <= 0) {
+					  Press(Key.One);
+					Release(Key.One);
+				} else if (var.numCount == 1) {
+					  Press(Key.Two);
+					Release(Key.Two);
+				} else if (var.numCount == 2) {
+					  Press(Key.Three);
+					Release(Key.Three);
+				} else if (var.numCount == 3) {
+					  Press(Key.Four);
+					Release(Key.Four);
+				} else if (var.numCount >= 4) {
+					  Press(Key.Six);
+					Release(Key.Six);
+					var.numCount = -1;
+				}
+				var.numCount++;
+			} else {
+				  Press(Key.Control);
+				Mouse.WheelUp = True;
+				Mouse.WheelUp = False;
+				Release(Key.Control);;
+			}
+		}
+
+		if (Pressed(var.XI_Left or var.XI_X)) {
+			Press(Mouse.RightButton);
+		} else if (Released(var.XI_Left or var.XI_X)) {
+			Release(Mouse.RightButton);
+		}
+		
+		if (Pressed(var.XI_Down or var.XI_A)) {
+			Press(Mouse.LeftButton);
+		} else if (Released(var.XI_Down or var.XI_A)) {
+			Release(Mouse.LeftButton);
+		}
+
+		if (Pressed(HeldDown(var.XI_Up, var.heldDownTime) or HeldDown(var.XI_Y, var.heldDownTime))) {
+			  Press(Key.Alt);
+			  Press(Key.F4);
+			Release(Key.F4);
+			Release(Key.Alt);
+		} else if (Released(var.XI_Up or var.XI_Y)) {
+			if (Key.Alt) Release(Key.Alt);
+			if (Window.AppName == "Task View") {
+				  Press(Key.Left);
+				Release(Key.Left);
+			} else if (Window.Class == "WorkerW") {
+				  Press(Key.Alt);
+				  Press(Key.Tab);
+				Release(Key.Tab);
+				Release(Key.Alt);
+			} else if (var.webMode and Window.Class == "ApplicationFrameWindow") {
+				  Press(Key.Control);
+				  Press(Key.W);
+				Release(Key.W);
+				Release(Key.Control);;
+				var.resetCursorPos = True;
+			} else if (var.webMode) {
+				  Press(Key.Control);
+				  Press(Key.W);
+				Release(Key.W);
+				Release(Key.Control);;
+				var.resetCursorPos = True;
+			} else if (Window.AppName == "Windows 종료") {
+				  Press(Key.Enter);
+				Release(Key.Enter);
+			} else {
+				  Press(Key.Alt);
+				  Press(Key.F4);
+				Release(Key.F4);
+				Release(Key.Alt);
+			}
+		}
+
+		if (Pressed(HeldDown(var.XI_Right, var.heldDownTime) or HeldDown(var.XI_B, var.heldDownTime))) {
+			if (Window.Class == "PotPlayer" or Window.Class == "PotPlayer64") {
+				  Press(mouse.Xbutton1);
+				Release(mouse.Xbutton1);
+			} else {
+				  Press(Key.Control);
+				  Press(Key.W);
+				Release(Key.W);
+				Release(Key.Control);;
+			}
+		} else if (Released(var.XI_Right or var.XI_B)) {
+			if (Key.Alt) Release(Key.Alt);
+			if (Window.AppName == "Task View") {
+				  Press(Key.Right);
+				Release(Key.Right);
+			} else if (Window.Class == "WorkerW") {
+				  Press(Key.Alt);
+				  Press(Key.Shift);
+				  Press(Key.Tab);
+				Release(Key.Tab);
+				Release(Key.Shift);
+				Release(Key.Alt);
+			} else if (Window.Class == "BT4823DF041B09") {
+				  Press(Mouse.RightButton);
+				Release(Mouse.RightButton);
+				  Press(Key.R);
+				Release(Key.R);
+			} else if (Window.Class == "TEditorForm") {
+				  Press(Key.Alt);
+				Release(Key.Alt);
+				  Press(Key.Dot);
+				Release(Key.Dot);
+			} else {
+				  Press(mouse.Xbutton1);
+				Release(mouse.Xbutton1);
+			}
+		}
+	}
+
+	///////////////////
+	// click and go
+	if (Window.Class != "TEditorForm") {
+		if (Pressed(var.XI_RThumb) or Pressed(mouse.MiddleButton)) Debug = mouse.cursorpos - [Window.Left, Window.Top];
+		if (Pressed(var.XI_LThumb) or Pressed(mouse.RightButton)) Debug = mouse.cursorpos - [Window.Left + Window.Width, Window.Top];
+	}
+	if (var.shiftMode == False and Pressed(var.XI_Start)) {
+		if (Window.Class != "Qt5QWindowGLOwnDCIcon") {
+			var.startCount = 0;
+			Execute("C:\Games\Diablo III\Diablo III Launcher.exe");
+		}
+		if (Window.Class == "Qt5QWindowGLOwnDCIcon") {
+			if (var.startCount == 2) {
+				  Press(Key.Alt);
+				  Press(Key.F4);
+				Release(Key.F4);
+				Release(Key.Alt);
+			}
+		}
+		Wait(1 s);
+		if (Window.Class == "Qt5QWindowGLOwnDCIcon") {
+			mouse.CursorPos = [Window.Left, Window.Top] + [60, 120];
+			  Press(Mouse.LeftButton);
+			Release(Mouse.LeftButton);
+			Wait(0.1 s);
+			mouse.CursorPos = [Window.Left, Window.Top + Window.Height] + [285, -70];
+			var.startCount++;
+			if (var.startCount == 2) {
+				  Press(Mouse.LeftButton);
+				Release(Mouse.LeftButton);
+			}
+		}
+	}
+
+	if (var.resetCursorPos) {
+		var.resetCursorPos = False;
+		Wait(0.5 s);
+		if (Window.Class != "WorkerW") {
+			if (Window.Class == "Windows.UI.Core.CoreWindow") {
+				mouse.CursorPos = [Window.Left, Window.Top] + [Window.Width, Window.Height / 5];
+			} else {
+				mouse.CursorPos = [Window.Left, Window.Top] + [Window.Width / 8, Window.Height / 2];
+			}
+		}
+	}
+
+	//////////////////////////////////////
+	// Vibration
+	if (var.Vibration) {
+		var.rumbleTR = var.XI_LT > var.dzTR or var.XI_RT > var.dzTR;
+		if (keepDown(Pressed(var.rumbleTR), 0.5)) {
+			var.rumbleTRType++;
+			if (var.rumbleTRType >= 20) {
+				var.rumbleTRType = 0;
+			}
+			XInput.Vibration1 = 0.2;
+			XInput.Vibration2 = (var.rumbleTRType / 20) * 0.08;
+		} else {
+			if (var.rumbleTRType < 1000) {
+				var.rumbleTRType = 1000;
+				XInput.Vibration1 = 0;
+				XInput.Vibration2 = 0;
+			}
+		}
+
+		var.rumbleBTNScale = 0.1;
+		var.rumbleBTN = var.XI_A or var.XI_B or var.XI_X or var.XI_Y or var.XI_Up or var.XI_Down or var.XI_Left or var.XI_Right;
+		if (keepDown(Pressed(var.rumbleBTN), 0.3)) {
+			var.rumbleBTNType++;
+			if (var.rumbleBTNType == 0) {
+				XInput.Vibration1 = 1 * var.rumbleBTNScale;
+				XInput.Vibration2 = 1 * var.rumbleBTNScale;
+			} else if (var.rumbleBTNType == 1) {
+				XInput.Vibration1 = 0.7 * var.rumbleBTNScale;
+				XInput.Vibration2 = 1 * var.rumbleBTNScale;
+			} else if (var.rumbleBTNType == 2) {
+				XInput.Vibration1 = 1 * var.rumbleBTNScale;
+				XInput.Vibration2 = 0.7 * var.rumbleBTNScale;
+			} else if (var.rumbleBTNType == 3) {
+				XInput.Vibration1 = 0.8 * var.rumbleBTNScale;
+				XInput.Vibration2 = 1 * var.rumbleBTNScale;
+			} else if (var.rumbleBTNType == 4) {
+				XInput.Vibration1 = 1 * var.rumbleBTNScale;
+				XInput.Vibration2 = 0.8 * var.rumbleBTNScale;
+			} else {
+				var.rumbleBTNType = 0;
+				XInput.Vibration1 = 1 * var.rumbleBTNScale;
+				XInput.Vibration2 = 1 * var.rumbleBTNScale;
+			}
+		} else {
+			if (var.rumbleBTNType < 1000) {
+				var.rumbleBTNType = 1000;
+				XInput.Vibration1 = 0;
+				XInput.Vibration2 = 0;
+			}
+		}
+	}
+}	 // var.dummyMode == False

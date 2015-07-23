@@ -1,0 +1,65 @@
+var.piename = "gamepad_windows.pie";
+var.joyResetTime = 20;
+
+//////////////////////////////////////////
+// Joystick Mapping
+// debug = Joystick.Count + " " + XInput1.Exists + " " + XInput2.Exists;
+if (XInput1.Exists == False and XInput2.Exists == False and XInput3.Exists == False and XInput4.Exists == False) {
+	if (var.XI_J1X or var.XI_J1Y or var.XI_J2X or var.XI_J2Y) var.joyResetCount = 0;
+	if (var.XI_A or var.XI_B or var.XI_X or var.XI_Y) var.joyResetCount = 0;
+	if (var.XI_LB or var.XI_RB or var.XI_LT or var.XI_RT) var.joyResetCount = 0;
+	if (var.XI_LThumb or var.XI_RThumb or var.XI_Back or var.XI_Start) var.joyResetCount = 0;
+	if (var.XI_Up or var.XI_Down or var.XI_Left or var.XI_Right) var.joyResetCount = 0;
+	if (Key.Control or Key.Shift or Key.Alt or Key.Space) var.joyResetCount = 0;
+	if (Key.Up or Key.Down or Key.Left or Key.Right) var.joyResetCount = 0;
+	if (Mouse.LeftButton or Mouse.RightButton) var.joyResetCount = 0;
+	if (var.joyResetCount > var.joyResetTime and var.AutoFireA = False and var.supportMode = False and var.dealerMode == False) {
+		Chain(var.piename);
+	} else {
+		Wait(1 s);
+		var.joyResetCount++;
+	}
+}
+if (Joystick.Count > 0) {
+	var.XI_J1X    = Joystick.X; 
+	var.XI_J1Y    = -Joystick.Y; 
+	var.XI_J2X    = Joystick.Z; 
+	var.XI_J2Y    = -Joystick.Roll; 
+	var.XI_A      = Joystick.button2;
+	var.XI_B      = Joystick.button3;
+	var.XI_X      = Joystick.button1;
+	var.XI_Y      = Joystick.button4;
+	var.XI_LB     = Joystick.button5;
+	var.XI_RB     = Joystick.button6;
+	var.XI_LThumb = Joystick.button11;
+	var.XI_RThumb = Joystick.button12;
+	var.XI_LT     = (Joystick.pitch + 1) / 2;
+	var.XI_RT     = (Joystick.yaw + 1) / 2;
+	var.XI_Up     = Joystick.Pov1 == 0 or Joystick.Pov1 == 45 or Joystick.Pov1 == 315;
+	var.XI_Down   = Joystick.Pov1 == 180 or Joystick.Pov1 == 135 or Joystick.Pov1 == 225;
+	var.XI_Left   = Joystick.Pov1 == 270 or Joystick.Pov1 == 315 or Joystick.Pov1 == 225;
+	var.XI_Right  = Joystick.Pov1 == 90 or Joystick.Pov1 == 135 or Joystick.Pov1 == 45;
+	var.XI_Back   = Joystick.button9 or Joystick.Button14;
+	var.XI_Start  = Joystick.button10 or Joystick.Button13;
+} else {
+	var.XI_J1X    = XInput.Joy1X;
+	var.XI_J1Y    = XInput.Joy1Y;
+	var.XI_J2X    = XInput.Joy2X;
+	var.XI_J2Y    = XInput.Joy2Y;
+	var.XI_A      = XInput.A;
+	var.XI_B      = XInput.B;
+	var.XI_X      = XInput.X;
+	var.XI_Y      = XInput.Y;
+	var.XI_LB     = XInput.LeftShoulder;
+	var.XI_RB     = XInput.RightShoulder;
+	var.XI_LThumb = XInput.LeftThumb;
+	var.XI_RThumb = XInput.RightThumb;
+	var.XI_LT     = XInput.LeftTrigger;
+	var.XI_RT     = XInput.RightTrigger;
+	var.XI_Up     = XInput.Up;
+	var.XI_Down   = XInput.Down;
+	var.XI_Left   = XInput.Left;
+	var.XI_Right  = XInput.Right;
+	var.XI_Back   = XInput.Back;
+	var.XI_Start  = XInput.Start;
+}

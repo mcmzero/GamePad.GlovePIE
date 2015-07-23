@@ -1,0 +1,357 @@
+﻿if starting {
+	//BeepDefault;
+	var.piename = "gamepad_wow.pie";
+	var.joyResetTime = 20;
+
+	var.dzL = 0.25;
+	var.dzR = 0.25;
+	
+	Keyboard.RepeatFakeKeys = False
+	Keyboard.RepeatMultipleFakeKeys = False
+	//Keyboard.RepeatDelay = 0.4 seconds
+	
+	xinput.Vibration1 = 0;
+	xinput.Vibration2 = 0;
+
+	var.toggleLs = true;
+	var.toggleRs = true;
+
+	var.joy2YCount = 0;
+	var.joy2YBug = false;
+
+	var.rumbleBTNType = 0;
+	var.rumbleBTN = false;
+}
+
+if pressed(key.F9 and key.alt and key.control and key.shift) {
+	ExitPIE;
+}
+
+if (HeldDown(window.class != "GxWindowClass"), 1) {
+	BeepDefault;
+	Chain("gamepad_windows.pie");
+} else if (var.windowClass != window.class) {
+	var.windowClass = window.class;
+	debugprint(window.class);
+}
+
+//////////////////////////////////////////
+// Joystick Mapping
+//debug = Joystick.Count + " " + XInput1.Exists + " " + XInput2.Exists;
+if (XInput1.Exists == False and XInput2.Exists == False and XInput3.Exists == False and XInput4.Exists == False) {
+	if (var.XI_J1X or var.XI_J1Y or var.XI_J2X or var.XI_J2Y) var.joyResetCount = 0;
+	if (var.XI_A or var.XI_B or var.XI_X or var.XI_Y) var.joyResetCount = 0;
+	if (var.XI_LB or var.XI_RB or var.XI_LT or var.XI_RT) var.joyResetCount = 0;
+	if (var.XI_LThumb or var.XI_RThumb or var.XI_Back or var.XI_Start) var.joyResetCount = 0;
+	if (var.XI_Up or var.XI_Down or var.XI_Left or var.XI_Right) var.joyResetCount = 0;
+	if (Key.Control or Key.Shift or Key.Alt or Key.Space) var.joyResetCount = 0;
+	if (Key.Up or Key.Down or Key.Left or Key.Right) var.joyResetCount = 0;
+	if (Mouse.LeftButton or Mouse.RightButton) var.joyResetCount = 0;
+	if (var.joyResetCount > var.joyResetTime and var.AutoFireA = False and var.supportMode = False and var.dealerMode == False) {
+		Chain(var.piename);
+	} else {
+		Wait(1 s);
+		var.joyResetCount++;
+	}
+}
+if (Joystick.Count > 0) {
+	var.XI_J1X    = Joystick.X; 
+	var.XI_J1Y    = -Joystick.Y; 
+	var.XI_J2X    = Joystick.Z; 
+	var.XI_J2Y    = -Joystick.Roll; 
+	var.XI_A      = Joystick.button2;
+	var.XI_B      = Joystick.button3;
+	var.XI_X      = Joystick.button1;
+	var.XI_Y      = Joystick.button4;
+	var.XI_LB     = Joystick.button5;
+	var.XI_RB     = Joystick.button6;
+	var.XI_LThumb = Joystick.button11;
+	var.XI_RThumb = Joystick.button12;
+	var.XI_LT     = (Joystick.pitch + 1) / 2;
+	var.XI_RT     = (Joystick.yaw + 1) / 2;
+	var.XI_Up     = Joystick.Pov1 == 0 or Joystick.Pov1 == 45 or Joystick.Pov1 == 315;
+	var.XI_Down   = Joystick.Pov1 == 180 or Joystick.Pov1 == 135 or Joystick.Pov1 == 225;
+	var.XI_Left   = Joystick.Pov1 == 270 or Joystick.Pov1 == 315 or Joystick.Pov1 == 225;
+	var.XI_Right  = Joystick.Pov1 == 90 or Joystick.Pov1 == 135 or Joystick.Pov1 == 45;
+	var.XI_Back   = Joystick.button9 or Joystick.Button14;
+	var.XI_Start  = Joystick.button10 or Joystick.Button13;
+} else {
+	var.XI_J1X    = XInput.Joy1X;
+	var.XI_J1Y    = XInput.Joy1Y;
+	var.XI_J2X    = XInput.Joy2X;
+	var.XI_J2Y    = XInput.Joy2Y;
+	var.XI_A      = XInput.A;
+	var.XI_B      = XInput.B;
+	var.XI_X      = XInput.X;
+	var.XI_Y      = XInput.Y;
+	var.XI_LB     = XInput.LeftShoulder;
+	var.XI_RB     = XInput.RightShoulder;
+	var.XI_LThumb = XInput.LeftThumb;
+	var.XI_RThumb = XInput.RightThumb;
+	var.XI_LT     = XInput.LeftTrigger;
+	var.XI_RT     = XInput.RightTrigger;
+	var.XI_Up     = XInput.Up;
+	var.XI_Down   = XInput.Down;
+	var.XI_Left   = XInput.Left;
+	var.XI_Right  = XInput.Right;
+	var.XI_Back   = XInput.Back;
+	var.XI_Start  = XInput.Start;
+}
+
+//////////////////////////////////////////
+// Left Stick
+if (var.toggleLs) {
+	var.j1x = deadzone(var.XI_J1X, var.dzL);
+	var.j1y = deadzone(var.XI_J1Y, var.dzL);
+	var.j1x = smooth(var.j1x, 10);
+	var.j1y = smooth(var.j1y, 10);
+	
+	if (var.j1x <= -var.dzL) {	// left
+		if (var.key1left != true) {
+			var.key1left = true;
+			press(key.q);
+		}
+	} else if (var.key1left == true) {
+		var.key1left = false;
+		release(key.q);
+	} 
+	
+	if (var.j1x >= var.dzL) { // right
+		if (var.key1right != true) {
+			var.key1right = true;
+			press(key.e);
+		}
+	} else if (var.key1right == true) {
+		var.key1right = false;
+		release(key.e);		
+	}
+	
+	if (var.j1y <= -var.dzL) {	// down
+		if (var.key1down != true) {
+			var.key1down = true;
+			press(key.s);
+		}
+	} else if (var.key1down == true) {
+		var.key1down = false;
+		release(key.s);
+	}
+	
+	if (var.j1y >= var.dzL) { // up
+		if (var.key1up != true) {
+			var.key1up = true;
+			press(key.w);
+		}
+	} else if (var.key1up == true) {
+		var.key1up = false;
+		release(key.w);
+	}
+} else {
+	var.rmx = deadzone(var.XI_J1X, var.dzL);
+	var.rmy = deadzone(-var.XI_J1Y, var.dzL);
+
+	var.rmx = ensuremaprange(var.rmx, -1, 1, -15, 15);
+	var.rmy = ensuremaprange(var.rmy, -1, 1, -15, 15);
+
+	if ([var.rmx, var.rmy] != [0, 0]) {
+		mouse.cursorpos += [var.rmx, var.rmy];
+	}
+}
+
+//////////////////////////////////////////
+// Right Stick
+var.rmx = deadzone(var.XI_J2X, var.dzR);
+var.rmy = deadzone(-var.XI_J2Y, var.dzR);
+
+var.rmx = ensuremaprange(var.rmx, -1, 1, -15, 15);
+var.rmy = ensuremaprange(var.rmy, -1, 1, -15, 15);
+
+//var.toggleRs = var.toggleRs XOR pressed(var.XI_Back);
+if ([var.rmx, var.rmy] != [0, 0]) {
+	if (not var.XI_LThumb) {
+		if (var.rightbutton != true) {
+			press(mouse.rightbutton);
+			var.rightbutton = true;
+		}
+	}
+	mouse.cursorpos += [var.rmx, var.rmy];
+} else {
+	if (var.rightbutton = true) {
+		release(mouse.rightbutton);
+		var.rightbutton = false;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+// Button Mapping
+if (pressed(var.XI_Back)) {
+	press(key.m);
+} else if (released(var.XI_Back)) {
+	release(key.m);
+}
+if (pressed(var.XI_Start)) {
+	press(key.o);
+} else if (released(var.XI_Start)) {
+	release(key.o);
+}
+
+if (pressed(var.XI_LThumb)) {
+//
+} else if (released(var.XI_LThumb)) {
+	press(mouse.LeftButton);
+	release(mouse.LeftButton);
+}
+if (pressed(var.XI_RThumb)) {
+	press(mouse.RightButton);
+	release(mouse.RightButton);
+} else if (released(var.XI_RThumb)) {
+}
+
+if (pressed(var.XI_RB)) {
+	press(key.One);
+} else if (released(var.XI_RB)) {
+	release(key.One);
+}
+if (pressed(var.XI_RT)) {
+	press(key.Two);
+} else if (released(var.XI_RT)) {
+	release(key.Two);
+}
+if (pressed(var.XI_LB)) {
+	press(key.Three);
+} else if (released(var.XI_LB)) {
+	release(key.Three);
+}
+if (pressed(var.XI_LT)) {
+	press(key.Four);
+} else if (released(var.XI_LT)) {
+	release(key.Four);
+}
+
+if (pressed(var.XI_A)) {
+	press(key.Space);
+} else if (released(var.XI_A)) {
+	release(key.Space);
+}
+if (pressed(var.XI_B)) {
+	press(key.Esc);
+} else if (released(var.XI_B)) {
+	release(key.Esc);
+}
+if (pressed(var.XI_X)) {
+	press(key.Tab);
+} else if (released(var.XI_X)) {
+	release(key.Tab);
+}
+if (pressed(var.XI_Y)) {
+	press(key.C);
+} else if (released(var.XI_Y)) {
+	release(key.C);
+}
+
+if (pressed(var.XI_Left)) {
+	press(key.Alt);
+	press(key.C);
+} else if (released(var.XI_Left)) {
+	release(key.C);
+	release(key.Alt);
+}
+if (pressed(var.XI_Right)) {
+	press(key.shift);
+	press(key.B);
+} else if (released(var.XI_Right)) {
+	release(key.B);
+	release(key.shift);
+}
+if (pressed(var.XI_Up)) {
+	press(key.T);
+} else if (released(var.XI_Up)) {
+	release(key.T);
+}
+if (pressed(var.XI_Down)) {
+	press(key.Z);
+} else if (released(var.XI_Down)) {
+	release(key.Z);
+}
+
+///////////////////
+// click and go
+if (released(var.XI_LThumb or var.XI_RThumb)) {
+	var.rateX = 1.0;
+	var.rateY = 1.2;
+	var.leftborder = (window.Width - window.ClientWidth) / 2;
+	var.middleX = window.Left + (window.Width / 2) * var.rateX;
+	var.middleY = window.Top + window.Height - var.leftborder - (window.ClientHeight / 2) * var.rateY;
+	wait 0.5 s;
+	mouse.CursorPos = [var.middleX, var.middleY];
+}
+
+//////////////////////////////////////
+// Vibration
+if (var.XI_RT) {
+	if (var.rumbleTR == false) {
+		var.rumbleTR = true;
+		var.rumbleTRv1 = 0.1;
+		wait 0.3 s;
+		var.rumbleTR = false;
+	}
+} else if (var.XI_RT) {
+	if (var.rumbleTR == false) {
+		var.rumbleTR = true;
+		var.rumbleTRv1 = 0.05;
+		wait 0.6 s;
+		var.rumbleTR = false;
+	}
+}
+if (var.rumbleTR) {
+	var.rumbleTRType++;
+	if (var.rumbleTRType >= 20) {
+		var.rumbleTRType = 0;
+	}
+	xinput.Vibration1 = var.rumbleTRv1;
+	xinput.Vibration2 = (var.rumbleTRType / 20) * 0.08;
+} else {
+	if (var.rumbleTRType < 1000) {
+		var.rumbleTRType = 1000;
+		xinput.Vibration1 = 0;
+		xinput.Vibration2 = 0;
+	}
+}
+
+///////////////////////////////////////
+if (pressed(var.XI_A or var.XI_B or var.XI_X or var.XI_Y or var.XI_Up or var.XI_Down or var.XI_Left or var.XI_Right)) {
+	if (var.rumbleBTN == false) {
+		var.rumbleBTN = true;
+		wait 0.3 s;
+		var.rumbleBTN = false;
+	}
+}
+var.rumbleBTNScale = 0.1;
+if (var.rumbleBTN) {
+	var.rumbleBTNType++;
+	if (var.rumbleBTNType == 0) {
+		xinput.Vibration1 = 1 * var.rumbleBTNScale;
+		xinput.Vibration2 = 1 * var.rumbleBTNScale;
+	} else if (var.rumbleBTNType == 1) {
+		xinput.Vibration1 = 0.7 * var.rumbleBTNScale;
+		xinput.Vibration2 = 1 * var.rumbleBTNScale;
+	} else if (var.rumbleBTNType == 2) {
+		xinput.Vibration1 = 1 * var.rumbleBTNScale;
+		xinput.Vibration2 = 0.7 * var.rumbleBTNScale;
+	} else if (var.rumbleBTNType == 3) {
+		xinput.Vibration1 = 0.8 * var.rumbleBTNScale;
+		xinput.Vibration2 = 1 * var.rumbleBTNScale;
+	} else if (var.rumbleBTNType == 4) {
+		xinput.Vibration1 = 1 * var.rumbleBTNScale;
+		xinput.Vibration2 = 0.8 * var.rumbleBTNScale;
+	} else {
+		var.rumbleBTNType = 0;
+		xinput.Vibration1 = 1 * var.rumbleBTNScale;
+		xinput.Vibration2 = 1 * var.rumbleBTNScale;
+	}
+} else {
+	if (var.rumbleBTNType < 1000) {
+		var.rumbleBTNType = 1000;
+		xinput.Vibration1 = 0;
+		xinput.Vibration2 = 0;
+	}
+}
