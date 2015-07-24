@@ -5,15 +5,13 @@ if (Starting) {
 
 	//var.debug = True;
 	var.mapleStory2 = True;
+
 	var.enableAutoFire = True;
-	if (var.enableAutoFire) {
-		// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30)
-		var.autoLv = "lv20";
-		if (var.autoLv == "lv20" or var.autoLv == "lv25" or var.autoLv == "lv30") {
-			var.enableAutoDirection = True;	// Leveling mode
-			var.enableNormalAttack = True;	// Melee Leveling mode
-		}
-	}
+	//var.enableAutoDirection = True;	// Leveling mode
+	//var.enableNormalAttack = True;	// Melee Leveling mode
+	//var.lv20 = True;
+	//var.lv25 = True;
+	//var.lv30 = True;
 
 	var.arrowKeyPeriod = 0.05;
 	var.autoKeyPeriod = 0.4;
@@ -627,7 +625,7 @@ if (var.mapleStory2) {
 				Release(Key.E);
 				Wait(var.arrowKeyPeriod s);
 
-			} else if (var.enableAutoDirection and var.enableNormalAttack and var.autoLv == "lv20") {
+			} else if (var.enableAutoDirection and var.enableNormalAttack and var.lv20) {
 				// 오색나무 숲
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
@@ -663,7 +661,7 @@ if (var.mapleStory2) {
 				Release(Key.E);
 				Wait(var.arrowKeyPeriod s);
 
-			} else if (var.enableAutoDirection and var.enableNormalAttack and var.autoLv == "lv25") {
+			} else if (var.enableAutoDirection and var.enableNormalAttack and var.lv25) {
 				// 쉐도우 게이트
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
@@ -732,7 +730,7 @@ if (var.mapleStory2) {
 				Release(Key.E);
 				Wait(var.arrowKeyPeriod s);
 
-			} else if (var.enableAutoDirection and var.enableNormalAttack and var.autoLv == "lv30") {
+			} else if (var.enableAutoDirection and var.enableNormalAttack and var.lv30) {
 				// 프리즘 폭포
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
