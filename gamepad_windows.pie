@@ -727,12 +727,6 @@ if (var.dummyMode == False) {
 			}
 		}
 
-		if (Pressed(var.XI_Left or var.XI_X)) {
-			Press(Mouse.RightButton);
-		} else if (Released(var.XI_Left or var.XI_X)) {
-			Release(Mouse.RightButton);
-		}
-		
 		if (Pressed(var.XI_Down or var.XI_A)) {
 			Press(Mouse.LeftButton);
 		} else if (Released(var.XI_Down or var.XI_A)) {
@@ -746,10 +740,7 @@ if (var.dummyMode == False) {
 			Release(Key.Alt);
 		} else if (Released(var.XI_Up or var.XI_Y)) {
 			if (Key.Alt) Release(Key.Alt);
-			if (Window.AppName == "Task View") {
-				  Press(Key.Left);
-				Release(Key.Left);
-			} else if (Window.Class == "WorkerW") {
+			if (Window.Class == "WorkerW") {
 				  Press(Key.Alt);
 				  Press(Key.Tab);
 				Release(Key.Tab);
@@ -777,7 +768,18 @@ if (var.dummyMode == False) {
 			}
 		}
 
-		if (Pressed(HeldDown(var.XI_Right, var.heldDownTime) or HeldDown(var.XI_B, var.heldDownTime))) {
+		if (Pressed(var.XI_Right or var.XI_B)) {
+			Press(Mouse.RightButton);
+		} else if (Released(var.XI_Right or var.XI_B)) {
+			if (Window.AppName == "Task View") {
+				  Press(Key.Right);
+				Release(Key.Right);
+			} else {
+				Release(Mouse.RightButton);
+			}
+		}
+
+		if (Pressed(HeldDown(var.XI_Left, var.heldDownTime) or HeldDown(var.XI_X, var.heldDownTime))) {
 			if (Window.Class == "PotPlayer" or Window.Class == "PotPlayer64") {
 				  Press(mouse.Xbutton1);
 				Release(mouse.Xbutton1);
@@ -787,11 +789,11 @@ if (var.dummyMode == False) {
 				Release(Key.W);
 				Release(Key.Control);;
 			}
-		} else if (Released(var.XI_Right or var.XI_B)) {
+		} else if (Released(var.XI_Left or var.XI_X)) {
 			if (Key.Alt) Release(Key.Alt);
 			if (Window.AppName == "Task View") {
-				  Press(Key.Right);
-				Release(Key.Right);
+				  Press(Key.Left);
+				Release(Key.Left);
 			} else if (Window.Class == "WorkerW") {
 				  Press(Key.Alt);
 				  Press(Key.Shift);
