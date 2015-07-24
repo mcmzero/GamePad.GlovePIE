@@ -780,8 +780,15 @@ if (var.dummyMode == False) {
 		}
 
 		if (Pressed(HeldDown(var.XI_Left, var.heldDownTime) or HeldDown(var.XI_X, var.heldDownTime))) {
-				  Press(mouse.Xbutton2);
-				Release(mouse.Xbutton2);
+			if (Window.Class == "PotPlayer" or Window.Class == "PotPlayer64") {
+				  Press(mouse.Xbutton1);
+				Release(mouse.Xbutton1);
+			} else {
+				  Press(Key.Control);
+				  Press(Key.W);
+				Release(Key.W);
+				Release(Key.Control);;
+			}
 		} else if (Released(var.XI_Left or var.XI_X)) {
 			if (Key.Alt) Release(Key.Alt);
 			if (Window.AppName == "Task View") {
