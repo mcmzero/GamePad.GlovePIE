@@ -2,7 +2,7 @@
 	//BeepDefault;
 	var.piename = "gamepad_windows.pie";
 	var.joyResetTime = 20;
-	
+
 	//var.debug = True;
 	if (var.debug) DebugPrint("windows pie");
 
@@ -543,7 +543,7 @@ if (var.dummyMode == False) {
 	}
 
 	if (var.shiftMode) {
-		if (HeldDown(not var.Bumper, 0.5)) {
+		if (HeldDown(not var.Bumper, 1.5)) {
 			BeepHand;
 			var.shiftMode = False;
 		}
@@ -551,7 +551,7 @@ if (var.dummyMode == False) {
 			  Press(Key.F11);
 			Release(Key.F11);
 		}
-		
+
 		if (Pressed(var.XI_LT > var.dzTR or var.XI_RT > var.dzTR)) {
 			  Press(mouse.MiddleButton);
 		}
@@ -559,7 +559,7 @@ if (var.dummyMode == False) {
 			Release(mouse.MiddleButton);
 			var.shiftMode = False;
 		}
-		
+
 		if (Pressed(var.XI_Back)) {
 			  Press(Key.Windows);
 		}
@@ -568,7 +568,7 @@ if (var.dummyMode == False) {
 			var.resetCursorPos = True;
 			var.shiftMode = False;
 		}
-		
+
 		if (Pressed(var.XI_Start)) {
 			  Press(Key.Windows);
 			  Press(Key.D);
@@ -768,20 +768,26 @@ if (var.dummyMode == False) {
 			}
 		}
 
-		if (Pressed(var.XI_Right or var.XI_B)) {
-			Press(Mouse.RightButton);
+		if (Pressed(HeldDown(var.XI_Right, var.heldDownTime) or HeldDown(var.XI_B, var.heldDownTime))) {
+				  Press(Mouse.RightButton);
+				Release(Mouse.RightButton);
+				var.mrb = True;
 		} else if (Released(var.XI_Right or var.XI_B)) {
 			if (Window.AppName == "Task View") {
 				  Press(Key.Right);
 				Release(Key.Right);
+			} else if (var.mrb) {
+				var.mrb = False;
 			} else {
-				Release(Mouse.RightButton);
+				  Press(Key.Enter);
+				Release(Key.Enter);
 			}
 		}
 
 		if (Pressed(HeldDown(var.XI_Left, var.heldDownTime) or HeldDown(var.XI_X, var.heldDownTime))) {
 				  Press(mouse.Xbutton2);
 				Release(mouse.Xbutton2);
+				var.xb2 = True;
 		} else if (Released(var.XI_Left or var.XI_X)) {
 			if (Key.Alt) Release(Key.Alt);
 			if (Window.AppName == "Task View") {
@@ -804,6 +810,8 @@ if (var.dummyMode == False) {
 				Release(Key.Alt);
 				  Press(Key.Dot);
 				Release(Key.Dot);
+			} else if (var.xb2) {
+				var.xb2 = False;
 			} else {
 				  Press(mouse.Xbutton1);
 				Release(mouse.Xbutton1);

@@ -1,22 +1,16 @@
-if (Starting) {
+﻿if (Starting) {
 	//BeepDefault;
-	var.piename = "gamepad_maplestory2.pie";
+	var.piename = "gamepad_MapleStory2.pie";
 	var.joyResetTime = 20;
 
 	//var.debug = True;
-	var.mapleStory2 = True;
-	var.enableAutoFire = True;
-	if (var.enableAutoFire) {
-		// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30)
-		// var.autoLv = "lv20";
-		if (var.autoLv == "lv20" or var.autoLv == "lv25" or var.autoLv == "lv30") {
-			var.enableAutoDirection = True;	// Leveling mode
-			var.enableNormalAttack = True;	// Melee Leveling mode
-		}
-	}
+	var.MapleStory2 = True;
+	var.EnableAutoFire = True;
+	var.CannonLevel = 30;	// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30)
+	var.ChatMode = True;
 
 	var.arrowKeyPeriod = 0.05;
-	var.autoKeyPeriod = 0.4;
+	var.autoKeyPeriod = 0.35;
 
 	var.toggleTabMode = True;
 	var.toggleSmooth = False;
@@ -51,7 +45,7 @@ if (HeldDown(Window.Class != "MapleStory2", 0.5)) {
 	Chain("gamepad_windows.pie");
 }
 
-if (var.mapleStory2) {
+if (var.MapleStory2) {
 	// 초기화
 	if (Window.Class != "ForegroundStaging") {
 		if ([var.INIT_WINDOW_W, var.INIT_WINDOW_H] != [Window.Left + Window.Width, Window.Top + Window.Height]) {
@@ -257,7 +251,7 @@ if (var.mapleStory2) {
 
 	// 스킬 버튼
 	var.ShiftMode = var.XI_LT > var.dzTR;
-	if (Pressed(HeldDown(var.XI_LT > var.dzTR, 0.2))) {
+	if (Pressed(HeldDown(var.XI_LT > var.dzTR, var.heldDownTime))) {
 		var.vib02 = True;
 		if (Key.A) Release(Key.A);
 		if (Not Key.X) Press(Key.X);
@@ -275,8 +269,9 @@ if (var.mapleStory2) {
 		}
 	}
 
-	if (Pressed(HeldDown(var.XI_RT > var.dzTR, 0.2))) {
+	if (Pressed(HeldDown(var.XI_RT > var.dzTR, var.heldDownTime))) {
 		var.vib02 = True;
+		var.xrt = True;
 		if (Key.A) Release(Key.A);
 		if (Not Key.X) Press(Key.X);
 	} else if (Pressed(var.XI_RT > var.dzTR)) {
@@ -288,9 +283,14 @@ if (var.mapleStory2) {
 		if (Key.Z) Release(Key.Z);
 		if (Key.X) Release(Key.X);
 
-		if (Not Key.C) Press(Key.C);
-		Wait(0.1 s);
-		if (Key.C) Release(Key.C);
+		if (var.xrt) {
+			var.xrt = False;
+		} else {
+			if (Not Key.C) Press(Key.C);
+			Wait(0.1 s);
+			if (Key.C) Release(Key.C);
+		}
+		
 		if (var.AutoFireA) {
 			Wait(0.1 s);
 			if (Not Key.A) Press(Key.A);
@@ -370,10 +370,13 @@ if (var.mapleStory2) {
 		if (Key.Eight) Release(Key.Eight);
 	}
 
-	if (Pressed(HeldDown(var.XI_A, 0.3))) {
+	if (Pressed(HeldDown(var.XI_A, var.heldDownTime))) {
 	} else if (var.XI_A) {
 		var.turnOnTab = False;
-		if (var.XI_LT == False) var.AutoFireA = False;
+		if (var.XI_LT == False and var.XI_RT == False) {
+			var.AutoFireA = False;
+			var.CannonMode = False;
+		}
 		if (var.ShiftMode) {
 			if (Not Key.D) Press(Key.D);
 			if (Not Key.Space) Press(Key.Space);
@@ -431,7 +434,7 @@ if (var.mapleStory2) {
 	}
 
 	// 메뉴 호출
-	if (Pressed(HeldDown(var.XI_Back, 0.3))) {
+	if (Pressed(HeldDown(var.XI_Back, var.heldDownTime))) {
 		if (Not Key.T) Press(Key.T);
 	} else if (DoubleClicked(var.XI_Back)) {
 	} else if (Pressed(var.XI_Back)) {
@@ -446,7 +449,7 @@ if (var.mapleStory2) {
 			}
 		}
 	} else if (Released(var.XI_Back)) {
-		var.AutoFireA = False;
+		//var.AutoFireA = False;
 		if (var.toggleTabMode == False and Key.Tab) Release(Key.Tab);
 		if (Key.M) Release(Key.M);
 		if (Key.T) Release(Key.T);
@@ -459,7 +462,7 @@ if (var.mapleStory2) {
 		if (Key.Tab) Release(Key.Tab);
 	}
 	
-	if (Pressed(HeldDown(var.XI_Start, 0.3))) {
+	if (Pressed(HeldDown(var.XI_Start, var.heldDownTime))) {
 		Press(Key.N);
 	} else if (Pressed(var.XI_Start)) {
 		var.resetCurPos = True;
@@ -472,11 +475,12 @@ if (var.mapleStory2) {
 		if (Key.J) Release(Key.J);
 		if (Key.Y) Release(Key.Y);
 		if (Key.N) Release(Key.N);
-		var.AutoFireA = False;
+		//var.AutoFireA = False;
 	}
 
-	if (Pressed(HeldDown(var.XI_Up, 0.3))) {
-		BeepDefault;
+	if (Pressed(HeldDown(var.XI_Up, var.heldDownTime))) {
+		//BeepDefault;
+		Display("매달리기");
 		var.keepSpace = True;
 	} else if (Pressed(var.XI_Up)) {
 		var.resetCurPos = True;
@@ -494,7 +498,7 @@ if (var.mapleStory2) {
 		if (Key.T) Release(Key.T);
 	}
 
-	if (Pressed(HeldDown(var.XI_Down, 0.3))) {
+	if (Pressed(HeldDown(var.XI_Down, var.heldDownTime))) {
 		if (Not Key.G) Press(Key.G);
 	} else if (Pressed(var.XI_Down)) {
 		var.resetCurPos = True;
@@ -509,7 +513,7 @@ if (var.mapleStory2) {
 		if (Key.U) Release(Key.U);
 	}
 
-	if (Pressed(HeldDown(var.XI_Left, 0.3))) {
+	if (Pressed(HeldDown(var.XI_Left, var.heldDownTime))) {
 		if (Not Key.K) Press(Key.K);
 	} else if (Pressed(var.XI_Left)) {
 		var.resetCurPos = True;
@@ -523,7 +527,7 @@ if (var.mapleStory2) {
 		if (Key.K) Release(Key.K);
 	}
 
-	if (Pressed(HeldDown(var.XI_Right, 0.3))) {
+	if (Pressed(HeldDown(var.XI_Right, var.heldDownTime))) {
 		if (Not Key.L) Press(Key.L);
 	} else if (Pressed(var.XI_Right)) {
 		var.resetCurPos = True;
@@ -558,12 +562,132 @@ if (var.mapleStory2) {
 		Joystick.Vibration2 = 0.0;
 	}
 
-	// 자동 사격
-	if (var.enableAutoFire) {
-		var.AutoFireA = var.AutoFireA xor (var.XI_LT and DoubleClicked(var.XI_RT));
+	// 자동 채팅
+	if (var.ChatMode) {
+		if (Pressed(var.XI_LThumb)) {
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+			TypeUnicode("피가 모자라 살려주세요");
+			Wait(0.1 s);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+		}
+
+		if (Pressed(var.XI_RThumb)) {
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+			TypeUnicode("괜찮아요? 많이 놀랬죠?");
+			Wait(0.1 s);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+		}
+
+		if (Pressed(HeldDown(var.XI_LB, 0.15))) {
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+			TypeUnicode("두둥실 두둥실");
+			Wait(0.1 s);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+		}
+
+		if (Pressed(HeldDown(var.XI_RB, 0.15))) {
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+			TypeUnicode("스파이더맨!!");
+			Wait(0.1 s);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+		}
 	}
-	if (Pressed(Key.Enter)) {
-		Var.AutoFireA = False;
+
+	// 자동 사격
+	if (var.EnableAutoFire) {
+		var.AutoFireButton = var.XI_LT and var.XI_RT and DoubleClicked(var.XI_A);
+		if (Pressed(var.AutoFireButton)) {
+			var.AutoFireA = True;
+		}
+		var.CannonButton = var.XI_LT and var.XI_RT and DoubleClicked(var.XI_B);
+		if (Pressed(Mouse.XButton1) or Pressed(var.CannonButton)) {
+			var.CannonMode = True;
+		}
+		if (Pressed(Mouse.XButton2)) {
+			var.CannonMode = False;
+			Press(Key.C);
+		} else if (Released(Mouse.XButton2)) {
+			Release(Key.C);
+		}
+
+		if (var.CannonMode) {
+			var.randomTime = RandomRange(15, 30);
+			Wait(var.randomTime s);
+			var.randomType = Random(3);
+			if (var.randomType == 0) {
+				Press(Key.Enter);
+				Wait(0.1 s);
+				Release(Key.Enter);
+				TypeUnicode("얍!");
+				Wait(0.1 s);
+				Press(Key.Enter);
+				Wait(0.1 s);
+				Release(Key.Enter);
+			} else if (var.randomType == 1) {
+				Press(Key.Enter);
+				Wait(0.1 s);
+				Release(Key.Enter);
+				TypeUnicode("빵야 뺭야!");
+				Wait(0.1 s);
+				Press(Key.Enter);
+				Wait(0.1 s);
+				Release(Key.Enter);
+			} else if (var.randomType == 2) {
+				Press(Key.Enter);
+				Wait(0.1 s);
+				Release(Key.Enter);
+				TypeUnicode("하앗!");
+				Wait(0.1 s);
+				Press(Key.Enter);
+				Wait(0.1 s);
+				Release(Key.Enter);
+			}
+		}
+
+		if (Pressed(var.CannonMode)) {
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+			TypeUnicode("파이어~~~ 볼!!!");
+			Wait(0.1 s);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+
+			Display("");
+			Display("캐논 사격");
+			var.AutoFireA = True;
+
+		} else if (Released(var.CannonMode)) {
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+			TypeUnicode("아~힘들다 잠시 쉬고 가실께요");
+			Wait(0.1 s);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+
+			Display("");
+			Display("사격 중지");
+			var.AutoFireA = False;
+		}
 	}
 	if (Pressed(var.AutoFireA)) {
 		XInput.Vibration2 = 0.6;
@@ -581,59 +705,13 @@ if (var.mapleStory2) {
 
 	if (var.AutoFireA and var.OnLeftStick == False and var.OnRightStick == False) {
 		if (Not (var.XI_A or var.XI_B or var.XI_X or var.XI_Y)) {
-			if (var.enableAutoDirection and var.enableNormalAttack == False) {
-				//Left
-				Press(Key.A);
-				Wait(var.autoKeyPeriod s);
-				Press(Key.Left); 
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.Left);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.A);
-				Wait(var.autoKeyPeriod s);
-
-				//Right
-				Press(Key.A);
-				Wait(var.autoKeyPeriod s);
-				Press(Key.Right);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.Right);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.A);
-				Wait(var.autoKeyPeriod s);
-
-				//Up
-				Press(Key.A);
-				Wait(var.autoKeyPeriod s);
-				Press(Key.Up); 
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.Up);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.A);
-				Wait(var.autoKeyPeriod s);
-
-				//Down
-				Press(Key.A);
-				Wait(var.autoKeyPeriod s);
-				Press(Key.Down);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.Down);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.A);
-				Wait(var.autoKeyPeriod s);
-
-				Press(Key.E);
-				Wait(var.autoKeyPeriod s);
-				Release(Key.E);
-				Wait(var.arrowKeyPeriod s);
-
-			} else if (var.enableAutoDirection and var.enableNormalAttack and var.autoLv == "lv20") {
+			if (var.CannonMode and var.CannonLevel == 20) {
 				// 오색나무 숲
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
 				Press(Key.Left);
 				Press(Key.Down);
-				Wait(var.arrowKeyPeriod s);
+				Wait(var.arrowKeyPeriod * 1.5 s);
 				Release(Key.Left);
 				Release(Key.Down);
 				Wait(var.arrowKeyPeriod s);
@@ -643,7 +721,7 @@ if (var.mapleStory2) {
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
 				Press(Key.Right);
-				Wait(var.arrowKeyPeriod s);
+				Wait(var.arrowKeyPeriod * 0.5 s);
 				Release(Key.Right);
 				Wait(var.arrowKeyPeriod s);
 				Release(Key.X);
@@ -652,18 +730,13 @@ if (var.mapleStory2) {
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
 				Press(Key.Up);
-				Wait(var.arrowKeyPeriod s);
+				Wait(var.arrowKeyPeriod * 0.5 s);
 				Release(Key.Up);
 				Wait(var.arrowKeyPeriod s);
 				Release(Key.X);
 				Wait(var.autoKeyPeriod s);
 
-				Press(Key.E);
-				Wait(var.autoKeyPeriod s);
-				Release(Key.E);
-				Wait(var.arrowKeyPeriod s);
-
-			} else if (var.enableAutoDirection and var.enableNormalAttack and var.autoLv == "lv25") {
+			} else if (var.CannonMode and var.CannonLevel == 25) {
 				// 쉐도우 게이트
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
@@ -727,12 +800,7 @@ if (var.mapleStory2) {
 				Release(Key.X);
 				Wait(var.autoKeyPeriod s);
 
-				Press(Key.E);
-				Wait(var.autoKeyPeriod s);
-				Release(Key.E);
-				Wait(var.arrowKeyPeriod s);
-
-			} else if (var.enableAutoDirection and var.enableNormalAttack and var.autoLv == "lv30") {
+			} else if (var.CannonMode and var.CannonLevel == 30) {
 				// 프리즘 폭포
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
@@ -770,23 +838,64 @@ if (var.mapleStory2) {
 				Release(Key.X);
 				Wait(var.autoKeyPeriod s);
 
+			} else if (var.CannonMode) {
+				//Left
+				Press(Key.A);
+				Wait(var.autoKeyPeriod s);
+				Press(Key.Left); 
+				Wait(var.arrowKeyPeriod s);
+				Release(Key.Left);
+				Wait(var.arrowKeyPeriod s);
+				Release(Key.A);
+				Wait(var.autoKeyPeriod s);
+
+				//Right
+				Press(Key.A);
+				Wait(var.autoKeyPeriod s);
+				Press(Key.Right);
+				Wait(var.arrowKeyPeriod s);
+				Release(Key.Right);
+				Wait(var.arrowKeyPeriod s);
+				Release(Key.A);
+				Wait(var.autoKeyPeriod s);
+
+				//Up
+				Press(Key.A);
+				Wait(var.autoKeyPeriod s);
+				Press(Key.Up); 
+				Wait(var.arrowKeyPeriod s);
+				Release(Key.Up);
+				Wait(var.arrowKeyPeriod s);
+				Release(Key.A);
+				Wait(var.autoKeyPeriod s);
+
+				//Down
+				Press(Key.A);
+				Wait(var.autoKeyPeriod s);
+				Press(Key.Down);
+				Wait(var.arrowKeyPeriod s);
+				Release(Key.Down);
+				Wait(var.arrowKeyPeriod s);
+				Release(Key.A);
+				Wait(var.autoKeyPeriod s);
+
 				Press(Key.E);
 				Wait(var.autoKeyPeriod s);
 				Release(Key.E);
 				Wait(var.arrowKeyPeriod s);
 
-			} else if (var.enableNormalAttack == False) {
-				Press(Key.A);
-				Wait(var.autoKeyPeriod s);
-				Release(Key.A);
-				Wait(var.autoKeyPeriod s);
-
-			} else {
+			} else if (var.enableNormalAttack) {
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
 				Release(Key.X);
 				Wait(var.autoKeyPeriod s);
+
+			} else {
+				Press(Key.A);
+				Wait(var.autoKeyPeriod s);
+				Release(Key.A);
+				Wait(var.autoKeyPeriod s);
 			}
 		}
 	}
-}				// (var.mapleStory2)
+}				// (var.MapleStory2)
