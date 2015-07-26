@@ -1,36 +1,49 @@
 ﻿if (Starting) {
-	//BeepDefault;
-	var.piename = "gamepad_MapleStory2.pie";
-	var.joyResetTime = 20;
-
-	//var.debug = True;
-	var.MapleStory2 = True;
 	var.EnableAutoFire = True;
 	var.CannonLevel = 30;	// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30)
-	var.ChatMode = True;
 
-	var.arrowKeyPeriod = 0.05;
-	var.autoKeyPeriod = 0.35;
+	///////////////////////////////////////
+	//var.EnableChatMode = True;
 
-	var.toggleTabMode = True;
-	var.toggleSmooth = False;
+	var.MSG_LOCAL_1 = "/s ";
+	var.MSG_LTHUMB_1 = "돕겠습니다";
+	var.MSG_LTHUMB_2 = "힘을 내세요";
+	var.MSG_RTHUMB_1 = "괜찮아요? 많이 놀랬죠?";
+	var.MSG_RTHUMB_2 = "성스러운 힘이여!";
+
+	var.MSG_LB_1 = "뿌뿌뿡 뿌뿌뿡";
+	var.MSG_LB_2 = "두둥실 두둥실";
+	var.MSG_RB_1 = "뾰로롱";
+	var.MSG_RB_2 = "뿅";
+
+	var.MSG_CANNON_1 ="얍!";
+	var.MSG_CANNON_2 ="빵야 빵야!";
+	var.MSG_CANNON_3 ="하앗!";
+	///////////////////////////////////////
+
+	var.piename = "gamepad_MapleStory2.pie";
+	var.MapleStory2 = True;
+	var.joyResetTime = 20;
 
 	var.dzL = 0.2;
 	var.dzR = 0.2;
 	var.dzTR = 0.2;
 
-	Keyboard.RepeatFakeKeys = False;
-	Keyboard.RepeatMultipleFakeKeys = False;
-
-	XInput.Vibration1 = 0;
-	XInput.Vibration2 = 0;
-	Joystick.Vibration1 = 0;
-	Joystick.Vibration2 = 0;
-
+	var.arrowKeyPeriod = 0.05;
+	var.autoKeyPeriod = 0.35;
 	var.Keywaitsec = var.arrowKeyPeriod;
 	var.rumbleBTNType = 0;
 	var.rumbleBTN = False;
 	var.heldDownTime = 0.3;
+
+	var.toggleTabMode = True;
+	var.toggleSmooth = False;
+	XInput.Vibration1 = 0;
+	XInput.Vibration2 = 0;
+	Joystick.Vibration1 = 0;
+	Joystick.Vibration2 = 0;
+	Keyboard.RepeatFakeKeys = False;
+	Keyboard.RepeatMultipleFakeKeys = False;
 
 	[var.cursorX, var.cursorY] = mouse.cursorpos;
 	Execute("taskkill_blackcipher.vbs");
@@ -254,11 +267,15 @@ if (var.MapleStory2) {
 	if (Pressed(HeldDown(var.XI_LT > var.dzTR, var.heldDownTime))) {
 		var.vib02 = True;
 		if (Key.A) Release(Key.A);
-		if (Not Key.X) Press(Key.X);
+		if (var.OnRightStick == False) {
+			if (Not Key.X) Press(Key.X);
+		}
 	} else if (Pressed(var.XI_LT > var.dzTR)) {
 		if (Key.A) Release(Key.A);
-		if (Not Key.Z) Press(Key.Z);
-		if (Not Mouse.RightButton) Press(Mouse.RightButton);
+		if (var.OnRightStick == False) {
+			if (Not Key.Z) Press(Key.Z);
+			if (Not Mouse.RightButton) Press(Mouse.RightButton);
+		}
 	} else if (Released(var.XI_LT > var.dzTR)) {
 		if (Mouse.RightButton) Release(Mouse.RightButton);
 		if (Key.Z) Release(Key.Z);
@@ -563,12 +580,33 @@ if (var.MapleStory2) {
 	}
 
 	// 자동 채팅
-	if (var.ChatMode) {
-		if (Pressed(var.XI_LThumb)) {
+	if (var.EnableChatMode) {
+		if (Pressed(var.keepSpace)) {
+			var.rdKSType = Random(2);
 			Press(Key.Enter);
 			Wait(0.1 s);
 			Release(Key.Enter);
-			TypeUnicode("피가 모자라 살려주세요");
+			if (var.rdKSType == 0) {
+				TypeUnicode("용서하지 않겠다");
+			} else {
+				TypeUnicode("신의 가호가 있기를");
+			}
+			Wait(0.1 s);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+		}
+
+		if (Pressed(var.XI_LThumb)) {
+			var.rdLThumbType = Random(2);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+			if (var.rdLThumbType == 0) {
+				TypeUnicode(var.MSG_LTHUMB_1);
+			} else {
+				TypeUnicode(var.MSG_LTHUMB_2);
+			}
 			Wait(0.1 s);
 			Press(Key.Enter);
 			Wait(0.1 s);
@@ -576,10 +614,15 @@ if (var.MapleStory2) {
 		}
 
 		if (Pressed(var.XI_RThumb)) {
+			var.rdRThumbType = Random(2);
 			Press(Key.Enter);
 			Wait(0.1 s);
 			Release(Key.Enter);
-			TypeUnicode("괜찮아요? 많이 놀랬죠?");
+			if (var.rdRThumbType == 0) {
+				TypeUnicode(var.MSG_RTHUMB_1);
+			} else {
+				TypeUnicode(var.MSG_RTHUMB_2);
+			}
 			Wait(0.1 s);
 			Press(Key.Enter);
 			Wait(0.1 s);
@@ -587,10 +630,15 @@ if (var.MapleStory2) {
 		}
 
 		if (Pressed(HeldDown(var.XI_LB, 0.15))) {
+			var.rdLBType = Random(2);
 			Press(Key.Enter);
 			Wait(0.1 s);
 			Release(Key.Enter);
-			TypeUnicode("두둥실 두둥실");
+			if (var.rdLBType == 0) {
+				TypeUnicode(var.MSG_LB_1);
+			} else {
+				TypeUnicode(var.MSG_LB_2);
+			}
 			Wait(0.1 s);
 			Press(Key.Enter);
 			Wait(0.1 s);
@@ -598,10 +646,15 @@ if (var.MapleStory2) {
 		}
 
 		if (Pressed(HeldDown(var.XI_RB, 0.15))) {
+			var.rdRBType = Random(2);
 			Press(Key.Enter);
 			Wait(0.1 s);
 			Release(Key.Enter);
-			TypeUnicode("스파이더맨!!");
+			if (var.rdRBType == 0) {
+				TypeUnicode(var.MSG_RB_1);
+			} else {
+				TypeUnicode(var.MSG_RB_2);
+			}
 			Wait(0.1 s);
 			Press(Key.Enter);
 			Wait(0.1 s);
@@ -627,14 +680,14 @@ if (var.MapleStory2) {
 		}
 
 		if (var.CannonMode) {
-			var.randomTime = RandomRange(15, 30);
-			Wait(var.randomTime s);
-			var.randomType = Random(3);
-			if (var.randomType == 0) {
+			var.randomCannonTime = RandomRange(15, 30);
+			Wait(var.randomCannonTime s);
+			var.randomCannonType = Random(3);
+			if (var.randomCannonType == 0) {
 				Press(Key.Enter);
 				Wait(0.1 s);
 				Release(Key.Enter);
-				TypeUnicode("얍!");
+				TypeUnicode(var.MSG_CANNON_1);
 				Wait(0.1 s);
 				Press(Key.Enter);
 				Wait(0.1 s);
@@ -643,7 +696,7 @@ if (var.MapleStory2) {
 				Press(Key.Enter);
 				Wait(0.1 s);
 				Release(Key.Enter);
-				TypeUnicode("빵야 뺭야!");
+				TypeUnicode(var.MSG_CANNON_2);
 				Wait(0.1 s);
 				Press(Key.Enter);
 				Wait(0.1 s);
@@ -652,7 +705,7 @@ if (var.MapleStory2) {
 				Press(Key.Enter);
 				Wait(0.1 s);
 				Release(Key.Enter);
-				TypeUnicode("하앗!");
+				TypeUnicode(var.MSG_CANNON_3);
 				Wait(0.1 s);
 				Press(Key.Enter);
 				Wait(0.1 s);
@@ -664,7 +717,7 @@ if (var.MapleStory2) {
 			Press(Key.Enter);
 			Wait(0.1 s);
 			Release(Key.Enter);
-			TypeUnicode("파이어~~~ 볼!!!");
+			TypeUnicode("천상의 이름으로!!");
 			Wait(0.1 s);
 			Press(Key.Enter);
 			Wait(0.1 s);
@@ -678,7 +731,7 @@ if (var.MapleStory2) {
 			Press(Key.Enter);
 			Wait(0.1 s);
 			Release(Key.Enter);
-			TypeUnicode("아~힘들다 잠시 쉬고 가실께요");
+			TypeUnicode("잠시 쉬고 가실께요");
 			Wait(0.1 s);
 			Press(Key.Enter);
 			Wait(0.1 s);
