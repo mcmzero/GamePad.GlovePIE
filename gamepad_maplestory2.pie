@@ -5,11 +5,11 @@
 	///////////////////////////////////////
 	//var.EnableChatMode = True;
 
-	var.MSG_LOCAL_1 = "/s ";
-	var.MSG_LTHUMB_1 = "돕겠습니다";
-	var.MSG_LTHUMB_2 = "힘을 내세요";
-	var.MSG_RTHUMB_1 = "괜찮아요? 많이 놀랬죠?";
-	var.MSG_RTHUMB_2 = "성스러운 힘이여!";
+	var.MSG_LTHUMB_1 = "괜찮아요? 많이 놀랬죠?";
+	var.MSG_LTHUMB_2 = "힘을내요 슈퍼파월!";
+
+	var.MSG_RTHUMB_1 = "냠냠";
+	var.MSG_RTHUMB_2 = "꿀꺽 꿀꺽";
 
 	var.MSG_LB_1 = "뿌뿌뿡 뿌뿌뿡";
 	var.MSG_LB_2 = "두둥실 두둥실";
@@ -78,15 +78,18 @@ if (var.MapleStory2) {
 	//////////////////////////////////////////
 	// Joystick Mapping
 	//debug = Joystick.Count + " " + XInput1.Exists + " " + XInput2.Exists;
+/*
 	if (XInput1.Exists == False and XInput2.Exists == False and XInput3.Exists == False and XInput4.Exists == False) {
-		if (var.XI_J1X or var.XI_J1Y or var.XI_J2X or var.XI_J2Y) var.joyResetCount = 0;
+		//if (Mouse.LeftButton or Mouse.RightButton) var.joyResetCount = 0;
+		//if (var.XI_J1X or var.XI_J1Y or var.XI_J2X or var.XI_J2Y) var.joyResetCount = 0;
+		//if (var.XI_LT or var.XI_RT) var.joyResetCount = 0;
 		if (var.XI_A or var.XI_B or var.XI_X or var.XI_Y) var.joyResetCount = 0;
-		if (var.XI_LB or var.XI_RB or var.XI_LT or var.XI_RT) var.joyResetCount = 0;
+		if (var.XI_LB or var.XI_RB) var.joyResetCount = 0;
 		if (var.XI_LThumb or var.XI_RThumb or var.XI_Back or var.XI_Start) var.joyResetCount = 0;
 		if (var.XI_Up or var.XI_Down or var.XI_Left or var.XI_Right) var.joyResetCount = 0;
 		if (Key.Control or Key.Shift or Key.Alt or Key.Space) var.joyResetCount = 0;
 		if (Key.Up or Key.Down or Key.Left or Key.Right) var.joyResetCount = 0;
-		if (Mouse.LeftButton or Mouse.RightButton) var.joyResetCount = 0;
+
 		if (var.joyResetCount > var.joyResetTime and var.AutoFireA = False and var.supportMode = False and var.dealerMode == False) {
 			Chain(var.piename);
 		} else {
@@ -94,50 +97,58 @@ if (var.MapleStory2) {
 			var.joyResetCount++;
 		}
 	}
+*/
+	var.XI_J1X    = 0;
+	var.XI_J1Y    = 0;
+	var.XI_J2X    = 0;
+	var.XI_J2Y    = 0;
+	var.XI_LT     = 0;
+	var.XI_RT     = 0;
 	if (Joystick.Count > 0) {
-		var.XI_J1X    = Joystick.X; 
-		var.XI_J1Y    = -Joystick.Y; 
-		var.XI_J2X    = Joystick.Z; 
-		var.XI_J2Y    = -Joystick.Roll; 
-		var.XI_A      = Joystick.button2;
-		var.XI_B      = Joystick.button3;
-		var.XI_X      = Joystick.button1;
-		var.XI_Y      = Joystick.button4;
-		var.XI_LB     = Joystick.button5;
-		var.XI_RB     = Joystick.button6;
-		var.XI_LThumb = Joystick.button11;
-		var.XI_RThumb = Joystick.button12;
-		var.XI_LT     = (Joystick.pitch + 1) / 2;
-		var.XI_RT     = (Joystick.yaw + 1) / 2;
-		var.XI_Up     = Joystick.Pov1 == 0; // or Joystick.Pov1 == 45 or Joystick.Pov1 == 315;
-		var.XI_Down   = Joystick.Pov1 == 180; // or Joystick.Pov1 == 135 or Joystick.Pov1 == 225;
-		var.XI_Left   = Joystick.Pov1 == 270; // or Joystick.Pov1 == 315 or Joystick.Pov1 == 225;
-		var.XI_Right  = Joystick.Pov1 == 90; // or Joystick.Pov1 == 135 or Joystick.Pov1 == 45;
-		var.XI_Back   = Joystick.button9 or Joystick.Button14;
-		var.XI_Start  = Joystick.button10 or Joystick.Button13;
-	} else {
+		if (abs(Joystick.X) > 0 or abs(Joystick.Y) > 0 or abs(Joystick.Z) > 0 or abs(Joystick.Roll) > 0 or abs((Joystick.pitch + 1) / 2) > 0 or abs((Joystick.yaw + 1) / 2) > 0) {
+			var.JoyMode = True;
+			var.XI_J1X    = Joystick.X; 
+			var.XI_J1Y    = -Joystick.Y; 
+			var.XI_J2X    = Joystick.Z; 
+			var.XI_J2Y    = -Joystick.Roll; 
+			var.XI_LT     = (Joystick.pitch + 1) / 2;
+			var.XI_RT     = (Joystick.yaw + 1) / 2;
+		}
+	}
+	if (abs(XInput.Joy1X) > 0 or abs(XInput.Joy1Y) > 0 or abs(XInput.Joy2X) > 0 or abs(XInput.Joy2Y) > 0 or abs(XInput.LeftTrigger) > 0 or abs(XInput.RightTrigger) > 0) {
+		var.JoyMode = False;
 		var.XI_J1X    = XInput.Joy1X;
 		var.XI_J1Y    = XInput.Joy1Y;
 		var.XI_J2X    = XInput.Joy2X;
 		var.XI_J2Y    = XInput.Joy2Y;
-		var.XI_A      = XInput.A;
-		var.XI_B      = XInput.B;
-		var.XI_X      = XInput.X;
-		var.XI_Y      = XInput.Y;
-		var.XI_LB     = XInput.LeftShoulder;
-		var.XI_RB     = XInput.RightShoulder;
-		var.XI_LThumb = XInput.LeftThumb;
-		var.XI_RThumb = XInput.RightThumb;
 		var.XI_LT     = XInput.LeftTrigger;
 		var.XI_RT     = XInput.RightTrigger;
-		var.XI_Up     = XInput.Up;
-		var.XI_Down   = XInput.Down;
-		var.XI_Left   = XInput.Left;
-		var.XI_Right  = XInput.Right;
-		var.XI_Back   = XInput.Back;
-		var.XI_Start  = XInput.Start;
 	}
+	if (abs(XInput2.Joy1X) > 0 or abs(XInput2.Joy1Y) > 0 or abs(XInput2.Joy2X) > 0 or abs(XInput2.Joy2Y) > 0 or abs(XInput2.LeftTrigger) > 0 or abs(XInput2.RightTrigger) > 0) {
+		var.JoyMode = False;
+		var.XI_J1X    = XInput2.Joy1X;
+		var.XI_J1Y    = XInput2.Joy1Y;
+		var.XI_J2X    = XInput2.Joy2X;
+		var.XI_J2Y    = XInput2.Joy2Y;
+		var.XI_LT     = XInput2.LeftTrigger;
+		var.XI_RT     = XInput2.RightTrigger;
+	}
+	var.XI_A      = XInput.A or XInput2.A or (var.JoyMode and Joystick.button2);
+	var.XI_B      = XInput.B or XInput2.B or (var.JoyMode and Joystick.button3);
+	var.XI_X      = XInput.X or XInput2.X or (var.JoyMode and Joystick.button1);
+	var.XI_Y      = XInput.Y or XInput2.Y or (var.JoyMode and Joystick.button4);
+	var.XI_LB     = XInput.LeftShoulder  or XInput2.LeftShoulder  or (var.JoyMode and Joystick.button5);
+	var.XI_RB     = XInput.RightShoulder or XInput2.RightShoulder or (var.JoyMode and Joystick.button6);
+	var.XI_LThumb = XInput.LeftThumb     or XInput2.LeftThumb     or (var.JoyMode and Joystick.button11);
+	var.XI_RThumb = XInput.RightThumb    or XInput2.RightThumb    or (var.JoyMode and Joystick.button12);
+	var.XI_Up     = XInput.Up    or XInput2.Up    or (var.JoyMode and Joystick.Pov1 == 0);
+	var.XI_Down   = XInput.Down  or XInput2.Down  or (var.JoyMode and Joystick.Pov1 == 180);
+	var.XI_Left   = XInput.Left  or XInput2.Left  or (var.JoyMode and Joystick.Pov1 == 270);
+	var.XI_Right  = XInput.Right or XInput2.Right or (var.JoyMode and Joystick.Pov1 == 90);
+	var.XI_Back   = XInput.Back  or XInput2.Back  or (var.JoyMode and Joystick.button9)  or (var.JoyMode and Joystick.Button14);
+	var.XI_Start  = XInput.Start or XInput2.Start or (var.JoyMode and Joystick.button10) or (var.JoyMode and Joystick.Button13);
 
+	///////////////////////////////////////////////////////////////////////
 	// 마우스 커서 위치 조정
 	if (Pressed(var.resetCurPos)) {
 		var.resetCurPos = False;
@@ -167,6 +178,8 @@ if (var.MapleStory2) {
 	var.OnLeftStick = abs(var.jlx) > 0 or abs(var.jly) > 0;
 	if (Pressed(var.OnLeftStick)) {
 		var.defaultCurPos = True;
+		if (var.AutoFireA and Key.A) Release(Key.A);
+		if (var.AutoFireA and Key.X) Release(Key.X);
 		var.TempAutoFireA = var.AutoFireA;
 		var.AutoFireA = False;
 	} else if (Released(var.OnLeftStick)) {
@@ -390,6 +403,7 @@ if (var.MapleStory2) {
 	if (Pressed(HeldDown(var.XI_A, var.heldDownTime))) {
 	} else if (var.XI_A) {
 		var.turnOnTab = False;
+		var.keepSpace = False;
 		if (var.XI_LT == False and var.XI_RT == False) {
 			var.AutoFireA = False;
 			var.CannonMode = False;
@@ -580,39 +594,39 @@ if (var.MapleStory2) {
 	}
 
 	// 자동 채팅
+	if (Pressed(var.keepSpace)) {
+		var.rdKSType = Random(2);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		if (var.rdKSType == 0) {
+			TypeUnicode("풋쳐핸접!!");
+		} else {
+			TypeUnicode("쇼미더머니!!");
+		}
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+	}
+
+	if (Pressed(var.XI_LThumb)) {
+		var.rdLThumbType = Random(2);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		if (var.rdLThumbType == 0) {
+			TypeUnicode(var.MSG_LTHUMB_1);
+		} else {
+			TypeUnicode(var.MSG_LTHUMB_2);
+		}
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+	}
+
 	if (var.EnableChatMode) {
-		if (Pressed(var.keepSpace)) {
-			var.rdKSType = Random(2);
-			Press(Key.Enter);
-			Wait(0.1 s);
-			Release(Key.Enter);
-			if (var.rdKSType == 0) {
-				TypeUnicode("용서하지 않겠다");
-			} else {
-				TypeUnicode("신의 가호가 있기를");
-			}
-			Wait(0.1 s);
-			Press(Key.Enter);
-			Wait(0.1 s);
-			Release(Key.Enter);
-		}
-
-		if (Pressed(var.XI_LThumb)) {
-			var.rdLThumbType = Random(2);
-			Press(Key.Enter);
-			Wait(0.1 s);
-			Release(Key.Enter);
-			if (var.rdLThumbType == 0) {
-				TypeUnicode(var.MSG_LTHUMB_1);
-			} else {
-				TypeUnicode(var.MSG_LTHUMB_2);
-			}
-			Wait(0.1 s);
-			Press(Key.Enter);
-			Wait(0.1 s);
-			Release(Key.Enter);
-		}
-
 		if (Pressed(var.XI_RThumb)) {
 			var.rdRThumbType = Random(2);
 			Press(Key.Enter);
@@ -759,6 +773,8 @@ if (var.MapleStory2) {
 	if (var.AutoFireA and var.OnLeftStick == False and var.OnRightStick == False) {
 		if (Not (var.XI_A or var.XI_B or var.XI_X or var.XI_Y)) {
 			if (var.CannonMode and var.CannonLevel == 20) {
+				if (Key.A) Release(Key.A);
+
 				// 오색나무 숲
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
@@ -790,6 +806,8 @@ if (var.MapleStory2) {
 				Wait(var.autoKeyPeriod s);
 
 			} else if (var.CannonMode and var.CannonLevel == 25) {
+				if (Key.A) Release(Key.A);
+
 				// 쉐도우 게이트
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
@@ -854,6 +872,8 @@ if (var.MapleStory2) {
 				Wait(var.autoKeyPeriod s);
 
 			} else if (var.CannonMode and var.CannonLevel == 30) {
+				if (Key.A) Release(Key.A);
+
 				// 프리즘 폭포
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
@@ -892,6 +912,8 @@ if (var.MapleStory2) {
 				Wait(var.autoKeyPeriod s);
 
 			} else if (var.CannonMode) {
+				if (Key.X) Release(Key.X);
+
 				//Left
 				Press(Key.A);
 				Wait(var.autoKeyPeriod s);
