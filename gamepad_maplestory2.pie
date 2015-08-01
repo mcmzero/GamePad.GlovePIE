@@ -1,24 +1,36 @@
 ﻿if (Starting) {
 	var.EnableAutoFire = True;
-	var.CannonLevel = 30;	// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30)
+	var.CannonLevel = 40;	// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30)
 
 	///////////////////////////////////////
 	//var.EnableChatMode = True;
 
 	var.MSG_LTHUMB_1 = "괜찮아요? 많이 놀랬죠?";
-	var.MSG_LTHUMB_2 = "힘을내요 슈퍼파월!";
+	var.MSG_LTHUMB_2 = "그럴싸~하쥬?";
 
-	var.MSG_RTHUMB_1 = "냠냠";
-	var.MSG_RTHUMB_2 = "꿀꺽 꿀꺽";
+	var.MSG_RTHUMB_1 = "피곤할땐 박카스!";
+	var.MSG_RTHUMB_2 = "그래 이맛이야!";
 
 	var.MSG_LB_1 = "뿌뿌뿡 뿌뿌뿡";
 	var.MSG_LB_2 = "두둥실 두둥실";
 	var.MSG_RB_1 = "뾰로롱";
 	var.MSG_RB_2 = "뿅";
 
-	var.MSG_CANNON_1 ="얍!";
-	var.MSG_CANNON_2 ="빵야 빵야!";
-	var.MSG_CANNON_3 ="하앗!";
+	var.MSG_CANNON_1 = "얍!";
+	var.MSG_CANNON_2 = "빵야 빵야!";
+	var.MSG_CANNON_3 = "하앗!";
+	
+	var.MSG_CHANNEL_1 = "/채널이동 5";
+	var.MSG_CHANNEL_2 = "/채널이동 10";
+	var.MSG_CHANNEL_3 = "/채널이동 15";
+	var.MSG_CHANNEL_4 = "/채널이동 20";
+	var.MSG_CHANNEL_5 = "/채널이동 25";
+	var.MSG_CHANNEL_6 = "/채널이동 30";
+	var.MSG_CHANNEL_7 = "/채널이동 35";
+	var.MSG_CHANNEL_8 = "/채널이동 40";
+	var.MSG_CHANNEL_9 = "/채널이동 45";
+	var.MSG_CHANNEL_10 = "/채널이동 50";
+	var.MSG_CHANNEL_11 = "/채널이동 55";
 	///////////////////////////////////////
 
 	var.piename = "gamepad_MapleStory2.pie";
@@ -32,6 +44,7 @@
 	var.arrowKeyPeriod = 0.05;
 	var.autoKeyPeriod = 0.35;
 	var.Keywaitsec = var.arrowKeyPeriod;
+
 	var.rumbleBTNType = 0;
 	var.rumbleBTN = False;
 	var.heldDownTime = 0.3;
@@ -46,15 +59,18 @@
 	Keyboard.RepeatMultipleFakeKeys = False;
 
 	[var.cursorX, var.cursorY] = mouse.cursorpos;
-	Execute("taskkill_blackcipher.vbs");
+	//Execute("taskkill_blackcipher.vbs");
 }
 
 if (Pressed(Key.F9 and Key.alt and Key.control and Key.LeftShift)) {
 	ExitPIE;
 }
 
+if (Window.Class != "MapleStory2") {
+	var.AutoFireA = False;
+	var.CannonMode = False;
+}
 if (HeldDown(Window.Class != "MapleStory2", 0.5)) {
-	BeepDefault;
 	Chain("gamepad_windows.pie");
 }
 
@@ -384,13 +400,11 @@ if (var.MapleStory2) {
 	if (Pressed(var.XI_LThumb)) {
 		var.resetCurPos = True;
 		if (var.ShiftMode) {
-			Press(Key.Escape);
 		} else {
 			Press(Key.Four);
 		}
 	} else if (Released(var.XI_LThumb)) {
 		if (Key.Four) Release(Key.Four);
-		if (Key.Escape) Release(Key.Escape);
 	}
 
 	if (Pressed(var.XI_RThumb)) {
@@ -399,14 +413,20 @@ if (var.MapleStory2) {
 	} else if (Released(var.XI_RThumb)) {
 		if (Key.Eight) Release(Key.Eight);
 	}
-
+	
+if (var.ChannelMode == False) {
 	if (Pressed(HeldDown(var.XI_A, var.heldDownTime))) {
 	} else if (var.XI_A) {
 		var.turnOnTab = False;
 		var.keepSpace = False;
 		if (var.XI_LT == False and var.XI_RT == False) {
-			var.AutoFireA = False;
-			var.CannonMode = False;
+			if (var.CannonMode) {
+				var.CannonMode = False;
+			}
+			if (var.AutoFireA) {
+				var.AutoFireA = False;
+				Chain(var.piename);
+			}
 		}
 		if (var.ShiftMode) {
 			if (Not Key.D) Press(Key.D);
@@ -463,6 +483,7 @@ if (var.MapleStory2) {
 		if (Key.W) Release(Key.W);
 		if (var.AutoFireA) Press(Key.A);
 	}
+}
 
 	// 메뉴 호출
 	if (Pressed(HeldDown(var.XI_Back, var.heldDownTime))) {
@@ -593,33 +614,166 @@ if (var.MapleStory2) {
 		Joystick.Vibration2 = 0.0;
 	}
 
-	// 자동 채팅
-	if (Pressed(var.keepSpace)) {
-		var.rdKSType = Random(2);
+	var.ChannelMode = var.ChannelMode xor Pressed(var.XI_LT and var.XI_LThumb);
+	// 채널이동
+	if (var.ChannelMode and Pressed(var.XI_A)) {
+		Wait(5 s);
 		Press(Key.Enter);
 		Wait(0.1 s);
 		Release(Key.Enter);
-		if (var.rdKSType == 0) {
-			TypeUnicode("풋쳐핸접!!");
-		} else {
-			TypeUnicode("쇼미더머니!!");
-		}
+		TypeUnicode(var.MSG_CHANNEL_1);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		Wait(1 s);
+		var.ChannelMode = False;
+	}
+	if (var.ChannelMode and Pressed(var.XI_B)) {
+		Wait(5 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_2);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		Wait(1 s);
+		var.ChannelMode = False;
+	}
+	if (var.ChannelMode and Pressed(var.XI_X)) {
+		Wait(5 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_3);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		Wait(1 s);
+		var.ChannelMode = False;
+	}
+	if (var.ChannelMode and Pressed(var.XI_Y)) {
+		Wait(5 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_4);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		Wait(1 s);
+		var.ChannelMode = False;
+	}
+
+	if (Key.Shift and Pressed(Key.F1)) {
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_1);
 		Wait(0.1 s);
 		Press(Key.Enter);
 		Wait(0.1 s);
 		Release(Key.Enter);
 	}
-
-	if (Pressed(var.XI_LThumb)) {
-		var.rdLThumbType = Random(2);
+	if (Key.Shift and Pressed(Key.F2)) {
 		Press(Key.Enter);
 		Wait(0.1 s);
 		Release(Key.Enter);
-		if (var.rdLThumbType == 0) {
-			TypeUnicode(var.MSG_LTHUMB_1);
-		} else {
-			TypeUnicode(var.MSG_LTHUMB_2);
-		}
+		TypeUnicode(var.MSG_CHANNEL_2);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+	}
+	if (Key.Shift and Pressed(Key.F3)) {
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_3);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+	}
+	if (Key.Shift and Pressed(Key.F4)) {
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_4);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+	}
+	if (Key.Shift and Pressed(Key.F5)) {
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_5);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+	}
+	if (Key.Shift and Pressed(Key.F6)) {
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_6);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+	}
+	if (Key.Shift and Pressed(Key.F7)) {
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_7);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+	}
+	if (Key.Shift and Pressed(Key.F8)) {
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_8);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+	}
+	if (Key.Shift and Pressed(Key.F9)) {
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_9);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+	}
+	if (Key.Shift and Pressed(Key.F10)) {
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_10);
+		Wait(0.1 s);
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+	}
+	if (Key.Shift and Pressed(Key.F11)) {
+		Press(Key.Enter);
+		Wait(0.1 s);
+		Release(Key.Enter);
+		TypeUnicode(var.MSG_CHANNEL_11);
 		Wait(0.1 s);
 		Press(Key.Enter);
 		Wait(0.1 s);
@@ -627,6 +781,39 @@ if (var.MapleStory2) {
 	}
 
 	if (var.EnableChatMode) {
+		// 자동 채팅
+		if (Pressed(var.keepSpace)) {
+			var.rdKSType = Random(2);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+			if (var.rdKSType == 0) {
+				TypeUnicode("풋쳐핸접!!");
+			} else {
+				TypeUnicode("쇼미더머니!!");
+			}
+			Wait(0.1 s);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+		}
+
+		if (Pressed(var.XI_LThumb)) {
+			var.rdLThumbType = Random(2);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+			if (var.rdLThumbType == 0) {
+				TypeUnicode(var.MSG_LTHUMB_1);
+			} else {
+				TypeUnicode(var.MSG_LTHUMB_2);
+			}
+			Wait(0.1 s);
+			Press(Key.Enter);
+			Wait(0.1 s);
+			Release(Key.Enter);
+		}
+
 		if (Pressed(var.XI_RThumb)) {
 			var.rdRThumbType = Random(2);
 			Press(Key.Enter);
@@ -693,7 +880,7 @@ if (var.MapleStory2) {
 			Release(Key.C);
 		}
 
-		if (var.CannonMode) {
+		if (var.CannonMode and var.EnableChatMode) {
 			var.randomCannonTime = RandomRange(15, 30);
 			Wait(var.randomCannonTime s);
 			var.randomCannonType = Random(3);
@@ -706,7 +893,7 @@ if (var.MapleStory2) {
 				Press(Key.Enter);
 				Wait(0.1 s);
 				Release(Key.Enter);
-			} else if (var.randomType == 1) {
+			} else if (var.randomCannonType == 1) {
 				Press(Key.Enter);
 				Wait(0.1 s);
 				Release(Key.Enter);
@@ -715,7 +902,7 @@ if (var.MapleStory2) {
 				Press(Key.Enter);
 				Wait(0.1 s);
 				Release(Key.Enter);
-			} else if (var.randomType == 2) {
+			} else if (var.randomCannonType == 2) {
 				Press(Key.Enter);
 				Wait(0.1 s);
 				Release(Key.Enter);
@@ -728,32 +915,37 @@ if (var.MapleStory2) {
 		}
 
 		if (Pressed(var.CannonMode)) {
-			Press(Key.Enter);
-			Wait(0.1 s);
-			Release(Key.Enter);
-			TypeUnicode("천상의 이름으로!!");
-			Wait(0.1 s);
-			Press(Key.Enter);
-			Wait(0.1 s);
-			Release(Key.Enter);
+			if (var.EnableChatMode) {
+				Press(Key.Enter);
+				Wait(0.1 s);
+				Release(Key.Enter);
+				TypeUnicode("천상의 이름으로!!");
+				Wait(0.1 s);
+				Press(Key.Enter);
+				Wait(0.1 s);
+				Release(Key.Enter);
+			}
 
 			Display("");
 			Display("캐논 사격");
 			var.AutoFireA = True;
 
 		} else if (Released(var.CannonMode)) {
-			Press(Key.Enter);
-			Wait(0.1 s);
-			Release(Key.Enter);
-			TypeUnicode("잠시 쉬고 가실께요");
-			Wait(0.1 s);
-			Press(Key.Enter);
-			Wait(0.1 s);
-			Release(Key.Enter);
+			if (var.EnableChatMode) {
+				Press(Key.Enter);
+				Wait(0.1 s);
+				Release(Key.Enter);
+				TypeUnicode("잠시 쉬고 가실께요");
+				Wait(0.1 s);
+				Press(Key.Enter);
+				Wait(0.1 s);
+				Release(Key.Enter);
+			}
 
 			Display("");
 			Display("사격 중지");
 			var.AutoFireA = False;
+			Chain(var.piename);
 		}
 	}
 	if (Pressed(var.AutoFireA)) {
@@ -768,13 +960,12 @@ if (var.MapleStory2) {
 		Wait(0.2 s);
 		XInput.Vibration2 = 0.0;
 		Joystick.Vibration2 = 0.0;
+		//Chain(var.piename);
 	}
 
 	if (var.AutoFireA and var.OnLeftStick == False and var.OnRightStick == False) {
 		if (Not (var.XI_A or var.XI_B or var.XI_X or var.XI_Y)) {
 			if (var.CannonMode and var.CannonLevel == 20) {
-				if (Key.A) Release(Key.A);
-
 				// 오색나무 숲
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
@@ -806,8 +997,6 @@ if (var.MapleStory2) {
 				Wait(var.autoKeyPeriod s);
 
 			} else if (var.CannonMode and var.CannonLevel == 25) {
-				if (Key.A) Release(Key.A);
-
 				// 쉐도우 게이트
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
@@ -872,8 +1061,6 @@ if (var.MapleStory2) {
 				Wait(var.autoKeyPeriod s);
 
 			} else if (var.CannonMode and var.CannonLevel == 30) {
-				if (Key.A) Release(Key.A);
-
 				// 프리즘 폭포
 				Press(Key.X);
 				Wait(var.autoKeyPeriod s);
@@ -911,65 +1098,248 @@ if (var.MapleStory2) {
 				Release(Key.X);
 				Wait(var.autoKeyPeriod s);
 
+			} else if (var.CannonMode and var.CannonLevel == 35) {
+				var.randomActionCode = Random(4);		// 공격
+				debug = "ActionCode: " + var.randomActionCode;
+				if (var.oldRandomActionCode == var.randomActionCode) {
+					var.randomActionCode = Random(5);	// 공격 + 제자리 이동 추가
+					debug = "ActionCode(2nd): " + var.randomActionCode;
+					if (var.oldRandomActionCode == var.randomActionCode) {
+						var.randomActionCode = Random(5);	// 공격 + 제자리 이동 추가
+						debug = "ActionCode(3rd): " + var.randomActionCode;
+						if (var.oldRandomActionCode == var.randomActionCode) {
+							var.randomActionCode = Random(5);	// 공격 + 제자리 이동 추가
+							debug = "ActionCode(4th): " + var.randomActionCode;
+							if (var.oldRandomActionCode == var.randomActionCode) {
+								var.randomActionCode = Random(5);	// 공격 + 제자리 이동 추가
+								debug = "ActionCode(5th): " + var.randomActionCode;
+							}
+						}
+					}
+				}
+				var.oldRandomActionCode = var.randomActionCode;
+
+				if (var.randomActionCode == 0) {
+					//Left
+					if (Key.A) Release(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left); 
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+					Release(Key.Left);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
+					Release(Key.A);
+
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.W);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2.5 s);
+					Release(Key.W);
+				} else if (var.randomActionCode == 1) {
+					//Right
+					if (Key.A) Release(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+					Release(Key.Right);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
+					Release(Key.A);
+
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.E);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2.5 s);
+					Release(Key.E);
+				} else if (var.randomActionCode == 2) {
+					//Up
+					if (Key.A) Release(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up); 
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+					Release(Key.Up);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
+					Release(Key.A);
+
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.R);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2.5 s);
+					Release(Key.R);
+				} else if (var.randomActionCode == 3) {
+					//Down
+					if (Key.A) Release(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+					Release(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
+					Release(Key.A);
+
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Four);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2.5 s);
+					Release(Key.Four);
+				} else if (var.randomActionCode == 4) {
+					//Left+Up
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+					Release(Key.Left);
+					Release(Key.Up);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+
+					//Right+Up
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+					Release(Key.Right);
+					Release(Key.Up);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+
+					//Right+Down
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+					Release(Key.Right);
+					Release(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+
+					//Left+Down
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+					Release(Key.Left);
+					Release(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				}
+
+				// 한 세트의 시간동안 대기
+				var.WaitActionTime = var.autoKeyPeriod * 4.25 + var.arrowKeyPeriod * 22;
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+
+			} else if (var.CannonMode and var.CannonLevel == 40) {
+				var.randomActionCode = Random(4);		// 공격
+				debug = "ActionCode: " + var.randomActionCode;
+				if (var.oldRandomActionCode == var.randomActionCode) {
+					var.randomActionCode = Random(5);	// 공격 + 제자리 이동 추가
+					debug = "ActionCode(2nd): " + var.randomActionCode;
+					if (var.oldRandomActionCode == var.randomActionCode) {
+						var.randomActionCode = Random(5);	// 공격 + 제자리 이동 추가
+						debug = "ActionCode(3rd): " + var.randomActionCode;
+						if (var.oldRandomActionCode == var.randomActionCode) {
+							var.randomActionCode = Random(5);	// 공격 + 제자리 이동 추가
+							debug = "ActionCode(4th): " + var.randomActionCode;
+							if (var.oldRandomActionCode == var.randomActionCode) {
+								var.randomActionCode = Random(5);	// 공격 + 제자리 이동 추가
+								debug = "ActionCode(5th): " + var.randomActionCode;
+							}
+						}
+					}
+				}
+				var.oldRandomActionCode = var.randomActionCode;
+
+				if (var.randomActionCode == 0) {
+					//Left+Up
+					if (Key.A) Release(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left); 
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up); 
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+					Release(Key.Left);
+					Release(Key.Up);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
+					Release(Key.A);
+
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.W);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2.5 s);
+					Release(Key.W);
+				} else if (var.randomActionCode == 1) {
+					//Right+Down
+					if (Key.A) Release(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+					Release(Key.Right);
+					Release(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
+					Release(Key.A);
+
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.E);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2.5 s);
+					Release(Key.E);
+				} else if (var.randomActionCode == 2) {
+					//Right+Up
+					if (Key.A) Release(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right); 
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up); 
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+					Release(Key.Right);
+					Release(Key.Up);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
+					Release(Key.A);
+
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.R);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2.5 s);
+					Release(Key.R);
+				} else if (var.randomActionCode == 3) {
+					//Left+Down
+					if (Key.A) Release(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.A);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left);
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+					Release(Key.Left);
+					Release(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
+					Release(Key.A);
+
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Four);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2.5 s);
+					Release(Key.Four);
+				} else if (var.randomActionCode == 4) {
+					//Left
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+					Release(Key.Left);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+
+					//Up
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+					Release(Key.Up);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+
+					//Right
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+					Release(Key.Right);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+
+					//Down
+					if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+					Release(Key.Down);
+					if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				}
+
+				// 한 세트의 시간동안 대기
+				var.WaitActionTime = var.autoKeyPeriod * 4.25 + var.arrowKeyPeriod * 22;
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
 			} else if (var.CannonMode) {
-				if (Key.X) Release(Key.X);
-
-				//Left
-				Press(Key.A);
-				Wait(var.autoKeyPeriod s);
-				Press(Key.Left); 
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.Left);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.A);
-				Wait(var.autoKeyPeriod s);
-
-				//Right
-				Press(Key.A);
-				Wait(var.autoKeyPeriod s);
-				Press(Key.Right);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.Right);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.A);
-				Wait(var.autoKeyPeriod s);
-
-				//Up
-				Press(Key.A);
-				Wait(var.autoKeyPeriod s);
-				Press(Key.Up); 
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.Up);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.A);
-				Wait(var.autoKeyPeriod s);
-
-				//Down
-				Press(Key.A);
-				Wait(var.autoKeyPeriod s);
-				Press(Key.Down);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.Down);
-				Wait(var.arrowKeyPeriod s);
-				Release(Key.A);
-				Wait(var.autoKeyPeriod s);
-
-				Press(Key.E);
-				Wait(var.autoKeyPeriod s);
-				Release(Key.E);
-				Wait(var.arrowKeyPeriod s);
 
 			} else if (var.enableNormalAttack) {
-				Press(Key.X);
-				Wait(var.autoKeyPeriod s);
+				if (var.AutoFireA and var.OnLeftStick == False) Press(Key.X);
+				if (var.AutoFireA and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 				Release(Key.X);
-				Wait(var.autoKeyPeriod s);
+				if (var.AutoFireA and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 
 			} else {
-				Press(Key.A);
-				Wait(var.autoKeyPeriod s);
+				if (var.AutoFireA and var.OnLeftStick == False) Press(Key.A);
+				if (var.AutoFireA and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 				Release(Key.A);
-				Wait(var.autoKeyPeriod s);
+				if (var.AutoFireA and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 			}
 		}
 	}

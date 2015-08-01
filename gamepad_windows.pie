@@ -64,6 +64,8 @@ if (var.windowClass != Window.Class) {
 	} else if (Window.Class == "GxWindowClass") {
 		Chain("gamepad_wow.pie");
 	} else if (Window.Class == "MapleStory2") {
+		Execute("taskkill_blackcipher.vbs");
+		Wait(1 s);
 		Chain("gamepad_maplestory2.pie");
 	}
 	if (Window.Class == "ForegroundStaging") {
@@ -206,13 +208,13 @@ if (var.dummyMode == False) {
 			if (var.jry > 0) {
 				Press(Key.Control);
 				Mouse.DirectInputZ -= 1;
-				Release(Key.Control);;
+				Release(Key.Control);
 				var.shiftMode = False;
 				Wait(0.5 s);
 			} else if (var.jry < 0) {
 				Press(Key.Control);
 				Mouse.DirectInputZ += 1;
-				Release(Key.Control);;
+				Release(Key.Control);
 				var.shiftMode = False;
 				Wait(0.5 s);
 			}
@@ -232,7 +234,7 @@ if (var.dummyMode == False) {
 						  Press(Key.Control);
 						  Press(Key.Tab);
 						Release(Key.Tab);
-						Release(Key.Control);;
+						Release(Key.Control);
 						Release(Key.Shift);
 						var.shiftMode = False;
 					} else if (HeldDown(var.jlx < 0, 0.5)) {
@@ -250,7 +252,7 @@ if (var.dummyMode == False) {
 						  Press(Key.Control);
 						  Press(Key.Tab);
 						Release(Key.Tab);
-						Release(Key.Control);;
+						Release(Key.Control);
 						var.shiftMode = False;
 					} else if (HeldDown(var.jlx > 0, 0.5)) {
 						  Press(Key.Right);
@@ -288,7 +290,7 @@ if (var.dummyMode == False) {
 					  Press(Key.Control);
 					  Press(Key.R);
 					Release(Key.R);
-					Release(Key.Control);;
+					Release(Key.Control);
 					Wait(0.5 s);
 					var.shiftMode = False;
 				}
@@ -355,7 +357,7 @@ if (var.dummyMode == False) {
 						var.shiftMode = False;
 					} else {
 						Release(Key.Left);
-						Release(Key.Control);;
+						Release(Key.Control);
 						Release(Key.Windows);
 					}
 				}
@@ -397,7 +399,7 @@ if (var.dummyMode == False) {
 						var.shiftMode = False;
 					} else {
 						Release(Key.Right);
-						Release(Key.Control);;
+						Release(Key.Control);
 						Release(Key.Windows);
 					}
 				}
@@ -629,7 +631,7 @@ if (var.dummyMode == False) {
 				  Press(Key.Control);
 				Mouse.WheelDown = True;
 				Mouse.WheelDown = False;
-				Release(Key.Control);;
+				Release(Key.Control);
 			}
 		}
 		if (Released(var.XI_LThumb) or Released(var.XI_RThumb)) var.shiftMode = False;
@@ -697,12 +699,27 @@ if (var.dummyMode == False) {
 		if (Released(var.XI_Right) or Released(var.XI_B)) var.shiftMode = False;
 
 	} else {	// var.shiftMode == False
-		if (Pressed(var.XI_LT > var.dzTR or var.XI_RT > var.dzTR)) {
-			  Press(mouse.LeftButton);
-		} else if (Released(var.XI_LT > var.dzTR or var.XI_RT > var.dzTR)) {
-			if (Key.Alt) Release(Key.Alt);
-			Release(mouse.LeftButton);
+		if (Pressed(HeldDown(var.XI_LT >= 1.0, 0.1))) {
+			Press(Key.Control);
+			Press(Mouse.WheelUp);
+		} else if (Pressed(var.XI_LT > var.dzTR)) {
+			Press(Mouse.LeftButton);
+		} else if (Released(var.XI_LT > var.dzTR)) {
+			if (Mouse.LeftButton) Release(Mouse.LeftButton);
+			if (Mouse.WheelUp) Release(Mouse.WheelUp);
+			if (Key.Control) Release(Key.Control);
 		}
+		if (Pressed(HeldDown(var.XI_RT >= 1.0, 0.1))) {
+			Press(Key.Control);
+			Press(Mouse.WheelDown);
+		} else if (Pressed(var.XI_RT > var.dzTR)) {
+			Press(Mouse.LeftButton);
+		} else if (Released(var.XI_RT > var.dzTR)) {
+			if (Mouse.LeftButton) Release(Mouse.LeftButton);
+			if (Mouse.WheelDown) Release(Mouse.WheelDown);
+			if (Key.Control) Release(Key.Control);
+		}
+		
 		if (Pressed(var.XI_Back)) {
 		} else if (Released(var.XI_Back)) {
 				  Press(Key.Alt);
@@ -749,7 +766,7 @@ if (var.dummyMode == False) {
 				  Press(Key.Control);
 				Mouse.WheelUp = True;
 				Mouse.WheelUp = False;
-				Release(Key.Control);;
+				Release(Key.Control);
 			}
 		}
 
@@ -775,13 +792,13 @@ if (var.dummyMode == False) {
 				  Press(Key.Control);
 				  Press(Key.W);
 				Release(Key.W);
-				Release(Key.Control);;
+				Release(Key.Control);
 				var.resetCursorPos = True;
 			} else if (var.webMode) {
 				  Press(Key.Control);
 				  Press(Key.W);
 				Release(Key.W);
-				Release(Key.Control);;
+				Release(Key.Control);
 				var.resetCursorPos = True;
 			} else if (Window.AppName == "Windows 종료") {
 				  Press(Key.Enter);

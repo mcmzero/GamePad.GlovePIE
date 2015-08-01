@@ -155,6 +155,9 @@ if (Window.Class != "ForegroundStaging") {
 }
 
 if (Pressed(Key.F9 and Key.alt and Key.control and Key.LeftShift)) {
+	var.supportMode = False;
+	var.dealerMode = False;
+	Wait(0.5 s);
 	Release(Key.LeftShift);
 	Release(Mouse.LeftButton);
 	ExitPIE;
@@ -162,9 +165,16 @@ if (Pressed(Key.F9 and Key.alt and Key.control and Key.LeftShift)) {
 
 if (HeldDown(Window.Class != "D3 Main Window Class", 1)) {
 	if (Window.Class != "ForegroundStaging") {
-		BeepDefault;
+		var.supportMode = False;
+		var.dealerMode = False;
+		Wait(0.5 s);
 		Release(Key.LeftShift);
 		Release(Mouse.LeftButton);
+	}
+}
+if (HeldDown(Window.Class != "D3 Main Window Class", 1)) {
+	if (Window.Class != "ForegroundStaging") {
+		BeepDefault;
 		Chain("gamepad_windows.pie");
 	}
 }
@@ -908,7 +918,7 @@ if (var.LBShift) {
 		Release(Key.LeftShift);
 		  Press(Key.Escape);
 		Release(Key.Escape);
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 440, var.scaleY * 660];;
+		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 440, var.scaleY * 660];
 		[var.cursorX, var.cursorY] = [var.scaleX * 440, var.scaleY * 660];
 		var.RightStickLock = True;
 		if (var.debug) DebugPrint("cursorX: " + var.cursorX + ", cursorY: " + var.cursorY);
