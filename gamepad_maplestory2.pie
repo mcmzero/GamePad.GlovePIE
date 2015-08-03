@@ -8,7 +8,7 @@
 	///////////////////////////////////////
 	var.EnableAutoFire = True;
 	var.normalAttackMode = False;
-	//var.CannonLevel = 40;	// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30)
+	var.CannonLevel = 40;	// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30)
 
 	///////////////////////////////////////
 	//var.EnableChatMode = True;
@@ -413,71 +413,71 @@ if (var.MapleStory2) {
 		if (Key.Eight) Release(Key.Eight);
 	}
 	
-if (var.ChannelMode == False) {
-	if (Pressed(HeldDown(var.XI_A, var.heldDownTime))) {
-	} else if (var.XI_A) {
-		var.turnOnTab = False;
-		var.keepSpace = False;
-		if (var.XI_LT == False and var.XI_RT == False) {
-			if (var.CannonMode) var.CannonMode = False;
-			if (var.AutoFireA) var.AutoFireA = False;
+	if (var.ChannelMode == False) {
+		if (Pressed(HeldDown(var.XI_A, var.heldDownTime))) {
+		} else if (var.XI_A) {
+			var.turnOnTab = False;
+			var.keepSpace = False;
+			if (var.XI_LT == False and var.XI_RT == False) {
+				if (var.CannonMode) var.CannonMode = False;
+				if (var.AutoFireA) var.AutoFireA = False;
+			}
+			if (var.ShiftMode) {
+				if (Not Key.D) Press(Key.D);
+				if (Not Key.Space) Press(Key.Space);
+			} else {
+				if (Not Key.Z) Press(Key.Z);
+				if (Not Key.A) Press(Key.A);
+			}
+		} else if (Released(var.XI_A)) {
+			if (Key.Space) Release(Key.Space);
+			if (Key.Z) Release(Key.Z);
+			if (Key.D) Release(Key.D);
+			if (Key.A and var.AutoFireA == False) Release(Key.A);
 		}
-		if (var.ShiftMode) {
-			if (Not Key.D) Press(Key.D);
-			if (Not Key.Space) Press(Key.Space);
-		} else {
-			if (Not Key.Z) Press(Key.Z);
-			if (Not Key.A) Press(Key.A);
-		}
-	} else if (Released(var.XI_A)) {
-		if (Key.Space) Release(Key.Space);
-		if (Key.Z) Release(Key.Z);
-		if (Key.D) Release(Key.D);
-		if (Key.A and var.AutoFireA == False) Release(Key.A);
-	}
 
-	if (var.XI_X) {
-		var.turnOnTab = False;
-		if (Key.A) Release(Key.A);
-		if (var.ShiftMode) {
-			if (Not Key.E) Press(Key.E);
-		} else {
-			if (Not Key.Q) Press(Key.Q);
+		if (var.XI_X) {
+			var.turnOnTab = False;
+			if (Key.A) Release(Key.A);
+			if (var.ShiftMode) {
+				if (Not Key.E) Press(Key.E);
+			} else {
+				if (Not Key.Q) Press(Key.Q);
+			}
+		} else if (Released(var.XI_X)) {
+			if (Key.E) Release(Key.E);
+			if (Key.Q) Release(Key.Q);
+			if (var.AutoFireA) Press(Key.A);
 		}
-	} else if (Released(var.XI_X)) {
-		if (Key.E) Release(Key.E);
-		if (Key.Q) Release(Key.Q);
-		if (var.AutoFireA) Press(Key.A);
-	}
 
-	if (var.XI_B) {
-		var.turnOnTab = False;
-		if (Key.A) Release(Key.A);
-		if (var.ShiftMode) {
-			if (Not Key.F) Press(Key.F);
-		} else {
-			if (Not Key.S) Press(Key.S);
+		if (var.XI_B) {
+			var.turnOnTab = False;
+			if (Key.A) Release(Key.A);
+			if (var.ShiftMode) {
+				if (Not Key.F) Press(Key.F);
+			} else {
+				if (Not Key.S) Press(Key.S);
+			}
+		} else if (Released(var.XI_B)) {
+			if (Key.F) Release(Key.F);
+			if (Key.S) Release(Key.S);
+			if (var.AutoFireA) Press(Key.A);
 		}
-	} else if (Released(var.XI_B)) {
-		if (Key.F) Release(Key.F);
-		if (Key.S) Release(Key.S);
-		if (var.AutoFireA) Press(Key.A);
-	}
 
-	if (var.XI_Y) {
-		var.turnOnTab = False;
-		if (Key.A) Release(Key.A);
-		if (var.ShiftMode) {
-			if (Not Key.R) Press(Key.R);
-		} else {
-			if (Not Key.W) Press(Key.W);
+		if (var.XI_Y) {
+			var.turnOnTab = False;
+			if (Key.A) Release(Key.A);
+			if (var.ShiftMode) {
+				if (Not Key.R) Press(Key.R);
+			} else {
+				if (Not Key.W) Press(Key.W);
+			}
+		} else if (Released(var.XI_Y)) {
+			if (Key.R) Release(Key.R);
+			if (Key.W) Release(Key.W);
+			if (var.AutoFireA) Press(Key.A);
 		}
-	} else if (Released(var.XI_Y)) {
-		if (Key.R) Release(Key.R);
-		if (Key.W) Release(Key.W);
-		if (var.AutoFireA) Press(Key.A);
 	}
-}
 
 	// 메뉴 호출
 	if (Pressed(HeldDown(var.XI_Back, var.heldDownTime))) {
@@ -610,7 +610,7 @@ if (var.ChannelMode == False) {
 
 	var.ChannelMode = var.ChannelMode xor Pressed(var.XI_LT and var.XI_LThumb);
 	// 채널이동
-	if (var.ChannelMode and Pressed(var.XI_A)) {
+	if (var.ChannelMode and SingleClicked(var.XI_A)) {
 		var.channel_num += var.channel_step;
 		if (var.channel_num > 200) var.channel_num = var.channel_begin;
 
@@ -651,7 +651,7 @@ if (var.ChannelMode == False) {
 		Wait(1 s);
 		var.ChannelMode = False;
 	}
-	if (var.ChannelMode and Pressed(var.XI_B)) {
+	if (var.ChannelMode and SingleClicked(var.XI_B)) {
 		var.channel_num -= var.channel_step;
 		if (var.channel_num < 0) var.channel_num = 200 - var.channel_begin;
 
@@ -692,7 +692,7 @@ if (var.ChannelMode == False) {
 		Wait(1 s);
 		var.ChannelMode = False;
 	}
-	if (var.ChannelMode and Pressed(var.XI_X)) {
+	if (var.ChannelMode and SingleClicked(var.XI_X)) {
 		var.channel_num += var.channel_step * 2;
 		if (var.channel_num > 200) var.channel_num = var.channel_begin;
 
@@ -733,7 +733,7 @@ if (var.ChannelMode == False) {
 		Wait(1 s);
 		var.ChannelMode = False;
 	}
-	if (var.ChannelMode and Pressed(var.XI_Y)) {
+	if (var.ChannelMode and SingleClicked(var.XI_Y)) {
 		var.channel_num -= var.channel_step * 2;
 		if (var.channel_num < 0) var.channel_num = 200 - var.channel_begin;
 
@@ -1235,15 +1235,20 @@ if (var.ChannelMode == False) {
 
 	// 자동 사격
 	if (var.EnableAutoFire) {
-		var.AutoFireButton = var.XI_LT and var.XI_RT and DoubleClicked(var.XI_A);
+		var.AutoFireButton = var.ChannelMode and DoubleClicked(var.XI_A);
 		if (Pressed(var.AutoFireButton)) {
+			BeepDefault;
 			var.AutoFireA = True;
+			Wait(0.5 s);
+			var.ChannelMode = False;
 		}
-		var.CannonButton = var.XI_LT and var.XI_RT and DoubleClicked(var.XI_B);
+		var.CannonButton = var.ChannelMode and DoubleClicked(var.XI_B);
 		var.CannonKeyOn = Key.Alt and Pressed(Key.F1);
 		var.CannonKeyOff = Key.Alt and Pressed(Key.F2);
 		if (Pressed(Mouse.XButton1) or Pressed(var.CannonButton) or Pressed(var.CannonKeyOn)) {
 			var.CannonMode = True;
+			Wait(0.5 s);
+			var.ChannelMode = False;
 		}
 		if (Pressed(var.CannonKeyOff)) {
 			var.CannonMode = False;
@@ -1426,8 +1431,8 @@ if (var.ChannelMode == False) {
 			} else if (var.CannonMode) {
 
 			} else {
-				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == False) Press(Key.A);
-				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == True) Press(Key.X);
+				if (var.AutoFireA and var.OnLeftStick == False and var.normalAttackMode == False) Press(Key.A);
+				if (var.AutoFireA and var.OnLeftStick == False and var.normalAttackMode == True) Press(Key.X);
 				if (var.AutoFireA and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 				if (Key.A) Release(Key.A);
 				if (Key.X) Release(Key.X);
