@@ -6,9 +6,9 @@
 	var.channel_num = var.channel_begin - var.channel_step;
 
 	///////////////////////////////////////
+	//var.normalAttackMode = True;
+	//var.CannonLevel = 50;	// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30), 상하좌우(lv35), 대각선(lv40), 8방향(lv50)
 	var.EnableAutoFire = True;
-	var.normalAttackMode = False;
-	var.CannonLevel = 40;	// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30)
 
 	///////////////////////////////////////
 	//var.EnableChatMode = True;
@@ -38,8 +38,11 @@
 
 	var.arrowKeyPeriod = 0.05;
 	var.autoKeyPeriod = 0.35;
+	var.moveKeyPeriod = 0.5;
 	//한 세트의 총 대기시간
-	var.WaitActionTime = var.autoKeyPeriod * 5 + var.arrowKeyPeriod * 22;
+	var.WaitSkillTime = var.autoKeyPeriod * 3 - 0.1;
+	var.WaitActionTime = var.autoKeyPeriod * 2 + var.arrowKeyPeriod * 21 + var.WaitSkillTime;
+	var.WaitMoveTime = var.moveKeyPeriod * 4 + var.autoKeyPeriod * 2;
 
 	var.rumbleBTNType = 0;
 	var.rumbleBTN = False;
@@ -1237,7 +1240,6 @@ if (var.MapleStory2) {
 	if (var.EnableAutoFire) {
 		var.AutoFireButton = var.ChannelMode and DoubleClicked(var.XI_A);
 		if (Pressed(var.AutoFireButton)) {
-			BeepDefault;
 			var.AutoFireA = True;
 			Wait(0.5 s);
 			var.ChannelMode = False;
@@ -1348,105 +1350,202 @@ if (var.MapleStory2) {
 			if (var.CannonMode and var.CannonLevel == 20) {
 				// 오색나무 숲
 				var.fireLeftDown = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
 				var.fireRight = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
 				var.fireUp = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
+
+				var.randomMoveCode = Random(4);
+				debug = "MoveCode: " + var.randomMoveCode;
+				if (var.oldRandomMoveCode == var.randomMoveCode) {
+					var.randomMoveCode = Random(4);
+					debug = "MoveCode(2nd): " + var.randomMoveCode;
+				}
+				var.oldRandomMoveCode = var.randomMoveCode;
+				if (var.randomMoveCode == 0) var.moveUp2Down = True;
+				if (var.randomMoveCode == 1) var.moveLeft2Right = True;
+				if (var.randomMoveCode == 2) var.moveLeftUp2RightDown = True;
+				if (var.randomMoveCode == 3) var.moveRightUp2LeftDown = True;
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitMoveTime + 0.3 s);
 
 			} else if (var.CannonMode and var.CannonLevel == 25) {
 				// 쉐도우 게이트
 				var.fireLeftUp = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
 				var.fireRightDown = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
 				var.fireRightUp = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
 				var.fireLeftDown = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
 				var.fireLeft = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
 				var.fireRight = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
+
+				var.randomMoveCode = Random(4);
+				debug = "MoveCode: " + var.randomMoveCode;
+				if (var.oldRandomMoveCode == var.randomMoveCode) {
+					var.randomMoveCode = Random(4);
+					debug = "MoveCode(2nd): " + var.randomMoveCode;
+				}
+				var.oldRandomMoveCode = var.randomMoveCode;
+				if (var.randomMoveCode == 0) var.moveUp2Down = True;
+				if (var.randomMoveCode == 1) var.moveLeft2Right = True;
+				if (var.randomMoveCode == 2) var.moveLeftUp2RightDown = True;
+				if (var.randomMoveCode == 3) var.moveRightUp2LeftDown = True;
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitMoveTime + 0.3 s);
 
 			} else if (var.CannonMode and var.CannonLevel == 30) {
 				// 프리즘 폭포
 				var.fireUp = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
 				var.fireDown = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
 				var.fireLeft = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
 				var.fireRight = True;
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime + 0.3 s);
+
+				var.randomMoveCode = Random(4);
+				debug = "MoveCode: " + var.randomMoveCode;
+				if (var.oldRandomMoveCode == var.randomMoveCode) {
+					var.randomMoveCode = Random(4);
+					debug = "MoveCode(2nd): " + var.randomMoveCode;
+				}
+				var.oldRandomMoveCode = var.randomMoveCode;
+				if (var.randomMoveCode == 0) var.moveUp2Down = True;
+				if (var.randomMoveCode == 1) var.moveLeft2Right = True;
+				if (var.randomMoveCode == 2) var.moveLeftUp2RightDown = True;
+				if (var.randomMoveCode == 3) var.moveRightUp2LeftDown = True;
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitMoveTime + 0.3 s);
 
 			} else if (var.CannonMode and var.CannonLevel == 35) {
-				var.randomActionCode = Random(6);		// 공격
-				//debug = "ActionCode: " + var.randomActionCode;
+				var.randomActionCode = Random(5);		// 공격
+				debug = "ActionCode: " + var.randomActionCode;
 				if (var.oldRandomActionCode == var.randomActionCode) {
-					var.randomActionCode = Random(4);	// 공격 + 제자리 이동 추가
+					var.randomActionCode = Random(5);	// 공격 + 제자리 이동 추가
 					debug = "ActionCode(2nd): " + var.randomActionCode;
 				}
 				var.oldRandomActionCode = var.randomActionCode;
 
-				if (var.randomActionCode == 0) {
-					var.fireLeft = True;
-				} else if (var.randomActionCode == 1) {
-					var.fireRight = True;
-				} else if (var.randomActionCode == 2) {
-					var.fireUp = True;
-				} else if (var.randomActionCode == 3) {
-					va.fireDown = True;
-				} else if (var.randomActionCode == 4) {
-					var.moveLeftUp2RightDown = True;
-				} else if (var.randomActionCode == 5) {
-					var.moveRightUp2LeftDown = True;
+				if (var.randomActionCode == 0) var.fireLeft = True;
+				if (var.randomActionCode == 1) var.fireRight = True;
+				if (var.randomActionCode == 2) var.fireUp = True;
+				if (var.randomActionCode == 3) var.fireDown = True;
+				if (var.randomActionCode == 4) {
+					var.randomMoveCode = Random(4);
+					debug = "MoveCode: " + var.randomMoveCode;
+					if (var.oldRandomMoveCode == var.randomMoveCode) {
+						var.randomMoveCode = Random(4);
+						debug = "MoveCode(2nd): " + var.randomMoveCode;
+					}
+					var.oldRandomMoveCode = var.randomMoveCode;
+					if (var.randomMoveCode == 0) var.moveUp2Down = True;
+					if (var.randomMoveCode == 1) var.moveLeft2Right = True;
+					if (var.randomMoveCode == 2) var.moveLeftUp2RightDown = True;
+					if (var.randomMoveCode == 3) var.moveRightUp2LeftDown = True;
 				}
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitMoveTime + 0.3 s);
 
 			} else if (var.CannonMode and var.CannonLevel == 40) {
-				var.randomActionCode = Random(6);		// 공격
-				//debug = "ActionCode: " + var.randomActionCode;
+				var.randomActionCode = Random(5);		// 공격
+				debug = "ActionCode: " + var.randomActionCode + " " + var.WaitActionTime + " " + var.WaitMoveTime;
 				if (var.oldRandomActionCode == var.randomActionCode) {
-					var.randomActionCode = Random(4);	// 공격 + 제자리 이동 추가
-					debug = "ActionCode(2nd): " + var.randomActionCode;
+					var.randomActionCode = Random(5);	// 공격 + 제자리 이동 추가
+					debug = "ActionCode(2nd): " + var.randomActionCode + " " + var.WaitActionTime + " " + var.WaitMoveTime;
 				}
 				var.oldRandomActionCode = var.randomActionCode;
 
-				if (var.randomActionCode == 0) {
-					var.fireLeftUp = True;
-				} else if (var.randomActionCode == 1) {
-					var.fireRightDown = True;
-				} else if (var.randomActionCode == 2) {
-					var.fireRightUp = True;
-				} else if (var.randomActionCode == 3) {
-					var.fireLeftDown = True;
-				} else if (var.randomActionCode == 4) {
-					var.moveUp2Down = True;
-				} else if (var.randomActionCode == 5) {
-					var.moveLeft2Right = True;
+				if (var.randomActionCode == 0) var.fireLeftUp = True;
+				if (var.randomActionCode == 1) var.fireRightDown = True;
+				if (var.randomActionCode == 2) var.fireRightUp = True;
+				if (var.randomActionCode == 3) var.fireLeftDown = True;
+				if (var.randomActionCode == 4) {
+					var.randomMoveCode = Random(4);
+					debug = "MoveCode: " + var.randomMoveCode;
+					if (var.oldRandomMoveCode == var.randomMoveCode) {
+						var.randomMoveCode = Random(4);
+						debug = "MoveCode(2nd): " + var.randomMoveCode;
+					}
+					var.oldRandomMoveCode = var.randomMoveCode;
+					if (var.randomMoveCode == 0) var.moveUp2Down = True;
+					if (var.randomMoveCode == 1) var.moveLeft2Right = True;
+					if (var.randomMoveCode == 2) var.moveLeftUp2RightDown = True;
+					if (var.randomMoveCode == 3) var.moveRightUp2LeftDown = True;
 				}
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitActionTime s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitMoveTime + 0.3 s);
+
+			} else if (var.CannonMode and var.CannonLevel == 50) {
+				var.randomActionCode = Random(9);		// 공격
+				debug = "ActionCode: " + var.randomActionCode + " " + var.WaitActionTime + " " + var.WaitMoveTime;
+				if (var.oldRandomActionCode == var.randomActionCode) {
+					var.randomActionCode = Random(9);	// 공격 + 제자리 이동 추가
+					debug = "ActionCode(2nd): " + var.randomActionCode + " " + var.WaitActionTime + " " + var.WaitMoveTime;
+				}
+				var.oldRandomActionCode = var.randomActionCode;
+
+				if (var.randomActionCode == 0) var.fireLeft = True;
+				if (var.randomActionCode == 1) var.fireRight = True;
+				if (var.randomActionCode == 2) var.fireUp = True;
+				if (var.randomActionCode == 3) var.fireDown = True;
+				if (var.randomActionCode == 4) var.fireLeftUp = True;
+				if (var.randomActionCode == 5) var.fireRightDown = True;
+				if (var.randomActionCode == 6) var.fireRightUp = True;
+				if (var.randomActionCode == 7) var.fireLeftDown = True;
+				if (var.randomActionCode == 8) {
+					var.randomMoveCode = Random(4);
+					debug = "MoveCode: " + var.randomMoveCode;
+					if (var.oldRandomMoveCode == var.randomMoveCode) {
+						var.randomMoveCode = Random(4);
+						debug = "MoveCode(2nd): " + var.randomMoveCode;
+					}
+					var.oldRandomMoveCode = var.randomMoveCode;
+					if (var.randomMoveCode == 0) var.moveUp2Down = True;
+					if (var.randomMoveCode == 1) var.moveLeft2Right = True;
+					if (var.randomMoveCode == 2) var.moveLeftUp2RightDown = True;
+					if (var.randomMoveCode == 3) var.moveRightUp2LeftDown = True;
+				}
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitMoveTime + 0.3 s);
 
 			} else if (var.CannonMode) {
+				var.randomActionCode = Random(8);		// 공격
+				debug = "ActionCode: " + var.randomActionCode + " " + var.WaitActionTime + " " + var.WaitMoveTime;
+				if (var.oldRandomActionCode == var.randomActionCode) {
+					var.randomActionCode = Random(8);	// 공격 + 제자리 이동 추가
+					debug = "ActionCode(2nd): " + var.randomActionCode + " " + var.WaitActionTime + " " + var.WaitMoveTime;
+				}
+				var.oldRandomActionCode = var.randomActionCode;
+
+				if (var.randomActionCode == 0) var.fireLeft = True;
+				if (var.randomActionCode == 1) var.fireRight = True;
+				if (var.randomActionCode == 2) var.fireUp = True;
+				if (var.randomActionCode == 3) var.fireDown = True;
+				if (var.randomActionCode == 4) var.fireLeftUp = True;
+				if (var.randomActionCode == 5) var.fireRightDown = True;
+				if (var.randomActionCode == 6) var.fireRightUp = True;
+				if (var.randomActionCode == 7) var.fireLeftDown = True;
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.WaitMoveTime + 0.3 s);
 
 			} else {
 				if (var.AutoFireA and var.OnLeftStick == False and var.normalAttackMode == False) Press(Key.A);
 				if (var.AutoFireA and var.OnLeftStick == False and var.normalAttackMode == True) Press(Key.X);
-				if (var.AutoFireA and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.AutoFireA and var.OnLeftStick == False) Wait(var.autoKeyPeriod/2 s);
+				if (var.AutoFireA and var.OnLeftStick == False) Wait(var.autoKeyPeriod/2 s);
 				if (Key.A) Release(Key.A);
 				if (Key.X) Release(Key.X);
-				if (var.AutoFireA and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.AutoFireA and var.OnLeftStick == False) Wait(var.autoKeyPeriod/2 s);
+				if (var.AutoFireA and var.OnLeftStick == False) Wait(var.autoKeyPeriod/2 s);
 			}
 
 			// FireSkill
-			if (var.fireRandomSkill) {
-				var.fireRandomSkill = False;
+			if (Pressed(var.fireRandomSkill) and var.normalAttackMode == False) {
 				var.randomSkillCode = Random(5);
-				debug = "SkillCode: " + var.randomSkillCode;
+				//debug = "SkillCode: " + var.randomSkillCode;
 				if (var.oldRandomSkillCode == var.randomSkillCode) {
 					var.randomSkillCode = Random(5);
-					debug = "SkillCode(2nd): " + var.randomSkillCode;
+					//debug = "SkillCode(2nd): " + var.randomSkillCode;
 				}
 				var.oldRandomSkillCode = var.randomSkillCode;
 
@@ -1455,166 +1554,219 @@ if (var.MapleStory2) {
 				if (var.CannonMode and var.OnLeftStick == False and var.randomSkillCode == 2) Press(Key.E);
 				if (var.CannonMode and var.OnLeftStick == False and var.randomSkillCode == 3) Press(Key.R);
 				if (var.CannonMode and var.OnLeftStick == False and var.randomSkillCode == 4) Press(Key.Four);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 3 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod - 0.1 s);
 				if (Key.Q) Release(Key.Q);
 				if (Key.W) Release(Key.W);
 				if (Key.E) Release(Key.E);
 				if (Key.R) Release(Key.R);
 				if (Key.Four) Release(Key.Four);
+				var.fireRandomSkill = False;
 			}
 
 			// FireAttack
 			if (Pressed(var.fireLeft)) {
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == False) Press(Key.A);
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == True) Press(Key.X);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left); 
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
 				if (Key.Left) Release(Key.Left);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
 				if (Key.A) Release(Key.A);
 				if (Key.X) Release(Key.X);
 				var.fireRandomSkill = True;
+				Wait(var.WaitSkillTime s);
 				var.fireLeft = False;
 			}
 			if (Pressed(var.fireRight)) {
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == False) Press(Key.A);
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == True) Press(Key.X);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
 				if (Key.Right) Release(Key.Right);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
 				if (Key.A) Release(Key.A);
 				if (Key.X) Release(Key.X);
 				var.fireRandomSkill = True;
+				Wait(var.WaitSkillTime s);
 				var.fireRight = False;
 			}
 			if (Pressed(var.fireUp)) {
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == False) Press(Key.A);
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == True) Press(Key.X);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up); 
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
 				if (Key.Up) Release(Key.Up);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
 				if (Key.A) Release(Key.A);
 				if (Key.X) Release(Key.X);
 				var.fireRandomSkill = True;
+				Wait(var.WaitSkillTime s);
 				var.fireUp = False;
 			}
 			if (Pressed(var.fireDown)) {
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == False) Press(Key.A);
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == True) Press(Key.X);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
 				if (Key.Down) Release(Key.Down);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
 				if (Key.A) Release(Key.A);
 				if (Key.X) Release(Key.X);
 				var.fireRandomSkill = True;
+				Wait(var.WaitSkillTime s);
 				var.fireDown = False;
 			}
 			if (Pressed(var.fireLeftUp)) {
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == False) Press(Key.A);
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == True) Press(Key.X);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left); 
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up); 
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
 				if (Key.Left) Release(Key.Left);
 				if (Key.Up) Release(Key.Up);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
 				if (Key.A) Release(Key.A);
 				if (Key.X) Release(Key.X);
 				var.fireRandomSkill = True;
+				Wait(var.WaitSkillTime s);
 				var.fireLeftUp = False;
 			}
 			if (Pressed(var.fireLeftDown)) {
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == False) Press(Key.A);
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == True) Press(Key.X);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
 				if (Key.Left) Release(Key.Left);
 				if (Key.Down) Release(Key.Down);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
 				if (Key.A) Release(Key.A);
 				if (Key.X) Release(Key.X);
 				var.fireRandomSkill = True;
+				Wait(var.WaitSkillTime s);
 				var.fireLeftDown = False;
 			}
 			if (Pressed(var.fireRightUp)) {
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == False) Press(Key.A);
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == True) Press(Key.X);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right); 
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up); 
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
 				if (Key.Right) Release(Key.Right);
 				if (Key.Up) Release(Key.Up);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
 				if (Key.A) Release(Key.A);
 				if (Key.X) Release(Key.X);
 				var.fireRandomSkill = True;
+				Wait(var.WaitSkillTime s);
 				var.fireRightUp = False;
 			}
 			if (Pressed(var.fireRightDown)) {
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == False) Press(Key.A);
 				if (var.CannonMode and var.OnLeftStick == False and var.normalAttackMode == True) Press(Key.X);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod * 2 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 20 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 5 s);
 				if (Key.Right) Release(Key.Right);
 				if (Key.Down) Release(Key.Down);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod s);
 				if (Key.A) Release(Key.A);
 				if (Key.X) Release(Key.X);
 				var.fireRandomSkill = True;
+				Wait(var.WaitSkillTime s);
 				var.fireRightDown = False;
 			}
+
 			// Move
 			if (Pressed(var.moveLeft2Right)) {
 				//Left
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
 				if (Key.Left) Release(Key.Left);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+
 				//Right
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
 				if (Key.Right) Release(Key.Right);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
-				var.moveLeftRight = False;
+				var.moveLeft2Right = False;
 			}
 			if (Pressed(var.moveUp2Down)) {
 				//Up
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
 				if (Key.Up) Release(Key.Up);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+
 				//Down
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
 				if (Key.Down) Release(Key.Down);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
-				var.moveUpDown = False;
+				var.moveUp2Down = False;
 			}
 			if (Pressed(var.moveLeftUp2RightDown)) {
 				//Left+Up
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
 				if (Key.Left) Release(Key.Left);
 				if (Key.Up) Release(Key.Up);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+
 				//Right+Down
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
 				if (Key.Right) Release(Key.Right);
 				if (Key.Down) Release(Key.Down);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
@@ -1624,14 +1776,17 @@ if (var.MapleStory2) {
 				//Right+Up
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Right);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Up);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
 				if (Key.Right) Release(Key.Right);
 				if (Key.Up) Release(Key.Up);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
+
 				//Left+Down
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Left);
 				if (var.CannonMode and var.OnLeftStick == False) Press(Key.Down);
-				if (var.CannonMode and var.OnLeftStick == False) Wait(var.arrowKeyPeriod * 4 s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
+				if (var.CannonMode and var.OnLeftStick == False) Wait(var.moveKeyPeriod s);
 				if (Key.Left) Release(Key.Left);
 				if (Key.Down) Release(Key.Down);
 				if (var.CannonMode and var.OnLeftStick == False) Wait(var.autoKeyPeriod s);
