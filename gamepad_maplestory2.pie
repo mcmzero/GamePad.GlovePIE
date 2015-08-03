@@ -7,7 +7,7 @@
 
 	///////////////////////////////////////
 	//var.normalAttackMode = True;
-	//var.CannonLevel = 50;	// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30), 상하좌우(lv35), 대각선(lv40), 8방향(lv50)
+	var.CannonLevel = 50;	// 오색나무 숲(lv20), 쉐도우 게이트(lv25), 프리즘 폭포(lv30), 상하좌우(lv35), 대각선(lv40), 8방향(lv50)
 	var.EnableAutoFire = True;
 
 	///////////////////////////////////////
@@ -628,16 +628,19 @@ if (var.MapleStory2) {
 
 		Display("");
 		Display("채널이동");
+		Wait(0.5 s);
+		Display(var.channel_num);
+
 		Wait(1 s);
-		Display("5");
+		Display("Five");
 		Wait(1 s);
-		Display("4");
+		Display("Four");
 		Wait(1 s);
-		Display("3");
+		Display("Three");
 		Wait(1 s);
-		Display("2");
+		Display("Two");
 		Wait(1 s);
-		Display("1");
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -669,16 +672,19 @@ if (var.MapleStory2) {
 
 		Display("");
 		Display("채널이동");
+		Wait(0.5 s);
+		Display(var.channel_num);
+
 		Wait(1 s);
-		Display("5");
+		Display("Five");
 		Wait(1 s);
-		Display("4");
+		Display("Four");
 		Wait(1 s);
-		Display("3");
+		Display("Three");
 		Wait(1 s);
-		Display("2");
+		Display("Two");
 		Wait(1 s);
-		Display("1");
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -710,16 +716,19 @@ if (var.MapleStory2) {
 
 		Display("");
 		Display("채널이동");
+		Wait(0.5 s);
+		Display(var.channel_num);
+
 		Wait(1 s);
-		Display("5");
+		Display("Five");
 		Wait(1 s);
-		Display("4");
+		Display("Four");
 		Wait(1 s);
-		Display("3");
+		Display("Three");
 		Wait(1 s);
-		Display("2");
+		Display("Two");
 		Wait(1 s);
-		Display("1");
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -751,16 +760,19 @@ if (var.MapleStory2) {
 
 		Display("");
 		Display("채널이동");
+		Wait(0.5 s);
+		Display(var.channel_num);
+
 		Wait(1 s);
-		Display("5");
+		Display("Five");
 		Wait(1 s);
-		Display("4");
+		Display("Four");
 		Wait(1 s);
-		Display("3");
+		Display("Three");
 		Wait(1 s);
-		Display("2");
+		Display("Two");
 		Wait(1 s);
-		Display("1");
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -793,11 +805,14 @@ if (var.MapleStory2) {
 		Display("");
 		Display("채널이동");
 		Wait(0.5 s);
-		Display("3");
-		Wait(0.5 s);
-		Display("2");
-		Wait(0.5 s);
-		Display("1");
+		Display(var.channel_num);
+
+		Wait(1 s);
+		Display("Three");
+		Wait(1 s);
+		Display("Two");
+		Wait(1 s);
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -827,11 +842,14 @@ if (var.MapleStory2) {
 		Display("");
 		Display("채널이동");
 		Wait(0.5 s);
-		Display("3");
-		Wait(0.5 s);
-		Display("2");
-		Wait(0.5 s);
-		Display("1");
+		Display(var.channel_num);
+
+		Wait(1 s);
+		Display("Three");
+		Wait(1 s);
+		Display("Two");
+		Wait(1 s);
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -861,11 +879,14 @@ if (var.MapleStory2) {
 		Display("");
 		Display("채널이동");
 		Wait(0.5 s);
-		Display("3");
-		Wait(0.5 s);
-		Display("2");
-		Wait(0.5 s);
-		Display("1");
+		Display(var.channel_num);
+
+		Wait(1 s);
+		Display("Three");
+		Wait(1 s);
+		Display("Two");
+		Wait(1 s);
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -895,11 +916,14 @@ if (var.MapleStory2) {
 		Display("");
 		Display("채널이동");
 		Wait(0.5 s);
-		Display("3");
-		Wait(0.5 s);
-		Display("2");
-		Wait(0.5 s);
-		Display("1");
+		Display(var.channel_num);
+
+		Wait(1 s);
+		Display("Three");
+		Wait(1 s);
+		Display("Two");
+		Wait(1 s);
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -929,11 +953,14 @@ if (var.MapleStory2) {
 		Display("");
 		Display("채널이동");
 		Wait(0.5 s);
-		Display("3");
-		Wait(0.5 s);
-		Display("2");
-		Wait(0.5 s);
-		Display("1");
+		Display(var.channel_num);
+
+		Wait(1 s);
+		Display("Three");
+		Wait(1 s);
+		Display("Two");
+		Wait(1 s);
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -963,11 +990,14 @@ if (var.MapleStory2) {
 		Display("");
 		Display("채널이동");
 		Wait(0.5 s);
-		Display("3");
-		Wait(0.5 s);
-		Display("2");
-		Wait(0.5 s);
-		Display("1");
+		Display(var.channel_num);
+
+		Wait(1 s);
+		Display("Three");
+		Wait(1 s);
+		Display("Two");
+		Wait(1 s);
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -997,12 +1027,14 @@ if (var.MapleStory2) {
 		Display("");
 		Display("채널이동");
 		Wait(0.5 s);
-		Display("3");
-		Wait(0.5 s);
-		Display("2");
-		Wait(0.5 s);
-		Display("1");
+		Display(var.channel_num);
 
+		Wait(1 s);
+		Display("Three");
+		Wait(1 s);
+		Display("Two");
+		Wait(1 s);
+		Display("One");
 		var.CannonMode = False;
 		var.AutoFireA = False;
 		Wait(0.5 s);
@@ -1031,11 +1063,14 @@ if (var.MapleStory2) {
 		Display("");
 		Display("채널이동");
 		Wait(0.5 s);
-		Display("3");
-		Wait(0.5 s);
-		Display("2");
-		Wait(0.5 s);
-		Display("1");
+		Display(var.channel_num);
+
+		Wait(1 s);
+		Display("Three");
+		Wait(1 s);
+		Display("Two");
+		Wait(1 s);
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -1065,11 +1100,14 @@ if (var.MapleStory2) {
 		Display("");
 		Display("채널이동");
 		Wait(0.5 s);
-		Display("3");
-		Wait(0.5 s);
-		Display("2");
-		Wait(0.5 s);
-		Display("1");
+		Display(var.channel_num);
+
+		Wait(1 s);
+		Display("Three");
+		Wait(1 s);
+		Display("Two");
+		Wait(1 s);
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -1099,11 +1137,14 @@ if (var.MapleStory2) {
 		Display("");
 		Display("채널이동");
 		Wait(0.5 s);
-		Display("3");
-		Wait(0.5 s);
-		Display("2");
-		Wait(0.5 s);
-		Display("1");
+		Display(var.channel_num);
+
+		Wait(1 s);
+		Display("Three");
+		Wait(1 s);
+		Display("Two");
+		Wait(1 s);
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
@@ -1133,11 +1174,14 @@ if (var.MapleStory2) {
 		Display("");
 		Display("채널이동");
 		Wait(0.5 s);
-		Display("3");
-		Wait(0.5 s);
-		Display("2");
-		Wait(0.5 s);
-		Display("1");
+		Display(var.channel_num);
+
+		Wait(1 s);
+		Display("Three");
+		Wait(1 s);
+		Display("Two");
+		Wait(1 s);
+		Display("One");
 
 		var.CannonMode = False;
 		var.AutoFireA = False;
