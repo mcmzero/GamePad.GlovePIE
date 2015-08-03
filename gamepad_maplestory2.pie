@@ -34,7 +34,7 @@
 
 	var.dzL = 0.2;
 	var.dzR = 0.2;
-	var.dzTR = 0.2;
+	var.dzTR = 0.25;
 
 	var.arrowKeyPeriod = 0.05;
 	var.autoKeyPeriod = 0.35;
