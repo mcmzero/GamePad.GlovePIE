@@ -24,6 +24,17 @@
 	var.rumbleBTNType = 0;
 	var.rumbleBTN = False;
 	var.heldDownTime = 0.3;
+
+	// Reset Yoro Mouse
+	Wait(4 s);
+	Press(Key.LeftControl);
+	Press(Key.LeftShift);
+	Press(Key.LeftAlt);
+	Press(Key.Zero);
+	Release(Key.Zero);
+	Release(Key.LeftAlt);
+	Release(Key.LeftShift);
+	Release(Key.LeftControl);
 }
 
 if (Pressed(Key.F2 and Key.F9 and Key.alt and Key.control and Key.shift)) {
@@ -85,16 +96,6 @@ if (var.windowClass != Window.Class) {
 	} else {
 		var.dummyMode = False;
 	}
-
-	// Reset Yoro Mouse
-	Press(Key.LeftControl);
-	Press(Key.LeftShift);
-	Press(Key.LeftAlt);
-	Press(Key.Zero);
-	Release(Key.Zero);
-	Release(Key.LeftAlt);
-	Release(Key.LeftShift);
-	Release(Key.LeftControl);
 }
 
 if (var.dummyMode == False) {
