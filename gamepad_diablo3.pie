@@ -8,8 +8,8 @@
 //
 // 각종 안내창 열기: LB+A(프로필), LB+B(순위표), LB+X(커뮤니티), LB+Y(친구)
 //
-// 자동 수리 / 분해: 수리창 열린 상태에서 LB+UP
-// (대)균열 신청: LB+DOWN (가방 (7,4), (7,5), (8,5) 세칸의 석(파편,시험석,균열석)을 사용) - 좌상 기준 (0,0)칸 부터 시작
+// 자동 수리 / 분해: 수리창 열린 상태에서 LB+X
+// (대)균열 신청: LB+A (가방 (7,4), (7,5), (8,5) 세칸의 석(파편,시험석,균열석)을 사용) - 좌상 기준 (0,0)칸 부터 시작
 //
 // 깃발: Down
 // 마을: Right 길게
@@ -47,7 +47,7 @@ if starting {
 	var.classDefaultType = var.classMeleeType;
 	var.classType = var.classDefaultType;				
 	var.testMode = False;
-	var.waitButton = 0.18;			// seconds
+	var.waitButton = 0.2;			// seconds
 
 	var.crusader = var.waitButton;
 	var.witchDoctor = 1.16;
@@ -59,7 +59,6 @@ if starting {
 	var.spinSpeed = 5;						// 회전 속도
 	var.spinAngle = 180 - var.spinSpeed;	// 회전 각도(시작)
 
-	var.SmoothCount = 10;
 	var.attackSpeed = 2.00;			// 2.02 // 1.71 // Attack Speed setting
 	var.useVibration = 0;			// vibration on:1 , off:0
 	var.rootingType = 1; 			// 1: root all 0: root one by one
@@ -103,9 +102,11 @@ if (Window.Class != "ForegroundStaging") {
 	if ([var.INIT_WINDOW_W, var.INIT_WINDOW_H] != [Window.Left + Window.Width, Window.Top + Window.Height]) {
 		[var.INIT_WINDOW_W, var.INIT_WINDOW_H] = [Window.Left + Window.Width, Window.Top + Window.Height];
 
+/*
 		if (var.classMode == var.crusader) Display("diablo buff Crusader");
 		if (var.classMode == var.witchDoctor) Display("diablo full Witch doctor");
 		if (var.classMode == var.witchDoctorHalf) Display("diablo semi Witch doctor");
+*/
 
 		if (var.debug) DebugPrint("[" + Window.Class + "]: " + window.width + " x " + window.height);
 		var.leftborder = (window.Width - window.ClientWidth) / 2;
@@ -162,95 +163,71 @@ if (Pressed(Key.F9 and Key.alt and Key.control and Key.LeftShift)) {
 	Release(Mouse.LeftButton);
 	ExitPIE;
 }
-
-if (HeldDown(Window.Class != "D3 Main Window Class", 1)) {
-	if (Window.Class != "ForegroundStaging") {
-		var.supportMode = False;
-		var.dealerMode = False;
-		Wait(0.5 s);
-		Release(Key.LeftShift);
-		Release(Mouse.LeftButton);
-	}
+if (Window.Class != "D3 Main Window Class") {
+	var.supportMode = False;
+	var.dealerMode = False;
+	var.autofireMode = False;
+	Wait(0.5 s);
+	Release(Key.LeftShift);
+	Release(Mouse.LeftButton);
 }
 if (HeldDown(Window.Class != "D3 Main Window Class", 1)) {
 	if (Window.Class != "ForegroundStaging") {
-		BeepDefault;
 		Chain("gamepad_windows.pie");
 	}
 }
 
-	//////////////////////////////////////////
-	// Joystick Mapping
-	//debug = Joystick.Count + " " + XInput1.Exists + " " + XInput2.Exists;
-/*
-	if (XInput1.Exists == False and XInput2.Exists == False and XInput3.Exists == False and XInput4.Exists == False) {
-		//if (Mouse.LeftButton or Mouse.RightButton) var.joyResetCount = 0;
-		//if (var.XI_J1X or var.XI_J1Y or var.XI_J2X or var.XI_J2Y) var.joyResetCount = 0;
-		//if (var.XI_LT or var.XI_RT) var.joyResetCount = 0;
-		if (var.XI_A or var.XI_B or var.XI_X or var.XI_Y) var.joyResetCount = 0;
-		if (var.XI_LB or var.XI_RB) var.joyResetCount = 0;
-		if (var.XI_LThumb or var.XI_RThumb or var.XI_Back or var.XI_Start) var.joyResetCount = 0;
-		if (var.XI_Up or var.XI_Down or var.XI_Left or var.XI_Right) var.joyResetCount = 0;
-		if (Key.Control or Key.Shift or Key.Alt or Key.Space) var.joyResetCount = 0;
-		if (Key.Up or Key.Down or Key.Left or Key.Right) var.joyResetCount = 0;
-
-		if (var.joyResetCount > var.joyResetTime and var.AutoFireA = False and var.supportMode = False and var.dealerMode == False) {
-			Chain(var.piename);
-		} else {
-			Wait(1 s);
-			var.joyResetCount++;
-		}
+//////////////////////////////////////////
+// Joystick Mapping
+var.XI_J1X    = 0;
+var.XI_J1Y    = 0;
+var.XI_J2X    = 0;
+var.XI_J2Y    = 0;
+var.XI_LT     = 0;
+var.XI_RT     = 0;
+if (Joystick.Count > 0) {
+	if (abs(Joystick.X) > 0 or abs(Joystick.Y) > 0 or abs(Joystick.Z) > 0 or abs(Joystick.Roll) > 0 or abs((Joystick.pitch + 1) / 2) > 0 or abs((Joystick.yaw + 1) / 2) > 0) {
+		var.JoyMode = True;
+		var.XI_J1X    = Joystick.X; 
+		var.XI_J1Y    = -Joystick.Y; 
+		var.XI_J2X    = Joystick.Z; 
+		var.XI_J2Y    = -Joystick.Roll; 
+		var.XI_LT     = (Joystick.pitch + 1) / 2;
+		var.XI_RT     = (Joystick.yaw + 1) / 2;
 	}
-*/
-	var.XI_J1X    = 0;
-	var.XI_J1Y    = 0;
-	var.XI_J2X    = 0;
-	var.XI_J2Y    = 0;
-	var.XI_LT     = 0;
-	var.XI_RT     = 0;
-	if (Joystick.Count > 0) {
-		if (abs(Joystick.X) > 0 or abs(Joystick.Y) > 0 or abs(Joystick.Z) > 0 or abs(Joystick.Roll) > 0 or abs((Joystick.pitch + 1) / 2) > 0 or abs((Joystick.yaw + 1) / 2) > 0) {
-			var.JoyMode = True;
-			var.XI_J1X    = Joystick.X; 
-			var.XI_J1Y    = -Joystick.Y; 
-			var.XI_J2X    = Joystick.Z; 
-			var.XI_J2Y    = -Joystick.Roll; 
-			var.XI_LT     = (Joystick.pitch + 1) / 2;
-			var.XI_RT     = (Joystick.yaw + 1) / 2;
-		}
-	}
-	if (abs(XInput.Joy1X) > 0 or abs(XInput.Joy1Y) > 0 or abs(XInput.Joy2X) > 0 or abs(XInput.Joy2Y) > 0 or abs(XInput.LeftTrigger) > 0 or abs(XInput.RightTrigger) > 0) {
-		var.JoyMode = False;
-		var.XI_J1X    = XInput.Joy1X;
-		var.XI_J1Y    = XInput.Joy1Y;
-		var.XI_J2X    = XInput.Joy2X;
-		var.XI_J2Y    = XInput.Joy2Y;
-		var.XI_LT     = XInput.LeftTrigger;
-		var.XI_RT     = XInput.RightTrigger;
-	}
-	if (abs(XInput2.Joy1X) > 0 or abs(XInput2.Joy1Y) > 0 or abs(XInput2.Joy2X) > 0 or abs(XInput2.Joy2Y) > 0 or abs(XInput2.LeftTrigger) > 0 or abs(XInput2.RightTrigger) > 0) {
-		var.JoyMode = False;
-		var.XI_J1X    = XInput2.Joy1X;
-		var.XI_J1Y    = XInput2.Joy1Y;
-		var.XI_J2X    = XInput2.Joy2X;
-		var.XI_J2Y    = XInput2.Joy2Y;
-		var.XI_LT     = XInput2.LeftTrigger;
-		var.XI_RT     = XInput2.RightTrigger;
-	}
-	var.XI_A      = XInput.A or XInput2.A or (var.JoyMode and Joystick.button2);
-	var.XI_B      = XInput.B or XInput2.B or (var.JoyMode and Joystick.button3);
-	var.XI_X      = XInput.X or XInput2.X or (var.JoyMode and Joystick.button1);
-	var.XI_Y      = XInput.Y or XInput2.Y or (var.JoyMode and Joystick.button4);
-	var.XI_LB     = XInput.LeftShoulder  or XInput2.LeftShoulder  or (var.JoyMode and Joystick.button5);
-	var.XI_RB     = XInput.RightShoulder or XInput2.RightShoulder or (var.JoyMode and Joystick.button6);
-	var.XI_LThumb = XInput.LeftThumb     or XInput2.LeftThumb     or (var.JoyMode and Joystick.button11);
-	var.XI_RThumb = XInput.RightThumb    or XInput2.RightThumb    or (var.JoyMode and Joystick.button12);
-	var.XI_Up     = XInput.Up    or XInput2.Up    or (var.JoyMode and Joystick.Pov1 == 0);
-	var.XI_Down   = XInput.Down  or XInput2.Down  or (var.JoyMode and Joystick.Pov1 == 180);
-	var.XI_Left   = XInput.Left  or XInput2.Left  or (var.JoyMode and Joystick.Pov1 == 270);
-	var.XI_Right  = XInput.Right or XInput2.Right or (var.JoyMode and Joystick.Pov1 == 90);
-	var.XI_Back   = XInput.Back  or XInput2.Back  or (var.JoyMode and Joystick.button9)  or (var.JoyMode and Joystick.Button14);
-	var.XI_Start  = XInput.Start or XInput2.Start or (var.JoyMode and Joystick.button10) or (var.JoyMode and Joystick.Button13);
+}
+if (abs(XInput.Joy1X) > 0 or abs(XInput.Joy1Y) > 0 or abs(XInput.Joy2X) > 0 or abs(XInput.Joy2Y) > 0 or abs(XInput.LeftTrigger) > 0 or abs(XInput.RightTrigger) > 0) {
+	var.JoyMode = False;
+	var.XI_J1X    = XInput.Joy1X;
+	var.XI_J1Y    = XInput.Joy1Y;
+	var.XI_J2X    = XInput.Joy2X;
+	var.XI_J2Y    = XInput.Joy2Y;
+	var.XI_LT     = XInput.LeftTrigger;
+	var.XI_RT     = XInput.RightTrigger;
+}
+if (abs(XInput2.Joy1X) > 0 or abs(XInput2.Joy1Y) > 0 or abs(XInput2.Joy2X) > 0 or abs(XInput2.Joy2Y) > 0 or abs(XInput2.LeftTrigger) > 0 or abs(XInput2.RightTrigger) > 0) {
+	var.JoyMode = False;
+	var.XI_J1X    = XInput2.Joy1X;
+	var.XI_J1Y    = XInput2.Joy1Y;
+	var.XI_J2X    = XInput2.Joy2X;
+	var.XI_J2Y    = XInput2.Joy2Y;
+	var.XI_LT     = XInput2.LeftTrigger;
+	var.XI_RT     = XInput2.RightTrigger;
+}
+var.XI_A      = XInput.A or XInput2.A or (var.JoyMode and Joystick.button2);
+var.XI_B      = XInput.B or XInput2.B or (var.JoyMode and Joystick.button3);
+var.XI_X      = XInput.X or XInput2.X or (var.JoyMode and Joystick.button1);
+var.XI_Y      = XInput.Y or XInput2.Y or (var.JoyMode and Joystick.button4);
+var.XI_LB     = XInput.LeftShoulder  or XInput2.LeftShoulder  or (var.JoyMode and Joystick.button5);
+var.XI_RB     = XInput.RightShoulder or XInput2.RightShoulder or (var.JoyMode and Joystick.button6);
+var.XI_LThumb = XInput.LeftThumb     or XInput2.LeftThumb     or (var.JoyMode and Joystick.button11);
+var.XI_RThumb = XInput.RightThumb    or XInput2.RightThumb    or (var.JoyMode and Joystick.button12);
+var.XI_Up     = XInput.Up    or XInput2.Up    or (var.JoyMode and Joystick.Pov1 == 0);
+var.XI_Down   = XInput.Down  or XInput2.Down  or (var.JoyMode and Joystick.Pov1 == 180);
+var.XI_Left   = XInput.Left  or XInput2.Left  or (var.JoyMode and Joystick.Pov1 == 270);
+var.XI_Right  = XInput.Right or XInput2.Right or (var.JoyMode and Joystick.Pov1 == 90);
+var.XI_Back   = XInput.Back  or XInput2.Back  or (var.JoyMode and Joystick.button9)  or (var.JoyMode and Joystick.Button14);
+var.XI_Start  = XInput.Start or XInput2.Start or (var.JoyMode and Joystick.button10) or (var.JoyMode and Joystick.Button13);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Stick Moving
@@ -260,13 +237,6 @@ var.LTrigger = var.XI_LT > var.dzTR;
 var.RTrigger = var.XI_RT > var.dzTR;
 var.Shoulder = var.XI_LB or var.XI_RB;
 var.Button = var.XI_A or var.XI_X or var.XI_Y;
-/*
-if (var.supportMode or var.dealerMode or var.classType == var.classMeleeType) {
-	var.toggleSpring = var.XI_LT > var.dzTR;
-} else {
-	var.toggleSpring = var.XI_RT > var.dzTR;
-}
-*/
 var.toggleSpring = var.XI_LT > var.dzTR;
 
 if (var.toggleRootingMode) {
@@ -366,6 +336,7 @@ if (var.LBShift == False) {
 			var.OnRightStick = True;	// RightStick
 			var.RightStickLock = True;	// RightSticking
 		}
+		var.OffRightStick = not var.OnRightStick;
 	} else {
 		// Charactor Moving
 		if (var.cjx or var.cjy or ((var.toggleSpring or var.dealerMode) and var.RightStickLock == False)) {
@@ -439,84 +410,58 @@ if (var.LBShift == False) {
 			}
 			var.OnLeftStick = False;
 		}
+		var.OffLeftStick = not var.OnLeftStick;
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // character moving or mouse click
 //
-
-//if (Released(Mouse.LeftButton) or Released(Key.LeftShift)) var.pressMouseLeftButton = False;
-if (Released(Mouse.RightButton)) var.pressMouseLeftButton = False;
-
 if (var.toggleChatMode == False and var.LBShift == False) {
+	var.IsStunMode = var.supportMode and var.autofireMode == False and var.OffLeftStick and var.toggleRootingMode == False;
+	var.IsSupportMode = var.supportMode and var.autofireMode == True and var.OffLeftStick and var.toggleRootingMode == False;
+	var.IsAutoFireMode = var.supportMode == False and var.autofireMode == True and var.OffLeftStick and var.toggleRootingMode == False;
+	var.IsDealerMode = var.dealerMode and var.toggleRootingMode == False;
+
 	if (var.XI_RT > var.dzTR) {
 		if (Pressed(var.XI_RT > var.dzTR)) Release(Key.LeftShift);
 		Wait(25 ms);
-		Release(Key.F10);
-		  Press(Key.LeftShift);
+		if (Key.F10) Release(Key.F10);
+		Press(Key.LeftShift);
 	} else if (var.XI_LT > var.dzTR) {
-		Release(Key.F10);
-	} else if (var.dealerMode and var.toggleRootingMode == False and var.toggleChatMode == False) {
-		// Dealer Mode
-		Release(Key.F10);
-		if (var.pressMouseLeftButton == False) {
-			//BeepHand;
-			var.pressMouseLeftButton = True;
-			//Press(Key.LeftShift);
-			  Press(Mouse.RightButton);
-		}
-	} else if (var.supportMode and var.autofireMode == False and var.OnLeftStick == False and var.toggleRootingMode == False) {
-		// Stun Mode
-		Release(Key.F10);
+		if (Key.F10) Release(Key.F10);
+	} else if (var.IsStunMode) {
+		if (Key.F10) Release(Key.F10);
+		Press(Mouse.RightButton);
+		Release(Mouse.RightButton);
 		if (var.classMode >= var.witchDoctor) {
-			//Press(Key.LeftShift);
-			  Press(Mouse.RightButton);
-			Release(Mouse.RightButton);
-			//Release(Key.LeftShift);
 			Wait(var.waitDog / 2 s);
-			  Press(Key.Three);
+			Press(Key.Three);
 			Release(Key.Three);
 			Wait(var.waitDog / 2 s);
-		} else {
-			//Press(Key.LeftShift);
-			  Press(Mouse.RightButton);
-			Release(Mouse.RightButton);
-			//Release(Key.LeftShift);
-			Wait(var.waitDog s);
 		}
-	} else if (var.supportMode and var.autofireMode == True and var.OnLeftStick == False and var.toggleRootingMode == False) {
-		// Support Mode
-		Release(Key.F10);
+		Wait(var.waitDog s);
+	} else if (var.IsSupportMode) {
+		if (Key.F10) Release(Key.F10);
 		if (not (var.classMode == var.crusader and var.XI_RT > var.dzTR)) {
 			if (var.classMode >= var.witchDoctor) {
 				if (var.OnRightStick) {
-					//Press(Key.LeftShift);
-					  Press(Mouse.RightButton);
+					Press(Mouse.RightButton);
 					Release(Mouse.RightButton);
-					//Release(Key.LeftShift);
 					Wait(var.waitDog / 2 s);
-					  Press(Key.Three);
+					Press(Key.Three);
 					Release(Key.Three);
 					Wait(var.waitDog / 2 s);
 				}
 			} else {
-				//Press(Key.LeftShift);
-				  Press(Mouse.RightButton);
+				Press(Mouse.RightButton);
 				Release(Mouse.RightButton);
-				//Release(Key.LeftShift);
 				Wait(var.waitDog s);
 			}
 		}
-	} else if (var.supportMode == False and var.autofireMode == True and var.OnLeftStick == False and var.toggleRootingMode == False) {
-		// Auto fire Mode
-		Release(Key.F10);
-		if (var.pressMouseLeftButton == False) {
-			//BeepHand;
-			var.pressMouseLeftButton = True;
-			  //Press(Key.LeftShift);
-			  Press(Mouse.RightButton);
-		}
+	} else if (var.IsAutoFireMode or var.IsDealerMode) {
+		if (Key.F10) Release(Key.F10);
+		if (not Mouse.RightButton) Press(Mouse.RightButton);
 	} else {
 		// Rooting Mode
 		if (var.toggleStick) {
@@ -534,7 +479,7 @@ if (var.toggleChatMode == False and var.LBShift == False) {
 		var.mya    = Smooth(var.mya, 6);
 		var.mxaOff = Smooth(var.mxaOff, 6);
 		var.myaOff = Smooth(var.myaOff, 6);
-		
+
 		var.mxa    = EnsureMapRange(var.mxa, -1.0, 1.0, -var.circleRooting, var.circleRooting);
 		var.mya    = EnsureMapRange(var.mya, -1.0, 1.0, -var.circleRooting, var.circleRooting);
 		var.mxaOff = EnsureMapRange(var.mxaOff, -1.0, 1.0, -var.circleRooting, var.circleRooting);
@@ -542,67 +487,68 @@ if (var.toggleChatMode == False and var.LBShift == False) {
 
 		if (var.toggleRootingMode) {
 			if (var.rootingType == 1) {
-				  Press(Mouse.LeftButton) = [var.mxa, var.mya];
+				Press(Mouse.LeftButton) = [var.mxa, var.mya];
 				Release(Mouse.LeftButton) = [var.mxaOff, var.myaOff];
 			} else {
 				if (var.toggleStick) {
-					  Press(Key.LeftControl) = var.XI_J2X < var.dzL4Root;
-					  Press(Key.LeftControl) = var.XI_J2Y < var.dzL4Root;
+					Press(Key.LeftControl) = var.XI_J2X < var.dzL4Root;
+					Press(Key.LeftControl) = var.XI_J2Y < var.dzL4Root;
 					Release(Key.LeftControl) = var.XI_J2X > var.dzL4Root;
 					Release(Key.LeftControl) = var.XI_J2Y > var.dzL4Root;
 				} else {
-					  Press(Key.LeftControl) = var.XI_J1X < var.dzL4Root;
-					  Press(Key.LeftControl) = var.XI_J1Y < var.dzL4Root;
+					Press(Key.LeftControl) = var.XI_J1X < var.dzL4Root;
+					Press(Key.LeftControl) = var.XI_J1Y < var.dzL4Root;
 					Release(Key.LeftControl) = var.XI_J1X > var.dzL4Root;
 					Release(Key.LeftControl) = var.XI_J1Y > var.dzL4Root;
 				}
 			}
 		}
 		if (var.toggleRootingMode and var.rootingType == 1) {
-			Release(Key.F10);
+			if (Key.F10) Release(Key.F10);
 		} else {
 			if ([var.mxa, var.mya] != [0, 0]) Press(Key.F10) = [var.mxa, var.mya];
 			if (Released([var.mxa, var.mya])) {
-				Release(Key.F10);
-				Release(Key.LeftShift);
+				if (Key.F10) Release(Key.F10);
+				if (Key.LeftShift) Release(Key.LeftShift);
 			}
-			//if (var.debug) DebugPrint(var.mxa + ", " + var.mya);
 		}
 	}
 }
 
 ////////////////////////////////////////////////////
-// Toggle Shift mode
-//
+// Yoro Mouse Setting
 if (Pressed(var.resetMouseColor)) {
-	var.resetMouseColor = False;
-	  Press(Key.LeftControl);
-	  Press(Key.LeftShift);
-	  Press(Key.LeftAlt);
+	Press(Key.LeftControl);
+	Press(Key.LeftShift);
+	Press(Key.LeftAlt);
 	if (var.supportMode and var.classMode == var.crusader) {
-		  Press(Key.Seven);
+		Press(Key.Seven);
 		Release(Key.Seven);
 	} else if (var.supportMode and var.classMode != var.crusader) {
-		  Press(Key.Eight);
+		Press(Key.Eight);
 		Release(Key.Eight);
 	} else if (var.dealerMode and var.testMode == False) {
-		  Press(Key.Seven);
+		Press(Key.Seven);
 		Release(Key.Seven);
 	} else if (var.dealerMode and var.testMode == True) {
-		  Press(Key.Eight);
+		Press(Key.Eight);
 		Release(Key.Eight);
 	} else if (var.classType == var.classMeleeType) {
-		  Press(Key.One);
+		Press(Key.One);
 		Release(Key.One);
 	} else if (var.classType >= var.classRangeType) {
-		  Press(Key.Two);
+		Press(Key.Two);
 		Release(Key.Two);
 	}
 	Release(Key.LeftAlt);
 	Release(Key.LeftShift);
 	Release(Key.LeftControl);
+	var.resetMouseColor = False;
 }
 
+////////////////////////////////////////////////////
+// Toggle Shift mode
+//
 if (Pressed(var.classType == var.classMeleeType)) {
 	var.circleRTrigger = var.meleeCircleRTrigger;
 	var.toggleXY = True;	// True: 2+3
@@ -629,7 +575,7 @@ if (Pressed(HeldDown(var.XI_LB, 0.5))) {
 		var.supportMode = False;
 		var.autofireMode = False;
 		var.classType = var.classDefaultType;
-		if (var.OnLeftStick == False) {
+		if (var.OffLeftStick) {
 			Wait(0.2 s);
 			if (var.testMode) {
 				// 마을에서 부활
@@ -642,7 +588,7 @@ if (Pressed(HeldDown(var.XI_LB, 0.5))) {
 		}
 	} else {
 		var.LBShift = not var.LBShift;
-		if (var.OnLeftStick == False) {
+		if (var.OffLeftStick) {
 			Mouse.cursorpos = [var.middleX, var.middleY + 50 * var.scaleY];	// 케릭 발밑으로 이동
 			[var.cursorX, var.cursorY] = Mouse.cursorpos;
 		}
@@ -691,8 +637,8 @@ if (var.LBShift) {
 	
 	// View(Back)
 	if (Pressed(var.XI_Back)) {
-		  Press(Key.Alt);
-		  Press(Key.Tab);
+		Press(Key.Alt);
+		Press(Key.Tab);
 	}
 	if (Released(var.XI_Back)) {
 		Release(Key.Tab);
@@ -708,8 +654,8 @@ if (var.LBShift) {
 	// A, B, X, Y
 	if (Pressed(var.XI_A)) {
 /*
-		  Press(Key.LeftShift);
-		  Press(Key.L);
+		Press(Key.LeftShift);
+		Press(Key.L);
 		Release(Key.L);
 		Release(Key.LeftShift);
 */
@@ -719,8 +665,8 @@ if (var.LBShift) {
 
 	if (Pressed(var.XI_B)) {
 		BeepHand;
-		  Press(Key.LeftShift);
-		  Press(Key.O);
+		Press(Key.LeftShift);
+		Press(Key.O);
 		Release(Key.O);
 		Release(Key.LeftShift);
 	} 
@@ -728,8 +674,8 @@ if (var.LBShift) {
 
 	if (Pressed(var.XI_X)) {
 /*
-		  Press(Key.LeftShift);
-		  Press(Key.P);
+		Press(Key.LeftShift);
+		Press(Key.P);
 		Release(Key.P);
 		Release(Key.LeftShift);
 */
@@ -738,14 +684,14 @@ if (var.LBShift) {
 	if (Released(var.XI_X)) var.LBShift = False;
 
 	if (Pressed(var.XI_Y)) {
-		  Press(Key.O);
+		Press(Key.O);
 		Release(Key.O);
 	}
 	if (Released(var.XI_Y)) var.LBShift = False;
 	
 	// Up 황야 바바 대균 시험 모드
 	if (Pressed(var.XI_Up)) {
-		  Press(Mouse.LeftButton);		// 딜러 모드 시작시 살짝 이동
+		Press(Mouse.LeftButton);		// 딜러 모드 시작시 살짝 이동
 		Release(Mouse.LeftButton);
 	}
 	if (Released(var.XI_Up)) {
@@ -858,15 +804,15 @@ if (var.LBShift) {
 	if (Pressed(var.XI_LT > var.dzTR)) {
 		if (var.dealerMode) {
 			Wait(0.05 s);
-			  Press(Mouse.RightButton);
+			Press(Mouse.RightButton);
 		} else {
-			  Press(Mouse.RightButton);
+			Press(Mouse.RightButton);
 		}
 	}
 	if (Released(var.XI_LT > var.dzTR)) Release(Mouse.RightButton);
 	if (var.supportMode) {
 		if (var.XI_LT > var.dzTR) {
-			  Press(Mouse.RightButton);
+			Press(Mouse.RightButton);
 			Release(Mouse.RightButton);
 		}
 	}
@@ -888,12 +834,12 @@ if (var.LBShift) {
 
 	if (Pressed(var.XI_B)) {
 		Release(Key.LeftShift);
-		  Press(Key.Escape);
+		Press(Key.Escape);
 		Release(Key.Escape);
-		  Press(Key.F9);
+		Press(Key.F9);
 		Wait(0.05 s);
 		Release(Key.F9);
-		  Press(Key.PageDown);
+		Press(Key.PageDown);
 		Release(Key.PageDown);
 
 		var.leftCount = 0;
@@ -907,7 +853,7 @@ if (var.LBShift) {
 	if (Pressed(var.XI_Start)) {
 		var.startCount++;
 		if (var.startCount == 1) {
-			  Press(Key.F9);
+			Press(Key.F9);
 			Release(Key.F9);
 		} else {
 			var.startCount = 0;
@@ -916,7 +862,7 @@ if (var.LBShift) {
 		var.rightCount = 0;
 
 		Release(Key.LeftShift);
-		  Press(Key.Escape);
+		Press(Key.Escape);
 		Release(Key.Escape);
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 440, var.scaleY * 660];
 		[var.cursorX, var.cursorY] = [var.scaleX * 440, var.scaleY * 660];
@@ -926,9 +872,9 @@ if (var.LBShift) {
 	if (Pressed(var.XI_Right)) {
 		var.rightCount++;
 		if (var.rightCount == 1) {
-			  Press(Key.Escape);
+			Press(Key.Escape);
 			Release(Key.Escape);
-			  Press(Key.F9);
+			Press(Key.F9);
 			Wait(0.05 s);
 			Release(Key.F9);
 		} else {
@@ -938,23 +884,23 @@ if (var.LBShift) {
 		var.startCount = 0;
 	}
 	if (Pressed(var.XI_Left)) {
-		  Press(Key.Escape);
+		Press(Key.Escape);
 		Release(Key.Escape);
-		  Press(Key.F9);
+		Press(Key.F9);
 		Wait(0.05 s);
 		Release(Key.F9);
 		var.leftCount++;
 		if (var.leftCount == 1) {
-			  Press(Key.P);
+			Press(Key.P);
 			Release(Key.P);
 		} else if (var.leftCount == 2) {
-			  Press(Key.S);
+			Press(Key.S);
 			Release(Key.S);
 		} else if (var.leftCount == 3) {
-			  Press(Key.F);
+			Press(Key.F);
 			Release(Key.F);
 		} else if (var.leftCount == 4) {
-			  Press(Key.N);
+			Press(Key.N);
 			Release(Key.N);
 		} else {
 			var.leftCount = 0;
@@ -972,25 +918,25 @@ if (var.LBShift) {
 	if (Pressed(var.XI_Right) and not HeldDown(var.XI_Right, 0.3)) Press(Key.I);
 	if (Released(var.XI_Right) and not HeldDown(var.XI_Right, 0.3)) Release(Key.I);
 	if (HeldDown(var.XI_Right, 0.3)) {
-		  Press(Key.T);
+		Press(Key.T);
 		Release(Key.T);
-		  Press(Key.T);
+		Press(Key.T);
 	}
 	if (Released(var.XI_Right)) Release(Key.T);
 
 	if (Pressed(var.XI_Down)) {
-		  Press(Key.F9);			// 모든창 닫기
+		Press(Key.F9);			// 모든창 닫기
 		Release(Key.F9);
-		  Press(Key.Enter);
+		Press(Key.Enter);
 		Release(Key.Enter);
 		Release(Key.LeftShift);
 		TypeUnicode("/p 1");
-		  Press(Key.Enter);
+		Press(Key.Enter);
 		Release(Key.Enter);
 		if (var.supportMode or var.dealerMode) {
-			  Press(Key.G);	// 깃발
+			Press(Key.G);	// 깃발
 			Release(Key.G);	// 깃발
-			  Press(Key.G);	// 깃발
+			Press(Key.G);	// 깃발
 		}
 	} else if (Released(var.XI_Down)) {
 		Release(Key.G);
@@ -1007,7 +953,7 @@ if (var.LBShift) {
 		BeepHand;
 		var.toggleChatMode = True;
 		Release(Key.LeftShift);
-		  Press(Key.printscreen);
+		Press(Key.printscreen);
 		Release(Key.printscreen);
 		var.toggleChatMode = False;
 	}
@@ -1086,9 +1032,9 @@ if (var.LBShift) {
 	}
 	if (abs(Deadzone(var.XI_J1X, var.dzR)) > var.dzDelta or abs(Deadzone(var.XI_J1Y, var.dzR)) > var.dzDelta) {
 		if (var.toggleChatMode) {
-			  Press(Key.Escape);
+			Press(Key.Escape);
 			Release(Key.Escape);
-			  Press(Key.F9);
+			Press(Key.F9);
 			Release(Key.F9);
 			var.toggleChatMode = False;
 		}
@@ -1098,81 +1044,60 @@ if (var.LBShift) {
 
 ////////////////////////////////////////////////////////
 // auto fire
-//
-var.OnFire = (var.OnLeftStick == False) or var.toggleSpring or var.dealerMode;
-if (var.toggleChatMode == False) {
+if (not var.toggleChatMode) {
+	var.OnFire = (var.toggleSpring or var.dealerMode or not var.OnLeftStick) and not var.XI_B;
+	var.OnFireWitchDoctor = var.OnFire or var.classMode >= var.witchDoctor;
+	var.OnFireMRB = var.OnFire and var.dealerMode and var.autofireMode and var.OffLeftStick;
+	var.toggleYY = (var.toggleX and var.toggleXY) or var.toggleY;
+	var.toggleYC = (var.toggleX and var.toggleXY and var.classMode == var.crusader) or var.toggleY;
+
 	if (var.supportMode and var.autofireMode == False) {
 		//if (Pressed(var.OnLeftStick)) Release(Key.Three);
 	} else {
 		// normal mode
 		if (var.supportMode) {
 			if (not (var.classMode == var.crusader and var.XI_RT > var.dzTR)) {
-				if (var.OnFire and not var.XI_B) {
-					if (var.toggleA) {
-						if (var.waitButton > 0) Wait(var.waitButton + 0.03 s);
-						  Press(Key.One);
-						Release(Key.One);
-					}
-					if (var.toggleX) {
-						if (var.waitButton > 0) Wait(var.waitButton + 0.02 s);
-						  Press(Key.Two);
-						Release(Key.Two);
-					}
-					if (var.toggleX and var.toggleXY and var.classMode == var.crusader) {
-						if (var.waitButton > 0) Wait(var.waitButton + 0.01 s);
-						  Press(Key.Three);
-						Release(Key.Three);
-					} else if (var.toggleY) {
-						if (var.waitButton > 0) Wait(var.waitButton + 0.01 s);
-						  Press(Key.Three);
-						Release(Key.Three);
-					}
-				}
-				if (var.autofireMode or var.toggleRB) {
-					if (var.classMode >= var.witchDoctor or (var.OnFire and not var.XI_B)) {
-						if (var.waitButton > 0) Wait(var.waitButton s);
-						  Press(Key.Four);
-						Release(Key.Four);
-					}
-				}
+				if (var.OnFire and var.toggleA) Wait(var.waitButton s);
+				if (var.OnFire and var.toggleA) Press(Key.One);
+				if (var.OnFire and var.toggleA) Release(Key.One);
+
+				if (var.OnFire and var.toggleX) Wait(var.waitButton s);
+				if (var.OnFire and var.toggleX) Press(Key.Two);
+				if (var.OnFire and var.toggleX) Release(Key.Two);
+
+				if (var.OnFire and var.toggleYC) Wait(var.waitButton s);
+				if (var.OnFire and var.toggleYC) Press(Key.Three);
+				if (var.OnFire and var.toggleYC) Release(Key.Three);
+
+				if (var.OnFireWitchDoctor and (var.autofireMode or var.toggleRB)) Wait(var.waitButton s);
+				if (var.OnFireWitchDoctor and (var.autofireMode or var.toggleRB)) Press(Key.Four);
+				if (var.OnFireWitchDoctor and (var.autofireMode or var.toggleRB)) Release(Key.Four);
 			}
 		} else {	// not var.supportMode
-			if (var.OnFire and not var.XI_B) {
-				if (1 or var.OnLeftStick == false) {
-					if (var.toggleA) {
-						if (var.waitButton > 0) Wait(var.waitButton + 0.03 s);
-						  Press(Key.One);
-						Release(Key.One);
-						if (var.waitDealerMode > 0) Wait(var.waitDealerMode s); // 60초 주기
-					}
-					if (var.toggleX) {
-						if (var.waitButton > 0) Wait(var.waitButton + 0.02 s);
-						  Press(Key.Two);
-						Release(Key.Two);
-					}
-				}
-				if (var.toggleX and var.toggleXY) {
-					if (var.waitButton > 0) Wait(var.waitButton + 0.01 s);
-					  Press(Key.Three);
-					Release(Key.Three);
-				} else if (var.toggleY) {
-					if (var.waitButton > 0) Wait(var.waitButton + 0.01 s);
-					  Press(Key.Three);
-					Release(Key.Three);
-				}
-				if (var.dealerMode and var.autofireMode and var.OnLeftStick == False) {
-					if (var.waitButton > 0) Wait(var.waitButton + 0.04 s);
-					  Press(Mouse.RightButton);
-					Release(Mouse.RightButton);
-				}
+			if (var.waitDealerMode > 0) {
+				if (var.OnFire and var.OffLeftStick and var.toggleA) Press(Key.One);
+				if (var.OnFire and var.OffLeftStick and var.toggleA) Release(Key.One);
+				if (var.OnFire and var.OffLeftStick and var.toggleA) Wait(var.waitDealerMode s); // 60초 주기
 			}
-			if (var.classMode >= var.witchDoctor or (var.OnFire and not var.XI_B)) {
-				if (var.toggleRB) {
-					if (var.waitButton > 0) Wait(var.waitButton s);
-					  Press(Key.Four);
-					Release(Key.Four);
-				}
-			}
+			if (var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0) Wait(var.waitButton s);
+			if (var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0) Press(Key.One);
+			if (var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0) Release(Key.One);
+
+			if (var.OnFire and var.OffLeftStick and var.toggleX) Wait(var.waitButton s);
+			if (var.OnFire and var.OffLeftStick and var.toggleX) Press(Key.Two);
+			if (var.OnFire and var.OffLeftStick and var.toggleX) Release(Key.Two);
+
+			if (var.OnFire and var.toggleYY) Wait(var.waitButton s);
+			if (var.OnFire and var.toggleYY) Press(Key.Three);
+			if (var.OnFire and var.toggleYY) Release(Key.Three);
+
+			if (var.OnFireMRB) Wait(var.waitButton s);
+			if (var.OnFireMRB) Press(Mouse.RightButton);
+			if (var.OnFireMRB) Release(Mouse.RightButton);
+
+			if (var.OnFireWitchDoctor and var.toggleRB) Wait(var.waitButton s);
+			if (var.OnFireWitchDoctor and var.toggleRB) Press(Key.Four);
+			if (var.OnFireWitchDoctor and var.toggleRB) Release(Key.Four);
 		}
 	}
 }
@@ -1182,11 +1107,11 @@ if (var.toggleChatMode == False) {
 //
 if (Pressed(var.supportMode)) {
 	if (var.classMode == var.crusader) {
-		Display("Crusader Support mode");
+		Display("법성 지원 시작");
 	} else if (var.classMode == var.witchDoctor) {
-		Display("Witch Doctor Support mode");
+		Display("공부 지원 시작");
 	} else if (var.classMode == var.witchDoctorHalf) {
-		Display("Half Witch Support mode");
+		Display("공부 지원 시작");
 	}
 	var.autofireMode = True;
 	var.toggleRootingMode = False;
@@ -1197,7 +1122,7 @@ if (Pressed(var.supportMode)) {
 		var.toggleY = True;
 	}
 } else if (Released(var.supportMode)) {
-	Display("Normal mode");
+	Display("지원 종료");
 	var.toggleA = False;
 	var.toggleX = False;
 	var.toggleY = False;
@@ -1209,7 +1134,7 @@ if (Pressed(var.supportMode)) {
 	Release(Key.LeftShift);
 }
 if (Pressed(var.dealerMode)) {
-	Display("Dealer mode");
+	Display("딜러 지원 시작");
 	var.resetCurPos = True;			// 마우스 포인터를 기본 위치로 이동
 	var.RightStickLock = False;
 	var.toggleRootingMode = False;
@@ -1217,10 +1142,10 @@ if (Pressed(var.dealerMode)) {
 	var.toggleX = True;
 	var.toggleY = True;
 	var.toggleRB = True;
-	if (var.classType == 11) var.waitDealerMode = 60;
+	if (var.classType == var.classMeleeType) var.waitDealerMode = 60;
 	var.resetMouseColor = True;
 } else if (Released(var.dealerMode)) {
-	Display("Normal mode");
+	Display("지원 종료");
 	var.toggleA = False;
 	var.toggleX = False;
 	var.toggleY = False;
@@ -1229,7 +1154,7 @@ if (Pressed(var.dealerMode)) {
 	Release(Mouse.LeftButton);
 	Release(Mouse.RightButton);
 	Release(Key.LeftShift);
-	if (var.classType == 11) var.waitDealerMode = 0;
+	if (var.classType == var.classMeleeType) var.waitDealerMode = 0;
 	var.resetMouseColor = True;
 }
 
@@ -1267,16 +1192,16 @@ if (KeepDown(Pressed(var.supportMode), 0.3)) {
 }
 
 if (KeepDown(Pressed(var.autofireMode), 0.3)) {
-	if (var.supportMode == False) Display("Auto fire mode");
+	if (var.supportMode == False) Display("자동 사격");
 	var.AF_vib1off = True;
 	XInput.Vibration1 = 0.3;
 	XInput.Vibration2 = 0.9;
 } else if (Released(var.autofireMode)) {
 	if (var.supportMode) {
-		Display("stun mode");
+		Display("개폭 지원 시작");
 		var.resetCurPos = True;			// 마우스 포인터를 기본 위치로 이동
 	} else {
-		Display("default mode");
+		Display("지원 종료");
 	}
 	Release(Mouse.LeftButton);
 	Release(Mouse.RightButton);
@@ -1423,8 +1348,6 @@ if (var.useVibration == 1) {
 
 var.rumbleBTN = Pressed(var.XI_LThumb or var.XI_RThumb);
 var.rumbleBTN = var.rumbleBTN or Pressed(var.XI_Down or var.XI_Left or var.XI_Right);
-//var.rumbleBTN = var.rumbleBTN or Pressed(var.XI_A or var.XI_X);
-//var.rumbleBTN = var.rumbleBTN or Pressed(var.XI_LB or var.XI_RB);
 if (KeepDown(var.rumbleBTN, 0.2)) {
 	var.rumbleBTNType++;
 	if (var.rumbleBTNType == 0) {
@@ -1468,35 +1391,35 @@ if (not (var.dealerMode or var.supportMode)) {
 		// size:70x70 가방칸(0,0):1900,770
 		Mouse.cursorpos = [var.bagX, var.bagY] + [var.bagSizeX * 0, var.bagSizeY * 0];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.RightButton);
+		Press(Mouse.RightButton);
 		Release(Mouse.RightButton);
 		Wait(var.repairWaitTime s);
 
 		// 가방칸(7, 4)
 		Mouse.cursorpos = [var.bagX, var.bagY] + [var.bagSizeX * 7, var.bagSizeY * 4];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.RightButton);
+		Press(Mouse.RightButton);
 		Release(Mouse.RightButton);
 		Wait(var.repairWaitTime s);
 
 		// 가방칸(7, 5)
 		Mouse.cursorpos = [var.bagX, var.bagY] + [var.bagSizeX * 7, var.bagSizeY * 5];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.RightButton);
+		Press(Mouse.RightButton);
 		Release(Mouse.RightButton);
 		Wait(var.repairWaitTime s);
 
 		// 가방칸(8, 5)
 		Mouse.cursorpos = [var.bagX, var.bagY] + [var.bagSizeX * 8, var.bagSizeY * 5];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.RightButton);
+		Press(Mouse.RightButton);
 		Release(Mouse.RightButton);
 		Wait(var.repairWaitTime s);
 
 		// 수락
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 80, var.scaleY * 1125];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
@@ -1511,69 +1434,69 @@ if (not (var.dealerMode or var.supportMode)) {
 		// 수리
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 685, var.scaleY * 822];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 363, var.scaleY * 789];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		// 노랑 분해
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 522, var.scaleY * 385];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1134, var.scaleY * 500];
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		// 파랑 분해
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 424, var.scaleY * 385];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1134, var.scaleY * 500];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		// 하양 분해
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 337, var.scaleY * 385];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1134, var.scaleY * 500];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
@@ -1581,13 +1504,13 @@ if (not (var.dealerMode or var.supportMode)) {
 		Wait(var.repairWaitTime * 15 s);
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 227, var.scaleY * 387];
 		Wait(var.repairWaitTime s);
-		  Press(Mouse.LeftButton);
+		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 

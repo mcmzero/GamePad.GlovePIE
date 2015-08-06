@@ -85,6 +85,16 @@ if (var.windowClass != Window.Class) {
 	} else {
 		var.dummyMode = False;
 	}
+
+	// Reset Yoro Mouse
+	Press(Key.LeftControl);
+	Press(Key.LeftShift);
+	Press(Key.LeftAlt);
+	Press(Key.Zero);
+	Release(Key.Zero);
+	Release(Key.LeftAlt);
+	Release(Key.LeftShift);
+	Release(Key.LeftControl);
 }
 
 if (var.dummyMode == False) {

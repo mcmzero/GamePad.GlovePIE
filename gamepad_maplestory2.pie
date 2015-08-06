@@ -6,7 +6,7 @@
 
 	///////////////////////////////////////
 	// 채널이동
-	var.channel_begin = 3;	// 1~200
+	var.channel_begin = 10;	// 1~200
 	var.channel_step = 5;
 	var.channel_num = var.channel_begin - var.channel_step;
 
@@ -69,12 +69,11 @@
 if (Pressed(Key.F9 and Key.alt and Key.control and Key.LeftShift)) {
 	ExitPIE;
 }
-
 if (Window.Class != "MapleStory2") {
 	var.AutoFireA = False;
 	var.CannonMode = False;
 }
-if (HeldDown(Window.Class != "MapleStory2", 0.5)) {
+if (HeldDown(Window.Class != "MapleStory2", 1)) {
 	Chain("gamepad_windows.pie");
 }
 
@@ -93,32 +92,21 @@ if (var.MapleStory2) {
 			if (var.debug) DebugPrint("ScaleX: " + var.scaleX + ", ScaleY: " + var.scaleY);
 			[var.cursorX, var.cursorY] = [var.middleX, var.middleY + var.scaleY * 240];
 			[var.defaultX, var.defaultY] = [var.middleX, Round(var.middleY + var.scaleY * 620)];
+
+			// Reset Yoro Mouse
+			Press(Key.LeftControl);
+			Press(Key.LeftShift);
+			Press(Key.LeftAlt);
+			Press(Key.Zero);
+			Release(Key.Zero);
+			Release(Key.LeftAlt);
+			Release(Key.LeftShift);
+			Release(Key.LeftControl);
 		}
 	}
 
 	//////////////////////////////////////////
 	// Joystick Mapping
-	//debug = Joystick.Count + " " + XInput1.Exists + " " + XInput2.Exists;
-/*
-	if (XInput1.Exists == False and XInput2.Exists == False and XInput3.Exists == False and XInput4.Exists == False) {
-		//if (Mouse.LeftButton or Mouse.RightButton) var.joyResetCount = 0;
-		//if (var.XI_J1X or var.XI_J1Y or var.XI_J2X or var.XI_J2Y) var.joyResetCount = 0;
-		//if (var.XI_LT or var.XI_RT) var.joyResetCount = 0;
-		if (var.XI_A or var.XI_B or var.XI_X or var.XI_Y) var.joyResetCount = 0;
-		if (var.XI_LB or var.XI_RB) var.joyResetCount = 0;
-		if (var.XI_LThumb or var.XI_RThumb or var.XI_Back or var.XI_Start) var.joyResetCount = 0;
-		if (var.XI_Up or var.XI_Down or var.XI_Left or var.XI_Right) var.joyResetCount = 0;
-		if (Key.Control or Key.Shift or Key.Alt or Key.Space) var.joyResetCount = 0;
-		if (Key.Up or Key.Down or Key.Left or Key.Right) var.joyResetCount = 0;
-
-		if (var.joyResetCount > var.joyResetTime and var.AutoFireA = False and var.supportMode = False and var.dealerMode == False) {
-			Chain(var.piename);
-		} else {
-			Wait(1 s);
-			var.joyResetCount++;
-		}
-	}
-*/
 	var.XI_J1X    = 0;
 	var.XI_J1Y    = 0;
 	var.XI_J2X    = 0;
@@ -430,7 +418,6 @@ if (var.MapleStory2) {
 			}
 			if (var.ShiftMode) {
 				if (Not Key.D) Press(Key.D);
-				if (Not Key.Space) Press(Key.Space);
 			} else {
 				if (Not Key.Z) Press(Key.Z);
 				if (Not Key.A) Press(Key.A);
@@ -440,6 +427,12 @@ if (var.MapleStory2) {
 			if (Key.Z) Release(Key.Z);
 			if (Key.D) Release(Key.D);
 			if (Key.A and var.AutoFireA == False) Release(Key.A);
+/*
+			Wait(0.1 s);
+			Press(Key.Space);
+			Wait(0.1 s);
+			Release(Key.Space);
+*/
 		}
 
 		if (var.XI_X) {
@@ -678,28 +671,28 @@ if (var.MapleStory2) {
 		var.MoveChannel = False;
 	}
 	
-	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_A, 0.2))) {
+	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_A, 0.01))) {
 		var.channel_num += var.channel_step;
 		if (var.channel_num > 200) var.channel_num = var.channel_begin;
 		var.MoveChannel = True;
 		Wait(8 s);
 		var.ChannelMode = False;
 	}
-	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_B, 0.2))) {
+	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_B, 0.01))) {
 		var.channel_num -= var.channel_step;
 		if (var.channel_num < 0) var.channel_num = 200 - var.channel_begin;
 		var.MoveChannel = True;
 		Wait(8 s);
 		var.ChannelMode = False;
 	}
-	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_X, 0.2))) {
+	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_X, 0.01))) {
 		var.channel_num += var.channel_step * 2;
 		if (var.channel_num > 200) var.channel_num = var.channel_begin;
 		var.MoveChannel = True;
 		Wait(8 s);
 		var.ChannelMode = False;
 	}
-	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_Y, 0.2))) {
+	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_Y, 0.01))) {
 		var.channel_num -= var.channel_step * 2;
 		if (var.channel_num < 0) var.channel_num = 200 - var.channel_begin;
 		var.MoveChannel = True;
