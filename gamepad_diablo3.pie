@@ -116,8 +116,8 @@ if (Window.Class != "ForegroundStaging") {
 		[var.cursorX, var.cursorY] = [var.middleX, var.middleY];
 		if (not Mouse.LeftButton) Mouse.CursorPos = [var.cursorX, var.cursorY];
 
-		var.scaleX = 1 / (2560 / window.width);
-		var.scaleY = 1 / (1440 / window.height);
+		var.scaleX = 1 / (2560 / window.ClientWidth);
+		var.scaleY = 1 / (1440 / window.ClientHeight);
 		if (var.debug) DebugPrint("ScaleX: " + var.scaleX + ", ScaleY: " + var.scaleY);
 		[var.bagSizeX, var.bagSizeY] = [var.scaleX * 70, var.scaleY * 70];
 		[var.bagX, var.bagY] = [Window.Left, Window.Top] + [var.scaleX * 1900, var.scaleY * 770];

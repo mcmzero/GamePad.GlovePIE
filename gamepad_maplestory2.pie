@@ -1,14 +1,19 @@
 ﻿if (Starting) {
+	var.channel_x = 2277;
+	var.channel_y = 17;
+
+	///////////////////////////////////////
+	// 채널이동
+	var.channel_mousemode = True;
+	var.channel_step = 5;
+
+	var.channel_begin = 10;	// 1~200
+	var.channel_num = var.channel_begin - var.channel_step;
+
 	///////////////////////////////////////
 	// 버튼 설정
 	//var.LT_IS_X = True;
 	var.RT_IS_X = True;		// False: RT_IS_A
-
-	///////////////////////////////////////
-	// 채널이동
-	var.channel_begin = 10;	// 1~200
-	var.channel_step = 5;
-	var.channel_num = var.channel_begin - var.channel_step;
 
 	///////////////////////////////////////
 	//var.normalAttackMode = True;
@@ -87,8 +92,8 @@ if (var.MapleStory2) {
 			var.topborder = window.Height - window.ClientHeight - var.leftborder;
 			var.middleX = Round(window.Left + window.Width / 2);
 			var.middleY = Round(window.Top + window.Height - var.leftborder - window.ClientHeight / 2);
-			var.scaleX = 1 / (2560 / window.width);
-			var.scaleY = 1 / (1440 / window.height);
+			var.scaleX = 1 / (2560 / window.ClientWidth);
+			var.scaleY = 1 / (1440 / window.ClientHeight);
 			if (var.debug) DebugPrint("ScaleX: " + var.scaleX + ", ScaleY: " + var.scaleY);
 			[var.cursorX, var.cursorY] = [var.middleX, var.middleY + var.scaleY * 240];
 			[var.defaultX, var.defaultY] = [var.middleX, Round(var.middleY + var.scaleY * 620)];
@@ -102,6 +107,9 @@ if (var.MapleStory2) {
 			Release(Key.LeftAlt);
 			Release(Key.LeftShift);
 			Release(Key.LeftControl);
+
+			if (var.channel_x == 0) var.channel_x = 2277;
+			if (var.channel_y == 0) var.channel_y = 17;
 		}
 	}
 
@@ -510,17 +518,20 @@ if (var.MapleStory2) {
 	}
 	
 	if (Pressed(HeldDown(var.XI_Start, var.heldDownTime))) {
-		Press(Key.N);
-	} else if (Pressed(var.XI_Start)) {
 		var.resetCurPos = True;
-		if (var.ShiftMode) {
-			Press(Key.J);
-		} else {
-			Press(Key.Y);
-		}
+		Press(Key.N);
+	} else if (DoubleClicked(var.XI_Start)) {
+		Display("");
+		if (var.ShiftMode) var.MoveDownChannel = var.channel_step else var.MoveUpChannel = var.channel_step;
+		if (var.ShiftMode) Display("채널" + var.channel_step + "감소") else Display("채널" + var.channel_step + "증가");
+		Wait(0.72)
+		Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(0.1 s);
+		var.defaultCurPos = True;
+	} else if (SingleClicked(var.XI_Start)) {
+		if (var.ShiftMode) var.MoveDownChannel = 5 else var.MoveUpChannel = 5;
 	} else if (Released(var.XI_Start)) {
-		if (Key.J) Release(Key.J);
-		if (Key.Y) Release(Key.Y);
 		if (Key.N) Release(Key.N);
 	}
 
@@ -671,33 +682,76 @@ if (var.MapleStory2) {
 		var.MoveChannel = False;
 	}
 	
-	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_A, 0.01))) {
-		var.channel_num += var.channel_step;
-		if (var.channel_num > 200) var.channel_num = var.channel_begin;
-		var.MoveChannel = True;
-		Wait(8 s);
-		var.ChannelMode = False;
-	}
-	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_B, 0.01))) {
-		var.channel_num -= var.channel_step;
-		if (var.channel_num < 0) var.channel_num = 200 - var.channel_begin;
-		var.MoveChannel = True;
-		Wait(8 s);
-		var.ChannelMode = False;
-	}
-	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_X, 0.01))) {
-		var.channel_num += var.channel_step * 2;
-		if (var.channel_num > 200) var.channel_num = var.channel_begin;
-		var.MoveChannel = True;
-		Wait(8 s);
-		var.ChannelMode = False;
-	}
-	if (var.ChannelMode and SingleClicked(HeldDown(var.XI_Y, 0.01))) {
-		var.channel_num -= var.channel_step * 2;
-		if (var.channel_num < 0) var.channel_num = 200 - var.channel_begin;
-		var.MoveChannel = True;
-		Wait(8 s);
-		var.ChannelMode = False;
+	if (var.channel_mousemode) {
+		if (var.ChannelMode and SingleClicked(HeldDown(var.XI_A, 0.01))) {
+			var.MoveUpChannel = var.channel_step;
+			Display("");
+			Display("채널" + var.channel_step + "증가");
+			Wait(0.72)
+			Press(Mouse.LeftButton);
+			Release(Mouse.LeftButton);
+			Wait(0.1 s);
+			var.defaultCurPos = True;
+		}
+		if (var.ChannelMode and SingleClicked(HeldDown(var.XI_B, 0.01))) {
+			var.MoveDownChannel = var.channel_step;
+			Display("");
+			Display("채널" + var.channel_step + "감소");
+			Wait(0.72)
+			Press(Mouse.LeftButton);
+			Release(Mouse.LeftButton);
+			Wait(0.1 s);
+			var.defaultCurPos = True;
+		}
+		if (var.ChannelMode and SingleClicked(HeldDown(var.XI_X, 0.01))) {
+			var.MoveUpChannel = var.channel_step * 2;
+			Display("");
+			Display("채널" + var.channel_step * 2 + "증가");
+			Wait(0.72)
+			Press(Mouse.LeftButton);
+			Release(Mouse.LeftButton);
+			Wait(0.1 s);
+			var.defaultCurPos = True;
+		}
+		if (var.ChannelMode and SingleClicked(HeldDown(var.XI_Y, 0.01))) {
+			var.MoveDownChannel = var.channel_step * 2;
+			Display("");
+			Display("채널" + var.channel_step * 2 + "감소");
+			Wait(0.72)
+			Press(Mouse.LeftButton);
+			Release(Mouse.LeftButton);
+			Wait(0.1 s);
+			var.defaultCurPos = True;
+		}
+	} else {
+		if (var.ChannelMode and SingleClicked(HeldDown(var.XI_A, 0.01))) {
+			var.channel_num += var.channel_step;
+			if (var.channel_num > 200) var.channel_num = var.channel_begin;
+			var.MoveChannel = True;
+			Wait(8 s);
+			var.ChannelMode = False;
+		}
+		if (var.ChannelMode and SingleClicked(HeldDown(var.XI_B, 0.01))) {
+			var.channel_num -= var.channel_step;
+			if (var.channel_num < 0) var.channel_num = 200 - var.channel_begin;
+			var.MoveChannel = True;
+			Wait(8 s);
+			var.ChannelMode = False;
+		}
+		if (var.ChannelMode and SingleClicked(HeldDown(var.XI_X, 0.01))) {
+			var.channel_num += var.channel_step * 2;
+			if (var.channel_num > 200) var.channel_num = var.channel_begin;
+			var.MoveChannel = True;
+			Wait(8 s);
+			var.ChannelMode = False;
+		}
+		if (var.ChannelMode and SingleClicked(HeldDown(var.XI_Y, 0.01))) {
+			var.channel_num -= var.channel_step * 2;
+			if (var.channel_num < 0) var.channel_num = 200 - var.channel_begin;
+			var.MoveChannel = True;
+			Wait(8 s);
+			var.ChannelMode = False;
+		}
 	}
 
 	if (Key.Shift and Pressed(Key.F1)) {
@@ -1408,4 +1462,107 @@ if (var.MapleStory2) {
 			}
 		}
 	}
-}				// (var.MapleStory2)
+
+	if (var.MoveUpChannel > 0 or var.MoveDownChannel > 0) {
+		// x = 2171 ~ 2284, y = 40 ~ 64, y_offset = 34, 25.5
+		if (var.ScaleY == 1) var.offsetY = 25.5 else var.offsetY = 34;
+		if (var.debug) DebugPrint("offsetY: " + var.offsetY);
+
+		[var.ChannelX, var.ChannelY] = [Window.Left, Window.Top + var.topborder] + [var.scaleX * var.channel_x, var.scaleY * var.channel_y];
+		Mouse.cursorpos = [var.ChannelX, var.ChannelY];
+		Press(Mouse.LeftButton);
+		Release(Mouse.LeftButton);
+		Wait(0.1 s);
+
+		if (var.MoveUpChannel > 0) {
+			Mouse.cursorpos = [var.ChannelX, var.ChannelY + var.scaleY * var.offsetY * min(var.MoveUpChannel, 9)];
+			[var.cursorX, var.cursorY] = Mouse.cursorpos;
+
+			Mouse.DirectInputZ--;
+			Wait(0.02 s);
+			Mouse.DirectInputZ--;
+			Wait(0.02 s);
+			Mouse.DirectInputZ--;
+			Wait(0.02 s);
+			Mouse.DirectInputZ--;
+			Wait(0.02 s);
+			Mouse.DirectInputZ--;
+			Wait(0.02 s);
+			Mouse.DirectInputZ--;
+			Wait(0.02 s);
+			Mouse.DirectInputZ--;
+			Wait(0.02 s);
+			Mouse.DirectInputZ--;
+			Wait(0.02 s);
+			Mouse.DirectInputZ--;
+			Wait(0.02 s);
+			Mouse.DirectInputZ--;
+			Wait(0.02 s);
+
+			if (var.MoveUpChannel >= 10) Mouse.DirectInputZ--;
+			if (var.MoveUpChannel >= 10) Wait(0.02 s);
+			if (var.MoveUpChannel >= 11) Mouse.DirectInputZ--;
+			if (var.MoveUpChannel >= 11) Wait(0.02 s);
+			if (var.MoveUpChannel >= 12) Mouse.DirectInputZ--;
+			if (var.MoveUpChannel >= 12) Wait(0.02 s);
+			if (var.MoveUpChannel >= 13) Mouse.DirectInputZ--;
+			if (var.MoveUpChannel >= 13) Wait(0.02 s);
+			if (var.MoveUpChannel >= 14) Mouse.DirectInputZ--;
+			if (var.MoveUpChannel >= 14) Wait(0.02 s);
+			if (var.MoveUpChannel >= 15) Mouse.DirectInputZ--;
+			if (var.MoveUpChannel >= 15) Wait(0.02 s);
+			if (var.MoveUpChannel >= 16) Mouse.DirectInputZ--;
+			if (var.MoveUpChannel >= 16) Wait(0.02 s);
+			if (var.MoveUpChannel >= 17) Mouse.DirectInputZ--;
+			if (var.MoveUpChannel >= 17) Wait(0.02 s);
+			if (var.MoveUpChannel >= 18) Mouse.DirectInputZ--;
+			if (var.MoveUpChannel >= 18) Wait(0.02 s);
+			if (var.MoveUpChannel >= 19) Mouse.DirectInputZ--;
+			if (var.MoveUpChannel >= 19) Wait(0.02 s);
+			if (var.MoveUpChannel >= 20) Mouse.DirectInputZ--;
+			if (var.MoveUpChannel >= 20) Wait(0.02 s);
+
+			var.MoveUpChannel = 0;
+		}
+
+		if (var.MoveDownChannel > 0) {
+			Mouse.cursorpos = [var.ChannelX, var.ChannelY + var.scaleY * var.offsetY * (10 - min(var.MoveDownChannel, 9))];
+			[var.cursorX, var.cursorY] = Mouse.cursorpos;
+
+			if (var.MoveDownChannel >= 10) Mouse.DirectInputZ++;
+			if (var.MoveDownChannel >= 10) Wait(0.02 s);
+			if (var.MoveDownChannel >= 11) Mouse.DirectInputZ++;
+			if (var.MoveDownChannel >= 11) Wait(0.02 s);
+			if (var.MoveDownChannel >= 12) Mouse.DirectInputZ++;
+			if (var.MoveDownChannel >= 12) Wait(0.02 s);
+			if (var.MoveDownChannel >= 13) Mouse.DirectInputZ++;
+			if (var.MoveDownChannel >= 13) Wait(0.02 s);
+			if (var.MoveDownChannel >= 14) Mouse.DirectInputZ++;
+			if (var.MoveDownChannel >= 14) Wait(0.02 s);
+			if (var.MoveDownChannel >= 15) Mouse.DirectInputZ++;
+			if (var.MoveDownChannel >= 15) Wait(0.02 s);
+			if (var.MoveDownChannel >= 16) Mouse.DirectInputZ++;
+			if (var.MoveDownChannel >= 16) Wait(0.02 s);
+			if (var.MoveDownChannel >= 17) Mouse.DirectInputZ++;
+			if (var.MoveDownChannel >= 17) Wait(0.02 s);
+			if (var.MoveDownChannel >= 18) Mouse.DirectInputZ++;
+			if (var.MoveDownChannel >= 18) Wait(0.02 s);
+			if (var.MoveDownChannel >= 19) Mouse.DirectInputZ++;
+			if (var.MoveDownChannel >= 19) Wait(0.02 s);
+			if (var.MoveDownChannel >= 20) Mouse.DirectInputZ++;
+			if (var.MoveDownChannel >= 20) Wait(0.02 s);
+
+			Wait(0.2 s);
+			var.MoveDownChannel = 0;
+		}
+
+		Wait(0.52 s);
+	}
+
+	if (DoubleClicked(Mouse.MiddleButton)) {
+		DebugPrint("채널이동 메뉴에서 마우스 가운데 버튼을 더블 클릭 하여 나오는 아래 좌표 2줄을 gamepad_maplestory2.pie 파일의 2~3째 줄에 덮어 쓰면 채널이동 기능을 사용할수 있습니다.");
+		DebugPrint("var.channel_x = " + Round((Mouse.cursorposX - Window.Left) / var.ScaleX) + ";");
+		DebugPrint("var.channel_y = " + Round((Mouse.cursorposY - Window.Top - var.topborder) / var.ScaleY) + ";");
+		DebugPrint(" ");
+	}
+} // (var.MapleStory2)
