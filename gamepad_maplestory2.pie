@@ -4,10 +4,10 @@
 
 	///////////////////////////////////////
 	// 채널이동
-	var.channel_mousemode = True;
+	var.channel_begin = 10;	// 1~200
 	var.channel_step = 5;
 
-	var.channel_begin = 10;	// 1~200
+	var.channel_mousemode = True;
 	var.channel_num = var.channel_begin - var.channel_step;
 
 	///////////////////////////////////////
@@ -516,10 +516,13 @@ if (var.MapleStory2) {
 	} else if (Released(var.turnOnTab)) {
 		if (Key.Tab) Release(Key.Tab);
 	}
-	
+
 	if (Pressed(HeldDown(var.XI_Start, var.heldDownTime))) {
-		var.resetCurPos = True;
-		Press(Key.N);
+		if (var.ShiftMode) var.channel_num = 190 else var.channel_num = var.channel_begin;
+		var.MoveChannel = True;
+		Wait(8 s);
+		var.ChannelMode = False;
+		var.defaultCurPos = True;
 	} else if (DoubleClicked(var.XI_Start)) {
 		Display("");
 		if (var.ShiftMode) var.MoveDownChannel = var.channel_step else var.MoveUpChannel = var.channel_step;
@@ -532,7 +535,6 @@ if (var.MapleStory2) {
 	} else if (SingleClicked(var.XI_Start)) {
 		if (var.ShiftMode) var.MoveDownChannel = 5 else var.MoveUpChannel = 5;
 	} else if (Released(var.XI_Start)) {
-		if (Key.N) Release(Key.N);
 	}
 
 	if (Pressed(HeldDown(var.XI_Up, var.heldDownTime))) {
