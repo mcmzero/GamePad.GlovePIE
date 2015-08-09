@@ -98,6 +98,8 @@ if (var.windowClass != Window.Class) {
 	}
 }
 
+if (var.dummyMode) Wait(3 s);
+
 if (var.dummyMode == False) {
 	var.webMode = (Window.Class == "Chrome_WidgetWin_1" or Window.Class == "IEFrame" or Window.Class == "MozillaWindowClass" or Window.Class == "ApplicationFrameWindow");
 	var.startmode = (Window.Class == "Windows.UI.Core.CoreWindow");
@@ -420,31 +422,11 @@ if (var.dummyMode == False) {
 		// Up, Down
 		if (Window.Class == "PotPlayer" or Window.Class == "PotPlayer64") {
 			if (var.shiftMode) {
-				if (var.jly < 0) {
-					if (abs(var.jlx) <= abs(var.jly)) {
-						var.shiftMode = False;
-					}
-				}
-				if (var.jly > 0) {
-					if (abs(var.jlx) <= abs(var.jly)) {
-						var.shiftMode = False;
-					}
-				}
+				if (var.jly != 0 and abs(var.jlx) <= abs(var.jly)) var.shiftMode = False;
 			} else {
-				if (var.jly) {
-					if (abs(var.jly) > 0.8) {
-						var.jlr = EnsureMapRange(abs(var.jly), 0.8, 1, 50, 200);
-					} else {
-						var.jlr = EnsureMapRange(abs(var.jly), 0, 0.8, 0, 50);
-					}
-					var.jly = EnsureMapRange(var.jly, -1, 1, -var.jlr, var.jlr);
-					if (HeldDown(var.jly, 0.5)) {
-						if (var.jly != 0) Mouse.DirectInputZ -= var.jly;
-					} else {
-						if (var.jly != 0) Mouse.DirectInputZ -= var.jly;
-						Wait(var.Keywaitsec s);
-					}
-				}
+				if (var.jly > 0.5) Mouse.DirectInputZ--;
+				if (var.jly < -0.5) Mouse.DirectInputZ++;
+				if (var.jly) Wait(0.8 s);
 			}
 		} else {	// Window.Class != "PotPlayer"
 			if (var.jly < 0) {
