@@ -518,31 +518,61 @@ if (var.toggleChatMode == False and var.LBShift == False) {
 ////////////////////////////////////////////////////
 // Yoro Mouse Setting
 if (Pressed(var.resetMouseColor)) {
-	Press(Key.LeftControl);
-	Press(Key.LeftShift);
-	Press(Key.LeftAlt);
 	if (var.supportMode and var.classMode == var.crusader) {
+		Press(Key.LeftControl);
+		Press(Key.LeftShift);
+		Press(Key.LeftAlt);
 		Press(Key.Seven);
 		Release(Key.Seven);
+		Release(Key.LeftAlt);
+		Release(Key.LeftShift);
+		Release(Key.LeftControl);
 	} else if (var.supportMode and var.classMode != var.crusader) {
+		Press(Key.LeftControl);
+		Press(Key.LeftShift);
+		Press(Key.LeftAlt);
 		Press(Key.Eight);
 		Release(Key.Eight);
+		Release(Key.LeftAlt);
+		Release(Key.LeftShift);
+		Release(Key.LeftControl);
 	} else if (var.dealerMode and var.testMode == False) {
+		Press(Key.LeftControl);
+		Press(Key.LeftShift);
+		Press(Key.LeftAlt);
 		Press(Key.Seven);
 		Release(Key.Seven);
+		Release(Key.LeftAlt);
+		Release(Key.LeftShift);
+		Release(Key.LeftControl);
 	} else if (var.dealerMode and var.testMode == True) {
+		Press(Key.LeftControl);
+		Press(Key.LeftShift);
+		Press(Key.LeftAlt);
 		Press(Key.Eight);
 		Release(Key.Eight);
+		Release(Key.LeftAlt);
+		Release(Key.LeftShift);
+		Release(Key.LeftControl);
 	} else if (var.classType == var.classMeleeType) {
+		Press(Key.LeftControl);
+		Press(Key.LeftShift);
+		Press(Key.LeftAlt);
 		Press(Key.One);
 		Release(Key.One);
-	} else if (var.classType >= var.classRangeType) {
+		Release(Key.LeftAlt);
+		Release(Key.LeftShift);
+		Release(Key.LeftControl);
+	} else if (var.classType == var.classRangeType) {
+		Press(Key.LeftControl);
+		Press(Key.LeftShift);
+		Press(Key.LeftAlt);
 		Press(Key.Two);
 		Release(Key.Two);
+		Release(Key.LeftAlt);
+		Release(Key.LeftShift);
+		Release(Key.LeftControl);
 	}
-	Release(Key.LeftAlt);
-	Release(Key.LeftShift);
-	Release(Key.LeftControl);
 	var.resetMouseColor = False;
 }
 
@@ -1384,6 +1414,9 @@ if (KeepDown(var.rumbleBTN, 0.2)) {
 var.repairWaitTime = 0.03;
 if (not (var.dealerMode or var.supportMode)) {
 	if (Pressed(var.goRift)) {
+		Display("");
+		Display("균열 신청");
+
 		var.goRift = False;
 		var.RightStickLock = True;
 		Release(Key.LeftShift);
@@ -1427,6 +1460,9 @@ if (not (var.dealerMode or var.supportMode)) {
 	}
 
 	if (Pressed(var.goRepair)) {
+		Display("");
+		Display("장비 정리");
+
 		var.goRepair = False;
 		var.RightStickLock = True;
 		Release(Key.LeftShift);
