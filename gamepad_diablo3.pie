@@ -102,12 +102,6 @@ if (Window.Class != "ForegroundStaging") {
 	if ([var.INIT_WINDOW_W, var.INIT_WINDOW_H] != [Window.Left + Window.Width, Window.Top + Window.Height]) {
 		[var.INIT_WINDOW_W, var.INIT_WINDOW_H] = [Window.Left + Window.Width, Window.Top + Window.Height];
 
-/*
-		if (var.classMode == var.crusader) Display("diablo buff Crusader");
-		if (var.classMode == var.witchDoctor) Display("diablo full Witch doctor");
-		if (var.classMode == var.witchDoctorHalf) Display("diablo semi Witch doctor");
-*/
-
 		if (var.debug) DebugPrint("[" + Window.Class + "]: " + window.width + " x " + window.height);
 		var.leftborder = (window.Width - window.ClientWidth) / 2;
 		var.topborder = window.Height - window.ClientHeight - var.leftborder;
@@ -148,10 +142,6 @@ if (Window.Class != "ForegroundStaging") {
 			var.circleRTrigger = var.rangeCircleRTrigger;
 			var.toggleXY = False;	// False: 2,3
 		}
-
-		// Turn on Yolomouse
-		Wait(1.5 s);
-		var.resetMouseColor = True;
 	}
 }
 
@@ -954,7 +944,7 @@ if (var.LBShift) {
 	}
 	if (Released(var.XI_Right)) Release(Key.T);
 
-	if (Pressed(var.XI_Down)) {
+	if (DoubleClicked(var.XI_Down)) {
 		Press(Key.F9);			// 모든창 닫기
 		Release(Key.F9);
 		Press(Key.Enter);
