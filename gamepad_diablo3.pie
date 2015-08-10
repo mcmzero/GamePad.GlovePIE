@@ -47,13 +47,13 @@ if starting {
 	var.classDefaultType = var.classMeleeType;
 	var.classType = var.classDefaultType;				
 	var.testMode = False;
-	var.waitButton = 0.2;			// seconds
+	var.WaitButtonTime = 0.3;			// seconds
 
-	var.crusader = var.waitButton;
+	var.crusader = var.WaitButtonTime;
 	var.witchDoctor = 1.16;
 	var.witchDoctorHalf = 1.178;
 	var.classMode = var.crusader;
-	var.waitDog = var.classMode;
+	var.WaitDogTime = var.classMode;
 
 	// wheel spin
 	var.spinSpeed = 5;						// 회전 속도
@@ -101,20 +101,24 @@ if starting {
 if (Window.Class != "ForegroundStaging") {
 	if ([var.INIT_WINDOW_W, var.INIT_WINDOW_H] != [Window.Left + Window.Width, Window.Top + Window.Height]) {
 		[var.INIT_WINDOW_W, var.INIT_WINDOW_H] = [Window.Left + Window.Width, Window.Top + Window.Height];
-
 		if (var.debug) DebugPrint("[" + Window.Class + "]: " + window.width + " x " + window.height);
-		var.leftborder = (window.Width - window.ClientWidth) / 2;
-		var.topborder = window.Height - window.ClientHeight - var.leftborder;
-		var.middleX = Round(window.Left + window.Width / 2);
-		var.middleY = Round(window.Top + window.Height - var.leftborder - window.ClientHeight / 2);
-		[var.cursorX, var.cursorY] = [var.middleX, var.middleY];
-		if (not Mouse.LeftButton) Mouse.CursorPos = [var.cursorX, var.cursorY];
 
 		var.scaleX = 1 / (2560 / window.ClientWidth);
 		var.scaleY = 1 / (1440 / window.ClientHeight);
 		if (var.debug) DebugPrint("ScaleX: " + var.scaleX + ", ScaleY: " + var.scaleY);
+
+		var.LeftBorder = (window.Width - window.ClientWidth) / 2;
+		var.TopBorder = window.Height - window.ClientHeight - var.LeftBorder;
+		var.WindowTop = Window.Top + var.TopBorder;
+		var.middleX = Round(window.Left + window.Width / 2);
+		var.middleY = Round(var.WindowTop + window.ClientHeight / 2);
+
+		////////////////////////////////////////////////////////////////////////////////
+		[var.cursorX, var.cursorY] = [var.middleX, var.middleY];
+		if (not Mouse.LeftButton) Mouse.CursorPos = [var.cursorX, var.cursorY];
+		
 		[var.bagSizeX, var.bagSizeY] = [var.scaleX * 70, var.scaleY * 70];
-		[var.bagX, var.bagY] = [Window.Left, Window.Top] + [var.scaleX * 1900, var.scaleY * 770];
+		[var.bagX, var.bagY] = [Window.Left, var.WindowTop] + [var.scaleX * 1900, var.scaleY * 770];
 
 		// circle length (스킬 거리)
 		var.circleLTrigger = Round(var.scaleX * window.Width / 3.5);
@@ -310,14 +314,14 @@ if (var.LBShift == False) {
 		var.pjy = Round(EnsureMapRange(var.pjy, -1, 1, -var.pjr, var.pjr));
 
 		if ([var.pjx, var.pjy] != [0, 0])	{
-			var.leftborder = (window.Width - window.ClientWidth) / 2;
-			var.topborder = window.Height - window.ClientHeight - var.leftborder;
+			var.LeftBorder = (window.Width - window.ClientWidth) / 2;
+			var.TopBorder = window.Height - window.ClientHeight - var.LeftBorder;
 			if (not var.toggleSpring) Mouse.cursorpos = [var.cursorX, var.cursorY];
 			[var.pjx, var.pjy] = Mouse.cursorpos + [var.pjx, var.pjy];
-			var.pjx = Max(var.pjx, window.Left + var.leftborder + 10); // 좌
-			var.pjx = Min(var.pjx, window.Left + var.leftborder + window.ClientWidth - 10); // 우
-			var.pjy = Max(var.pjy, window.Top + var.topborder + 10); // 상
-			var.pjy = Min(var.pjy, window.Top + var.topborder + window.ClientHeight - 10); // 하
+			var.pjx = Max(var.pjx, window.Left + var.LeftBorder + 10); // 좌
+			var.pjx = Min(var.pjx, window.Left + var.LeftBorder + window.ClientWidth - 10); // 우
+			var.pjy = Max(var.pjy, var.WindowTop + 10); // 상
+			var.pjy = Min(var.pjy, var.WindowTop + window.ClientHeight - 10); // 하
 
 			Mouse.cursorpos = [var.pjx, var.pjy];
 			[var.cursorX, var.cursorY] = Mouse.cursorpos;
@@ -385,10 +389,10 @@ if (var.LBShift == False) {
 
 			[var.mx, var.my] = [var.middleX, var.middleY - var.offset] + [var.mx, var.my];
 			if (var.supportMode == False and var.autofireMode and var.toggleSpring) var.my = var.my - 90 * var.scaleY;
-			var.mx = Max(var.mx, window.Left + var.leftborder + 10);					 	// 좌
-			var.mx = Min(var.mx, window.Left + var.leftborder + window.ClientWidth - 10);	// 우
-			var.my = Max(var.my, window.Top + var.topborder + 10);							// 상
-			var.my = Min(var.my, window.Top + var.topborder + window.ClientHeight - 260 * var.scaleY); // 하
+			var.mx = Max(var.mx, window.Left + var.LeftBorder + 10);					 	// 좌
+			var.mx = Min(var.mx, window.Left + var.LeftBorder + window.ClientWidth - 10);	// 우
+			var.my = Max(var.my, var.WindowTop + 10);							// 상
+			var.my = Min(var.my, var.WindowTop + window.ClientHeight - 260 * var.scaleY); // 하
 			var.mx = Round(var.mx);
 			var.my = Round(var.my);
 			if (Mouse.CursorPos != [var.mx, var.my]) Mouse.CursorPos = [var.mx, var.my];
@@ -421,34 +425,9 @@ if (var.toggleChatMode == False and var.LBShift == False) {
 	} else if (var.XI_LT > var.dzTR) {
 		if (Key.F10) Release(Key.F10);
 	} else if (var.IsStunMode) {
-		if (Key.F10) Release(Key.F10);
-		Press(Mouse.RightButton);
-		Release(Mouse.RightButton);
-		if (var.classMode >= var.witchDoctor) {
-			Wait(var.waitDog / 2 s);
-			Press(Key.Three);
-			Release(Key.Three);
-			Wait(var.waitDog / 2 s);
-		}
-		Wait(var.waitDog s);
+		if (Key.F10) Release(Key.F10);	// goto 1064 line(ctrl + g)
 	} else if (var.IsSupportMode) {
-		if (Key.F10) Release(Key.F10);
-		if (not (var.classMode == var.crusader and var.XI_RT > var.dzTR)) {
-			if (var.classMode >= var.witchDoctor) {
-				if (var.OnRightStick) {
-					Press(Mouse.RightButton);
-					Release(Mouse.RightButton);
-					Wait(var.waitDog / 2 s);
-					Press(Key.Three);
-					Release(Key.Three);
-					Wait(var.waitDog / 2 s);
-				}
-			} else {
-				Press(Mouse.RightButton);
-				Release(Mouse.RightButton);
-				Wait(var.waitDog s);
-			}
-		}
+		if (Key.F10) Release(Key.F10);	// goto 1099 line(ctrl + g)
 	} else if (var.IsAutoFireMode or var.IsDealerMode) {
 		if (Key.F10) Release(Key.F10);
 		if (not Mouse.RightButton) Press(Mouse.RightButton);
@@ -599,7 +578,7 @@ if (Pressed(HeldDown(var.XI_LB, 0.5))) {
 			Wait(0.2 s);
 			if (var.testMode) {
 				// 마을에서 부활
-				Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1300, var.scaleY * 1120];
+				Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 1300, var.scaleY * 1120];
 			} else {
 				Mouse.cursorpos = [var.middleX, var.middleY - var.resetCurPosOffset];
 			}
@@ -623,7 +602,7 @@ if (var.LBShift) {
 	// LB 법성
 	if (Pressed(var.XI_LB)) {
 		var.classMode = var.crusader;
-		var.waitDog = var.classMode;
+		var.WaitDogTime = var.classMode;
 		var.supportMode = True;
 		var.classType = var.classMeleeType;
 	} 
@@ -632,7 +611,7 @@ if (var.LBShift) {
 	// RB 공부
 	if (Pressed(var.XI_RB)) {
 		var.classMode = var.witchDoctor;
-		var.waitDog = var.classMode;
+		var.WaitDogTime = var.classMode;
 		var.supportMode = True;
 		var.classType = var.classRangeType;
 	}
@@ -673,48 +652,48 @@ if (var.LBShift) {
 	
 	// A, B, X, Y
 	if (Pressed(var.XI_A)) {
-/*
-		Press(Key.LeftShift);
-		Press(Key.L);
-		Release(Key.L);
-		Release(Key.LeftShift);
-*/
 		var.goRift = True;
+		var.LBShift = False;
 	}
-	if (Released(var.XI_A)) var.LBShift = False;
 
-	if (Pressed(var.XI_B)) {
-		BeepHand;
-		Press(Key.LeftShift);
-		Press(Key.O);
-		Release(Key.O);
-		Release(Key.LeftShift);
-	} 
-	if (Released(var.XI_B)) var.LBShift = False;
-
-	if (Pressed(var.XI_X)) {
-/*
+	if (SingleClicked(var.XI_B)) {
 		Press(Key.LeftShift);
 		Press(Key.P);
 		Release(Key.P);
 		Release(Key.LeftShift);
-*/
-		var.goRepair = True;
+		var.LBShift = False;
 	}
-	if (Released(var.XI_X)) var.LBShift = False;
+	if (DoubleClicked(var.XI_B)) {
+		Press(Key.LeftShift);
+		Press(Key.L);
+		Release(Key.L);
+		Release(Key.LeftShift);
+		var.LBShift = False;
+	}
 
-	if (Pressed(var.XI_Y)) {
+	if (Pressed(var.XI_X)) {
+		var.goRepair = True;
+		var.LBShift = False;
+	}
+
+	if (SingleClicked(var.XI_Y)) {
 		Press(Key.O);
 		Release(Key.O);
+		var.LBShift = False;
 	}
-	if (Released(var.XI_Y)) var.LBShift = False;
+	if (DoubleClicked(var.XI_Y)) {
+		Press(Key.LeftShift);
+		Press(Key.O);
+		Release(Key.O);
+		Release(Key.LeftShift);
+		var.LBShift = False;
+	}
 	
 	// Up 황야 바바 대균 시험 모드
 	if (Pressed(var.XI_Up)) {
 		Press(Mouse.LeftButton);		// 딜러 모드 시작시 살짝 이동
 		Release(Mouse.LeftButton);
-	}
-	if (Released(var.XI_Up)) {
+
 		var.testMode = True;
 		var.dealerMode = True;
 		var.LBShift = False;
@@ -722,8 +701,6 @@ if (var.LBShift) {
 	
 	// Down 황야 바바 소용돌이 모드
 	if (Pressed(var.XI_Down)) {
-	}
-	if (Released(var.XI_Down)) {
 		var.testMode = False;
 		var.dealerMode = True;
 		var.LBShift = False;
@@ -732,22 +709,18 @@ if (var.LBShift) {
 	// Left 법성
 	if (Pressed(var.XI_Left)) {
 		var.classMode = var.crusader;
-		var.waitDog = var.classMode;
+		var.WaitDogTime = var.classMode;
 		var.supportMode = True;
 		var.classType = var.classMeleeType;
-	}
-	if (Released(var.XI_Left)) {
 		var.LBShift = False;
 	}
 
 	// Right 공부
 	if (Pressed(var.XI_Right)) {
 		var.classMode = var.witchDoctor;
-		var.waitDog = var.classMode;
+		var.WaitDogTime = var.classMode;
 		var.supportMode = True;
 		var.classType = var.classRangeType;
-	}
-	if (Released(var.XI_Right)) {
 		var.LBShift = False;
 	}
 	
@@ -815,7 +788,7 @@ if (var.LBShift) {
 	// F3(Say 따라오게)
 	//
 	if (Pressed(Mouse.MiddleButton)) {
-		if (var.debug) DebugPrint("[" + Round((Mouse.cursorposX - Window.Left) / var.ScaleX) + ", " + Round((Mouse.cursorposY - Window.Top) / var.ScaleY) + "]");
+		if (var.debug) DebugPrint("[" + Round((Mouse.cursorposX - Window.Left) / var.ScaleX) + ", " + Round((Mouse.cursorposY - var.WindowTop) / var.ScaleY) + "]");
 	}
 	
 	if (Pressed(var.XI_RT > var.dzTR)) Press(Mouse.LeftButton);
@@ -884,7 +857,7 @@ if (var.LBShift) {
 		Release(Key.LeftShift);
 		Press(Key.Escape);
 		Release(Key.Escape);
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 440, var.scaleY * 660];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 440, var.scaleY * 660];
 		[var.cursorX, var.cursorY] = [var.scaleX * 440, var.scaleY * 660];
 		var.RightStickLock = True;
 		if (var.debug) DebugPrint("cursorX: " + var.cursorX + ", cursorY: " + var.cursorY);
@@ -944,6 +917,20 @@ if (var.LBShift) {
 	}
 	if (Released(var.XI_Right)) Release(Key.T);
 
+	if (SingleClicked(var.XI_Down)) {
+		Release(Key.LeftShift);
+		Press(Key.Escape);
+		Release(Key.Escape);
+		Press(Key.F9);
+		Wait(0.05 s);
+		Release(Key.F9);
+		Press(Key.PageDown);
+		Release(Key.PageDown);
+
+		var.leftCount = 0;
+		var.rightCount = 0;
+		var.startCount = 0;
+	}
 	if (DoubleClicked(var.XI_Down)) {
 		Press(Key.F9);			// 모든창 닫기
 		Release(Key.F9);
@@ -1060,65 +1047,118 @@ if (var.LBShift) {
 		}
 		var.RightStickLock = False;
 	}
-}	// (var.LBShift == False) 
+}	// (var.LBShift == False)
 
 ////////////////////////////////////////////////////////
 // auto fire
 if (not var.toggleChatMode) {
+	var.OnStunMode = var.supportMode and var.autofireMode == False;
+	var.OnSupportMode = var.supportMode and var.autofireMode == True;
+	var.OnNormalMode = var.OnStunMode == False and var.OnSupportMode == False;
 	var.OnFire = (var.toggleSpring or var.dealerMode or not var.OnLeftStick) and not var.XI_B;
-	var.OnFireWitchDoctor = var.OnFire or var.classMode >= var.witchDoctor;
+	var.OnFireOrWD = var.OnFire or var.classMode >= var.witchDoctor;
 	var.OnFireMRB = var.OnFire and var.dealerMode and var.autofireMode and var.OffLeftStick;
 	var.toggleYY = (var.toggleX and var.toggleXY) or var.toggleY;
 	var.toggleYC = (var.toggleX and var.toggleXY and var.classMode == var.crusader) or var.toggleY;
+	var.IsSupportWitchDoctor = var.IsSupportMode and var.classMode >= var.witchDoctor and var.OnRightStick;
+	var.IsSupportCrusader = var.IsSupportMode and var.classMode == var.crusader;
 
-	if (var.supportMode and var.autofireMode == False) {
-		//if (Pressed(var.OnLeftStick)) Release(Key.Three);
-	} else {
-		// normal mode
-		if (var.supportMode) {
-			if (not (var.classMode == var.crusader and var.XI_RT > var.dzTR)) {
-				if (var.OnFire and var.toggleA) Wait(var.waitButton s);
-				if (var.OnFire and var.toggleA) Press(Key.One);
-				if (var.OnFire and var.toggleA) Release(Key.One);
+	// 개폭
+	var.rbmax = 11;
+	if (var.OnStunMode and var.IsStunMode) {
+		Release(Key.F10);
+		if (var.rbnum <= var.rbmax) Press(Mouse.RightButton);
+		if (var.rbnum <= var.rbmax) Release(Mouse.RightButton);
+		if (var.rbnum < var.rbmax) Wait(var.WaitDogTime s);
+		if (var.rbnum > var.rbmax and var.classMode >= var.witchDoctor) Press(Key.Three);
+		if (var.rbnum > var.rbmax and var.classMode >= var.witchDoctor) Wait(0.2 s);
+		if (var.rbnum > var.rbmax and var.classMode >= var.witchDoctor) Release(Key.Three);
+		if (var.rbnum > var.rbmax) var.rbnum = 0 else var.rbnum++;
+	}
 
-				if (var.OnFire and var.toggleX) Wait(var.waitButton s);
-				if (var.OnFire and var.toggleX) Press(Key.Two);
-				if (var.OnFire and var.toggleX) Release(Key.Two);
+	// 법성 or 공부
+	if (var.OnSupportMode and not (var.classMode == var.crusader and var.XI_RT > var.dzTR)) {
+		var.WaitCount = 2;
+		var.IsRbNum = var.rbnum < var.rbmax - 1;
+		var.SkillStep = var.SkillNum % 3;
+		if (var.SkillNum == 99) var.SkillNum = 0 else var.SkillNum++;
 
-				if (var.OnFire and var.toggleYC) Wait(var.waitButton s);
-				if (var.OnFire and var.toggleYC) Press(Key.Three);
-				if (var.OnFire and var.toggleYC) Release(Key.Three);
+		// Right Button
+		if (var.IsSupportCrusader) Press(Mouse.RightButton);
+		if (var.IsSupportCrusader) Release(Mouse.RightButton);
+		if (var.IsSupportCrusader) Wait(var.WaitButtonTime * 2 s);
 
-				if (var.OnFireWitchDoctor and (var.autofireMode or var.toggleRB)) Wait(var.waitButton s);
-				if (var.OnFireWitchDoctor and (var.autofireMode or var.toggleRB)) Press(Key.Four);
-				if (var.OnFireWitchDoctor and (var.autofireMode or var.toggleRB)) Release(Key.Four);
-			}
-		} else {	// not var.supportMode
-			if (var.waitDealerMode > 0) {
-				if (var.OnFire and var.OffLeftStick and var.toggleA) Press(Key.One);
-				if (var.OnFire and var.OffLeftStick and var.toggleA) Release(Key.One);
-				if (var.OnFire and var.OffLeftStick and var.toggleA) Wait(var.waitDealerMode s); // 60초 주기
-			}
-			if (var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0) Wait(var.waitButton s);
-			if (var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0) Press(Key.One);
-			if (var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0) Release(Key.One);
+		if (var.rbnum <= var.rbmax and var.IsSupportWitchDoctor) Press(Mouse.RightButton);
+		if (var.rbnum <= var.rbmax and var.IsSupportWitchDoctor) Release(Mouse.RightButton);
+		if (var.rbnum <= var.rbmax and var.IsSupportWitchDoctor) Wait(var.WaitButtonTime * 2);
 
-			if (var.OnFire and var.OffLeftStick and var.toggleX) Wait(var.waitButton s);
-			if (var.OnFire and var.OffLeftStick and var.toggleX) Press(Key.Two);
-			if (var.OnFire and var.OffLeftStick and var.toggleX) Release(Key.Two);
+		// One
+		if (var.IsRbNum and var.SkillStep == 0 and var.OnFire and var.toggleA) Press(Key.One);
+		if (var.IsRbNum and var.SkillStep == 0 and var.OnFire and var.toggleA) Wait(var.WaitButtonTime s);
+		if (var.IsRbNum and var.SkillStep == 0 and var.OnFire and var.toggleA) Release(Key.One);
+		if (var.IsRbNum and var.SkillStep == 0 and var.OnFire and var.toggleA) var.WaitCount++;
 
-			if (var.OnFire and var.toggleYY) Wait(var.waitButton s);
-			if (var.OnFire and var.toggleYY) Press(Key.Three);
-			if (var.OnFire and var.toggleYY) Release(Key.Three);
+		// Two
+		if (var.IsRbNum and var.SkillStep == 1 and var.OnFire and var.toggleX) Press(Key.Two);
+		if (var.IsRbNum and var.SkillStep == 1 and var.OnFire and var.toggleX) Wait(var.WaitButtonTime s);
+		if (var.IsRbNum and var.SkillStep == 1 and var.OnFire and var.toggleX) Release(Key.Two);
+		if (var.IsRbNum and var.SkillStep == 1 and var.OnFire and var.toggleX) var.WaitCount++;
 
-			if (var.OnFireMRB) Wait(var.waitButton s);
-			if (var.OnFireMRB) Press(Mouse.RightButton);
-			if (var.OnFireMRB) Release(Mouse.RightButton);
+		// Three
+		if (var.rbnum > var.rbmax and var.IsSupportWitchDoctor) Press(Key.Three);
+		if (var.rbnum > var.rbmax and var.IsSupportWitchDoctor) Wait(0.2 s);
+		if (var.rbnum > var.rbmax and var.IsSupportWitchDoctor) Release(Key.Three);
+		if (var.rbnum > var.rbmax) var.rbnum = 0 else if (var.IsSupportWitchDoctor) var.rbnum++;
 
-			if (var.OnFireWitchDoctor and var.toggleRB) Wait(var.waitButton s);
-			if (var.OnFireWitchDoctor and var.toggleRB) Press(Key.Four);
-			if (var.OnFireWitchDoctor and var.toggleRB) Release(Key.Four);
+		if (var.OnFire and var.SkillStep == 2 and var.toggleYC) Press(Key.Three);
+		if (var.OnFire and var.SkillStep == 2 and var.toggleYC) Wait(var.WaitButtonTime s);
+		if (var.OnFire and var.SkillStep == 2 and var.toggleYC) Release(Key.Three);
+
+		// Four
+		if (var.IsRbNum and var.OnFireOrWD and (var.autofireMode or var.toggleRB)) Press(Key.Four);
+		if (var.IsRbNum and var.OnFireOrWD and (var.autofireMode or var.toggleRB)) Wait(var.WaitButtonTime s);
+		if (var.IsRbNum and var.OnFireOrWD and (var.autofireMode or var.toggleRB)) Release(Key.Four);
+		if (var.IsRbNum and var.OnFireOrWD and (var.autofireMode or var.toggleRB)) var.WaitCount++;
+
+		// Wait
+		if (var.rbnum < var.rbmax and var.IsSupportWitchDoctor) Wait(var.WaitDogTime - var.WaitButtonTime * var.WaitCount s);
+		if (var.IsSupportWitchDoctor or var.IsSupportCrusader) Release(Key.F10);
+	}
+
+	// 기본
+	if (var.OnNormalMode) {
+		var.SkillStep = var.SkillNum % 4;
+		if (var.SkillNum == 99) var.SkillNum = 0 else var.SkillNum++;
+
+		// One
+		if (var.waitDealerMode > 0) {
+			if (var.OnFire and var.OffLeftStick and var.toggleA) Press(Key.One);
+			if (var.OnFire and var.OffLeftStick and var.toggleA) Release(Key.One);
+			if (var.OnFire and var.OffLeftStick and var.toggleA) Wait(var.waitDealerMode s); // 60초 주기
 		}
+		if (var.SkillStep == 0 and var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0) Press(Key.One);
+		if (var.SkillStep == 0 and var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0) Wait(var.WaitButtonTime s);
+		if (var.SkillStep == 0 and var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0) Release(Key.One);
+
+		// Two
+		if (var.SkillStep == 1 and var.OnFire and var.OffLeftStick and var.toggleX) Press(Key.Two);
+		if (var.SkillStep == 1 and var.OnFire and var.OffLeftStick and var.toggleX) Wait(var.WaitButtonTime s);
+		if (var.SkillStep == 1 and var.OnFire and var.OffLeftStick and var.toggleX) Release(Key.Two);
+
+		// Three
+		if (var.SkillStep == 2 and var.OnFire and var.toggleYY) Press(Key.Three);
+		if (var.SkillStep == 2 and var.OnFire and var.toggleYY) Wait(var.WaitButtonTime s);
+		if (var.SkillStep == 2 and var.OnFire and var.toggleYY) Release(Key.Three);
+
+		// Four
+		if (var.SkillStep == 3 and var.OnFireOrWD and var.toggleRB) Press(Key.Four);
+		if (var.SkillStep == 3 and var.OnFireOrWD and var.toggleRB) Wait(var.WaitButtonTime s);
+		if (var.SkillStep == 3 and var.OnFireOrWD and var.toggleRB) Release(Key.Four);
+
+		// Right Button
+		if (var.OnFireMRB) Press(Mouse.RightButton);
+		if (var.OnFireMRB) Release(Mouse.RightButton);
+		if (var.OnFireMRB) Wait(var.WaitButtonTime s);
 	}
 }
 
@@ -1440,7 +1480,7 @@ if (not (var.dealerMode or var.supportMode)) {
 		Wait(var.repairWaitTime s);
 
 		// 수락
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 80, var.scaleY * 1125];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 80, var.scaleY * 1125];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
@@ -1458,69 +1498,69 @@ if (not (var.dealerMode or var.supportMode)) {
 		Release(Key.LeftShift);
 
 		// 수리
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 685, var.scaleY * 822];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 685, var.scaleY * 822];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 363, var.scaleY * 789];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 363, var.scaleY * 789];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		// 노랑 분해
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 686, var.scaleY * 646];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 522, var.scaleY * 385];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 522, var.scaleY * 385];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1134, var.scaleY * 500];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 1134, var.scaleY * 500];
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		// 파랑 분해
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 686, var.scaleY * 646];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 424, var.scaleY * 385];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 424, var.scaleY * 385];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1134, var.scaleY * 500];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 1134, var.scaleY * 500];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
 		// 하양 분해
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 686, var.scaleY * 646];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 337, var.scaleY * 385];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 337, var.scaleY * 385];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1134, var.scaleY * 500];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 1134, var.scaleY * 500];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
@@ -1528,19 +1568,19 @@ if (not (var.dealerMode or var.supportMode)) {
 
 		// 전설 분해
 		Wait(var.repairWaitTime * 15 s);
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 686, var.scaleY * 646];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 686, var.scaleY * 646];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 227, var.scaleY * 387];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 227, var.scaleY * 387];
 		Wait(var.repairWaitTime s);
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
 
-		Mouse.cursorpos = [Window.Left, Window.Top] + [var.scaleX * 1900, var.scaleY * 770];
+		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 1900, var.scaleY * 770];
 		[var.cursorX, var.cursorY] = Mouse.cursorpos;
 	}
 }
