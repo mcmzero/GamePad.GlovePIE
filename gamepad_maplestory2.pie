@@ -421,7 +421,9 @@ if (var.MapleStory2) {
 
 	var.KeyStepTime = 0.2;
 	if (var.ChannelMode == False) {
-		if (var.XI_A) {
+		if (HeldDown(var.XI_A, 0.5)) {
+			Press(Key.A);
+		} else if (var.XI_A) {
 			var.defaultCurPos = True;
 			var.turnOnTab = False;
 			var.keepSpace = False;
@@ -430,16 +432,10 @@ if (var.MapleStory2) {
 				if (var.AutoFireA) var.AutoFireA = False;
 			}
 			if (var.ShiftMode) {
-				if (Not Key.A) Press(Key.A);
+				Press(Key.A);
 			} else {
-				if (Not Key.Z) Press(Key.Z);
-				var.AMod = var.ACount % 10;
-				debug = var.AMod + " " + var.ACount;
-				if (var.AMod == 1) Press(Key.D) else Press(Key.A);
-				Wait(var.KeyStepTime s);
-				if (Key.D) Release(Key.D);
-				if (Key.A and var.AutoFireA == False) Release(Key.A);
-				var.ACount++;
+				Press(Key.Z);
+				Press(Key.D);
 			}
 		} else if (Released(var.XI_A)) {
 			if (Key.Space) Release(Key.Space);
@@ -452,16 +448,17 @@ if (var.MapleStory2) {
 		if (var.XI_X) {
 			var.defaultCurPos = True;
 			var.turnOnTab = False;
+			var.keepSpace = False;
 			if (Key.A) Release(Key.A);
 			if (var.ShiftMode) {
 				if (Not Key.Q) Press(Key.Q);
 			} else {
+				var.XCount++;
 				var.XMod = var.XCount % 2;
 				if (var.XMod == 1) Press(Key.E) else Press(Key.Q);
 				Wait(var.KeyStepTime s);
 				if (Key.E) Release(Key.E);
 				if (Key.Q) Release(Key.Q);
-				var.XCount++;
 			}
 		} else if (Released(var.XI_X)) {
 			if (Key.E) Release(Key.E);
@@ -470,40 +467,38 @@ if (var.MapleStory2) {
 			var.XCount = 0;
 		}
 
-		if (var.XI_B) {
+		if (HeldDown(var.XI_B, 0.5)) {
+			Press(Key.S);
+		} else if (var.XI_B) {
 			var.defaultCurPos = True;
 			var.turnOnTab = False;
+			var.keepSpace = False;
 			if (Key.A) Release(Key.A);
 			if (var.ShiftMode) {
-				if (Not Key.S) Press(Key.S);
+				Press(Key.S);
 			} else {
-				var.BMod = var.BCount % 10;
-				if (var.BMod == 1) Press(Key.F) else Press(Key.S);
-				Wait(var.KeyStepTime s);
-				if (Key.F) Release(Key.F);
-				if (Key.S) Release(Key.S);
-				var.BCount++;
+				Press(Key.F);
 			}
 		} else if (Released(var.XI_B)) {
 			if (Key.F) Release(Key.F);
 			if (Key.S) Release(Key.S);
 			if (var.AutoFireA) Press(Key.A);
-			var.BCount = 0;
 		}
 
 		if (var.XI_Y) {
 			var.defaultCurPos = True;
 			var.turnOnTab = False;
+			var.keepSpace = False;
 			if (Key.A) Release(Key.A);
 			if (var.ShiftMode) {
 				if (Not Key.W) Press(Key.W);
 			} else {
+				var.YCount++;
 				var.YMod = var.YCount % 2;
 				if (var.YMod == 1) Press(Key.R) else Press(Key.W);
 				Wait(var.KeyStepTime s);
 				if (Key.R) Release(Key.R);
 				if (Key.W) Release(Key.W);
-				var.YCount++;
 			}
 		} else if (Released(var.XI_Y)) {
 			if (Key.R) Release(Key.R);
@@ -596,29 +591,31 @@ if (var.MapleStory2) {
 	}
 
 	if (Pressed(HeldDown(var.XI_Left, var.heldDownTime))) {
-		if (Not Key.K) Press(Key.K);
+		if (Not Key.I) Press(Key.I);
 	} else if (Pressed(var.XI_Left)) {
-		var.resetCurPos = True;
 		if (var.ShiftMode) {
 			if (Not Key.K) Press(Key.K);
 		} else {
 			if (Not Key.P) Press(Key.P);
 		}
+		var.resetCurPos = True;
 	} else if (Released(var.XI_Left)) {
+		if (Key.I) Release(Key.I);
 		if (Key.P) Release(Key.P);
 		if (Key.K) Release(Key.K);
 	}
 
 	if (Pressed(HeldDown(var.XI_Right, var.heldDownTime))) {
-		if (Not Key.L) Press(Key.L);
+		if (Not Key.P) Press(Key.P);
 	} else if (Pressed(var.XI_Right)) {
-		var.resetCurPos = True;
 		if (var.ShiftMode) {
 			if (Not Key.L) Press(Key.L);
 		} else {
 			if (Not Key.I) Press(Key.I);
 		}
+		var.resetCurPos = True;
 	} else if (Released(var.XI_Right)) {
+		if (Key.P) Release(Key.P);
 		if (Key.I) Release(Key.I);
 		if (Key.L) Release(Key.L);
 	}
