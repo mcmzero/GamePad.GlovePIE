@@ -419,7 +419,7 @@ if (var.MapleStory2) {
 		if (Key.Eight) Release(Key.Eight);
 	}
 
-	var.KeyStepTime = 0.5;
+	var.KeyStepTime = 0.2;
 	if (var.ChannelMode == False) {
 		if (var.XI_A) {
 			var.defaultCurPos = True;
@@ -433,8 +433,9 @@ if (var.MapleStory2) {
 				if (Not Key.A) Press(Key.A);
 			} else {
 				if (Not Key.Z) Press(Key.Z);
-				var.AMod = var.ACount % 8;
-				if (var.AMod == 0) Press(Key.D) else Press(Key.A);
+				var.AMod = var.ACount % 10;
+				debug = var.AMod + " " + var.ACount;
+				if (var.AMod == 1) Press(Key.D) else Press(Key.A);
 				Wait(var.KeyStepTime s);
 				if (Key.D) Release(Key.D);
 				if (Key.A and var.AutoFireA == False) Release(Key.A);
@@ -445,7 +446,7 @@ if (var.MapleStory2) {
 			if (Key.Z) Release(Key.Z);
 			if (Key.D) Release(Key.D);
 			if (Key.A and var.AutoFireA == False) Release(Key.A);
-			ACount = 0;
+			var.ACount = 0;
 		}
 
 		if (var.XI_X) {
@@ -456,7 +457,7 @@ if (var.MapleStory2) {
 				if (Not Key.Q) Press(Key.Q);
 			} else {
 				var.XMod = var.XCount % 2;
-				if (var.XMod == 0) Press(Key.E) else Press(Key.Q);
+				if (var.XMod == 1) Press(Key.E) else Press(Key.Q);
 				Wait(var.KeyStepTime s);
 				if (Key.E) Release(Key.E);
 				if (Key.Q) Release(Key.Q);
@@ -466,7 +467,7 @@ if (var.MapleStory2) {
 			if (Key.E) Release(Key.E);
 			if (Key.Q) Release(Key.Q);
 			if (var.AutoFireA) Press(Key.A);
-			XCount = 0;
+			var.XCount = 0;
 		}
 
 		if (var.XI_B) {
@@ -476,8 +477,8 @@ if (var.MapleStory2) {
 			if (var.ShiftMode) {
 				if (Not Key.S) Press(Key.S);
 			} else {
-				var.BMod = var.BCount % 8;
-				if (var.BMod == 0) Press(Key.F) else Press(Key.S);
+				var.BMod = var.BCount % 10;
+				if (var.BMod == 1) Press(Key.F) else Press(Key.S);
 				Wait(var.KeyStepTime s);
 				if (Key.F) Release(Key.F);
 				if (Key.S) Release(Key.S);
@@ -498,7 +499,7 @@ if (var.MapleStory2) {
 				if (Not Key.W) Press(Key.W);
 			} else {
 				var.YMod = var.YCount % 2;
-				if (var.YMod == 0) Press(Key.R) else Press(Key.W);
+				if (var.YMod == 1) Press(Key.R) else Press(Key.W);
 				Wait(var.KeyStepTime s);
 				if (Key.R) Release(Key.R);
 				if (Key.W) Release(Key.W);
