@@ -83,18 +83,22 @@ if (HeldDown(Window.Class != "MapleStory2", 1)) {
 }
 
 if (var.MapleStory2) {
-	// 초기화
 	if (Window.Class != "ForegroundStaging") {
 		if ([var.INIT_WINDOW_W, var.INIT_WINDOW_H] != [Window.Left + Window.Width, Window.Top + Window.Height]) {
 			[var.INIT_WINDOW_W, var.INIT_WINDOW_H] = [Window.Left + Window.Width, Window.Top + Window.Height];
 			if (var.debug) DebugPrint("[" + Window.Class + "]: " + window.width + " x " + window.height);
-			var.leftborder = (window.Width - window.ClientWidth) / 2;
-			var.topborder = window.Height - window.ClientHeight - var.leftborder;
-			var.middleX = Round(window.Left + window.Width / 2);
-			var.middleY = Round(window.Top + window.Height - var.leftborder - window.ClientHeight / 2);
+
 			var.scaleX = 1 / (2560 / window.ClientWidth);
 			var.scaleY = 1 / (1440 / window.ClientHeight);
 			if (var.debug) DebugPrint("ScaleX: " + var.scaleX + ", ScaleY: " + var.scaleY);
+
+			var.LeftBorder = (window.Width - window.ClientWidth) / 2;
+			var.TopBorder = window.Height - window.ClientHeight - var.LeftBorder;
+			var.WindowTop = Window.Top + var.TopBorder;
+			var.middleX = Round(window.Left + window.Width / 2);
+			var.middleY = Round(var.WindowTop + window.ClientHeight / 2);
+
+			////////////////////////////////////////////////////////////////////////////////
 			[var.cursorX, var.cursorY] = [var.middleX, var.middleY + var.scaleY * 240];
 			[var.defaultX, var.defaultY] = [var.middleX, Round(var.middleY + var.scaleY * 620)];
 
@@ -1470,7 +1474,7 @@ if (var.MapleStory2) {
 		if (var.ScaleY == 1) var.offsetY = 25.5 else var.offsetY = 34;
 		if (var.debug) DebugPrint("offsetY: " + var.offsetY);
 
-		[var.ChannelX, var.ChannelY] = [Window.Left, Window.Top + var.topborder] + [var.scaleX * var.channel_x, var.scaleY * var.channel_y];
+		[var.ChannelX, var.ChannelY] = [Window.Left, var.WindowTop] + [var.scaleX * var.channel_x, var.scaleY * var.channel_y];
 		Mouse.cursorpos = [var.ChannelX, var.ChannelY];
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
@@ -1564,7 +1568,7 @@ if (var.MapleStory2) {
 	if (DoubleClicked(Mouse.MiddleButton)) {
 		DebugPrint("채널이동 메뉴에서 마우스 가운데 버튼을 더블 클릭 하여 나오는 아래 좌표 2줄을 gamepad_maplestory2.pie 파일의 2~3째 줄에 덮어 쓰면 채널이동 기능을 사용할수 있습니다.");
 		DebugPrint("var.channel_x = " + Round((Mouse.cursorposX - Window.Left) / var.ScaleX) + ";");
-		DebugPrint("var.channel_y = " + Round((Mouse.cursorposY - Window.Top - var.topborder) / var.ScaleY) + ";");
+		DebugPrint("var.channel_y = " + Round((Mouse.cursorposY - Window.Top - var.TopBorder) / var.ScaleY) + ";");
 		DebugPrint(" ");
 	}
 } // (var.MapleStory2)
