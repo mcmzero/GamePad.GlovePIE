@@ -419,9 +419,10 @@ if (var.MapleStory2) {
 		if (Key.Eight) Release(Key.Eight);
 	}
 
-	var.KeyStepTime = 0.2;
+	var.KeyStepWait = 0.2;
+	var.KeyStepHeld = 0.5;
 	if (var.ChannelMode == False) {
-		if (HeldDown(var.XI_A, 0.5)) {
+		if (HeldDown(var.XI_A, var.KeyStepHeld)) {
 			Press(Key.A);
 		} else if (var.XI_A) {
 			var.defaultCurPos = True;
@@ -456,7 +457,7 @@ if (var.MapleStory2) {
 				var.XCount++;
 				var.XMod = var.XCount % 2;
 				if (var.XMod == 1) Press(Key.E) else Press(Key.Q);
-				Wait(var.KeyStepTime s);
+				Wait(var.KeyStepWait s);
 				if (Key.E) Release(Key.E);
 				if (Key.Q) Release(Key.Q);
 			}
@@ -467,7 +468,7 @@ if (var.MapleStory2) {
 			var.XCount = 0;
 		}
 
-		if (HeldDown(var.XI_B, 0.5)) {
+		if (HeldDown(var.XI_B, var.KeyStepHeld)) {
 			Press(Key.S);
 		} else if (var.XI_B) {
 			var.defaultCurPos = True;
@@ -496,7 +497,7 @@ if (var.MapleStory2) {
 				var.YCount++;
 				var.YMod = var.YCount % 2;
 				if (var.YMod == 1) Press(Key.R) else Press(Key.W);
-				Wait(var.KeyStepTime s);
+				Wait(var.KeyStepWait s);
 				if (Key.R) Release(Key.R);
 				if (Key.W) Release(Key.W);
 			}
@@ -549,7 +550,7 @@ if (var.MapleStory2) {
 		Wait(0.72)
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
-		Wait(var.KeyStepTime s);
+		Wait(0.2 s);
 		var.defaultCurPos = True;
 	} else if (SingleClicked(var.XI_Start)) {
 		if (var.ShiftMode) var.MoveDownChannel = 5 else var.MoveUpChannel = 5;
