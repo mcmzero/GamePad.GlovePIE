@@ -1,0 +1,7 @@
+<NotepadPlus>
+    <Project name="gampepad_glovepie">
+        <File name="gamepad_diablo3.pie" />
+        <File name="gamepad_maplestory2.pie" />
+        <File name="gamepad_windows.pie" />
+    </Project>
+</NotepadPlus>

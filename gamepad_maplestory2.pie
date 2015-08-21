@@ -324,6 +324,8 @@ if (var.MapleStory2) {
 		if (var.AutoFireA and Key.A) Release(Key.A);
 		if (var.RT_IS_X != True and Not Key.A) Press(Key.A);
 		if (var.RT_IS_X == True and Not Key.X) Press(Key.X);
+	} else if (DoubleClicked(var.XI_RT > var.dzTR)) {
+		var.SkipJump = False;
 	} else if (Pressed(var.XI_RT > var.dzTR)) {
 		if (var.AutoFireA and Key.A) Release(Key.A);
 		if (Not Key.Z) Press(Key.Z);
@@ -336,7 +338,7 @@ if (var.MapleStory2) {
 
 		if (var.xrt) {
 			var.xrt = False;
-		} else {
+		} else if (var.SkipJump == False) {
 			if (Not Key.C) Press(Key.C);
 			Wait(0.1 s);
 			if (Key.C) Release(Key.C);
@@ -568,6 +570,11 @@ if (var.MapleStory2) {
 			var.defaultCurPos = True;
 			if (Not Key.Space) Press(Key.Space);
 			if (Not Key.Z) Press(Key.Z);
+		}
+		var.SkipJump = True;
+		if (var.SkipJump) {
+			wait(30 s);
+			var.SkipJump = False;
 		}
 	} else if (Released(var.XI_Up)) {
 		if (Key.Space and var.keepSpace = False) Release(Key.Space);
