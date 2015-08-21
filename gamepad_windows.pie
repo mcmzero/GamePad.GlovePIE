@@ -75,8 +75,8 @@ if (var.windowClass != Window.Class) {
 	} else if (Window.Class == "GxWindowClass") {
 		Chain("gamepad_wow.pie");
 	} else if (Window.Class == "MapleStory2") {
-		Execute("taskkill_blackcipher.vbs");
-		Wait(1 s);
+		//Execute("taskkill_blackcipher.vbs");
+		//Wait(1 s);
 		Chain("gamepad_maplestory2.pie");
 	}
 	if (Window.Class == "ForegroundStaging") {
