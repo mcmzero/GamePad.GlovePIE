@@ -10,8 +10,9 @@ del %CMDUAC%
 exit /b
 :noUAC
 
-:: 자동실행 등록
+:delete_hklm_run
 set HKLM_RUN="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-%SystemRoot%\system32\reg.exe delete %HKLM_RUN% /v GlovePIE_gamepad /f > nul
+set ValueName="GlovePIE_gamepad"
+%SystemRoot%\system32\reg.exe delete %HKLM_RUN% /v %ValueName% /f > nul
 
-pause
+timeout 5

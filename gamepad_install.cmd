@@ -10,10 +10,11 @@ del %CMDUAC%
 exit /b
 :noUAC
 
-:: 자동실행 등록
+:add_hklm_run
 set HKLM_RUN="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-set GLOVEPIE_RUN="%CD%\gamepad_run.cmd %CD%"
-%SystemRoot%\system32\reg.exe add    %HKLM_RUN% /v GlovePIE_gamepad /t REG_SZ /d %GLOVEPIE_RUN% /f > nul
-%SystemRoot%\system32\reg.exe query  %HKLM_RUN% /v GlovePIE_gamepad
+set ValueName="GlovePIE_gamepad"
+set Data="%CD%\gamepad_run.cmd %CD%"
+%SystemRoot%\system32\reg.exe add   %HKLM_RUN% /v %ValueName% /t REG_SZ /d %Data% /f > nul
+%SystemRoot%\system32\reg.exe query %HKLM_RUN% /v %ValueName% 2> nul
 
-pause
+timeout 5
