@@ -1073,10 +1073,12 @@ if (not var.toggleChatMode) {
 		
 		if (var.rbnum > var.rbmax and var.classMode >= var.witchDoctor and var.CustomActionKey == True) Press(Key.F7);
 		if (var.rbnum > var.rbmax and var.classMode >= var.witchDoctor and var.CustomActionKey == False) Press(Key.Three);
+		if (var.rbnum > var.rbmax and var.classMode >= var.witchDoctor) var.IsPressedKey = True;
 		if (var.rbnum > var.rbmax and var.classMode >= var.witchDoctor) Wait(0.2 s);
-		if (var.rbnum > var.rbmax and var.classMode >= var.witchDoctor and var.CustomActionKey == True) Release(Key.F7);
-		if (var.rbnum > var.rbmax and var.classMode >= var.witchDoctor and var.CustomActionKey == False) Release(Key.Three);
+		if (var.IsPressedKey and var.CustomActionKey == True) Release(Key.F7);
+		if (var.IsPressedKey and var.CustomActionKey == False) Release(Key.Three);
 		if (var.rbnum > var.rbmax) var.rbnum = 0 else var.rbnum++;
+		var.IsPressedKey = False;
 	}
 
 	// 법성 or 공부
@@ -1098,40 +1100,50 @@ if (not var.toggleChatMode) {
 		// One
 		if (var.IsRbNum and var.SkillStep == 0 and var.OnFire and var.toggleA and var.CustomActionKey == True) Press(Key.F5);
 		if (var.IsRbNum and var.SkillStep == 0 and var.OnFire and var.toggleA and var.CustomActionKey == False) Press(Key.One);
+		if (var.IsRbNum and var.SkillStep == 0 and var.OnFire and var.toggleA) var.IsPressedKey = True;
 		if (var.IsRbNum and var.SkillStep == 0 and var.OnFire and var.toggleA) Wait(var.WaitButtonTime s);
-		if (var.IsRbNum and var.SkillStep == 0 and var.OnFire and var.toggleA and var.CustomActionKey == True) Release(Key.F5);
-		if (var.IsRbNum and var.SkillStep == 0 and var.OnFire and var.toggleA and var.CustomActionKey == False) Release(Key.One);
+		if (var.IsPressedKey and var.CustomActionKey == True) Release(Key.F5);
+		if (var.IsPressedKey and var.CustomActionKey == False) Release(Key.One);
 		if (var.IsRbNum and var.SkillStep == 0 and var.OnFire and var.toggleA) var.WaitCount++;
+		var.IsPressedKey = False;
 
 		// Two
 		if (var.IsRbNum and var.SkillStep == 1 and var.OnFire and var.toggleX and var.CustomActionKey == True) Press(Key.F6);
 		if (var.IsRbNum and var.SkillStep == 1 and var.OnFire and var.toggleX and var.CustomActionKey == False) Press(Key.Two);
+		if (var.IsRbNum and var.SkillStep == 1 and var.OnFire and var.toggleX) var.IsPressedKey = True;
 		if (var.IsRbNum and var.SkillStep == 1 and var.OnFire and var.toggleX) Wait(var.WaitButtonTime s);
-		if (var.IsRbNum and var.SkillStep == 1 and var.OnFire and var.toggleX and var.CustomActionKey == True) Release(Key.F6);
-		if (var.IsRbNum and var.SkillStep == 1 and var.OnFire and var.toggleX and var.CustomActionKey == False) Release(Key.Two);
+		if (var.IsPressedKey and var.CustomActionKey == True) Release(Key.F6);
+		if (var.IsPressedKey and var.CustomActionKey == False) Release(Key.Two);
 		if (var.IsRbNum and var.SkillStep == 1 and var.OnFire and var.toggleX) var.WaitCount++;
+		var.IsPressedKey = False;
 
 		// Three
 		if (var.rbnum > var.rbmax and var.IsSupportWitchDoctor and var.CustomActionKey == True) Press(Key.F7);
 		if (var.rbnum > var.rbmax and var.IsSupportWitchDoctor and var.CustomActionKey == False) Press(Key.Three);
+		if (var.rbnum > var.rbmax and var.IsSupportWitchDoctor) var.IsPressedKey = True;
 		if (var.rbnum > var.rbmax and var.IsSupportWitchDoctor) Wait(0.2 s);
-		if (var.rbnum > var.rbmax and var.IsSupportWitchDoctor and var.CustomActionKey == True) Release(Key.F7);
-		if (var.rbnum > var.rbmax and var.IsSupportWitchDoctor and var.CustomActionKey == False) Release(Key.Three);
+		if (var.IsPressedKey and var.CustomActionKey == True) Release(Key.F7);
+		if (var.IsPressedKey and var.CustomActionKey == False) Release(Key.Three);
 		if (var.rbnum > var.rbmax) var.rbnum = 0 else if (var.IsSupportWitchDoctor) var.rbnum++;
+		var.IsPressedKey = False;
 
 		if (var.OnFire and var.SkillStep == 2 and var.toggleYC and var.CustomActionKey == True) Press(Key.F7);
 		if (var.OnFire and var.SkillStep == 2 and var.toggleYC and var.CustomActionKey == False) Press(Key.Three);
+		if (var.OnFire and var.SkillStep == 2 and var.toggleYC) var.IsPressedKey = True;
 		if (var.OnFire and var.SkillStep == 2 and var.toggleYC) Wait(var.WaitButtonTime s);
-		if (var.OnFire and var.SkillStep == 2 and var.toggleYC and var.CustomActionKey == True) Release(Key.F7);
-		if (var.OnFire and var.SkillStep == 2 and var.toggleYC and var.CustomActionKey == False) Release(Key.Three);
+		if (var.IsPressedKey and var.CustomActionKey == True) Release(Key.F7);
+		if (var.IsPressedKey and var.CustomActionKey == False) Release(Key.Three);
+		var.IsPressedKey = False;
 
 		// Four
 		if (var.IsRbNum and var.OnFireOrWD and (var.autofireMode or var.toggleRB) and var.CustomActionKey == True) Press(Key.F8);
 		if (var.IsRbNum and var.OnFireOrWD and (var.autofireMode or var.toggleRB) and var.CustomActionKey == False) Press(Key.Four);
+		if (var.IsRbNum and var.OnFireOrWD and (var.autofireMode or var.toggleRB)) var.IsPressedKey = True;
 		if (var.IsRbNum and var.OnFireOrWD and (var.autofireMode or var.toggleRB)) Wait(var.WaitButtonTime s);
-		if (var.IsRbNum and var.OnFireOrWD and (var.autofireMode or var.toggleRB) and var.CustomActionKey == True) Release(Key.F8);
-		if (var.IsRbNum and var.OnFireOrWD and (var.autofireMode or var.toggleRB) and var.CustomActionKey == False) Release(Key.Four);
+		if (var.IsPressedKey and var.CustomActionKey == True) Release(Key.F8);
+		if (var.IsPressedKey and var.CustomActionKey == False) Release(Key.Four);
 		if (var.IsRbNum and var.OnFireOrWD and (var.autofireMode or var.toggleRB)) var.WaitCount++;
+		var.IsPressedKey = False;
 
 		// Wait
 		if (var.rbnum < var.rbmax and var.IsSupportWitchDoctor) Wait(var.WaitDogTime - var.WaitButtonTime * var.WaitCount s);
@@ -1153,30 +1165,38 @@ if (not var.toggleChatMode) {
 		}
 		if (var.SkillStep == 0 and var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0 and var.CustomActionKey == True) Press(Key.F5);
 		if (var.SkillStep == 0 and var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0 and var.CustomActionKey == False) Press(Key.One);
+		if (var.SkillStep == 0 and var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0) var.IsPressedKey = True;
 		if (var.SkillStep == 0 and var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0) Wait(var.WaitButtonTime s);
-		if (var.SkillStep == 0 and var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0 and var.CustomActionKey == True) Release(Key.F5);
-		if (var.SkillStep == 0 and var.OnFire and var.OffLeftStick and var.toggleA and var.waitDealerMode == 0 and var.CustomActionKey == False) Release(Key.One);
+		if (var.IsPressedKey and var.CustomActionKey == True) Release(Key.F5);
+		if (var.IsPressedKey and var.CustomActionKey == False) Release(Key.One);
+		var.IsPressedKey = False;
 
 		// Two
 		if (var.SkillStep == 1 and var.OnFire and var.OffLeftStick and var.toggleX and var.CustomActionKey == True) Press(Key.F6);
 		if (var.SkillStep == 1 and var.OnFire and var.OffLeftStick and var.toggleX and var.CustomActionKey == False) Press(Key.Two);
+		if (var.SkillStep == 1 and var.OnFire and var.OffLeftStick and var.toggleX) var.IsPressedKey = True;
 		if (var.SkillStep == 1 and var.OnFire and var.OffLeftStick and var.toggleX) Wait(var.WaitButtonTime s);
-		if (var.SkillStep == 1 and var.OnFire and var.OffLeftStick and var.toggleX and var.CustomActionKey == True) Release(Key.F6);
-		if (var.SkillStep == 1 and var.OnFire and var.OffLeftStick and var.toggleX and var.CustomActionKey == False) Release(Key.Two);
+		if (var.IsPressedKey and var.CustomActionKey == True) Release(Key.F6);
+		if (var.IsPressedKey and var.CustomActionKey == False) Release(Key.Two);
+		var.IsPressedKey = False;
 
 		// Three
 		if (var.SkillStep == 2 and var.OnFire and var.toggleYY and var.CustomActionKey == True) Press(Key.F7);
 		if (var.SkillStep == 2 and var.OnFire and var.toggleYY and var.CustomActionKey == False) Press(Key.Three);
+		if (var.SkillStep == 2 and var.OnFire and var.toggleYY) var.IsPressedKey = True;
 		if (var.SkillStep == 2 and var.OnFire and var.toggleYY) Wait(var.WaitButtonTime s);
-		if (var.SkillStep == 2 and var.OnFire and var.toggleYY and var.CustomActionKey == True) Release(Key.F7);
-		if (var.SkillStep == 2 and var.OnFire and var.toggleYY and var.CustomActionKey == False) Release(Key.Three);
+		if (var.IsPressedKey and var.CustomActionKey == True) Release(Key.F7);
+		if (var.IsPressedKey and var.CustomActionKey == False) Release(Key.Three);
+		var.IsPressedKey = False;
 
 		// Four
 		if (var.SkillStep == 3 and var.OnFireOrWD and var.toggleRB and var.CustomActionKey == True) Press(Key.F8);
 		if (var.SkillStep == 3 and var.OnFireOrWD and var.toggleRB and var.CustomActionKey == False) Press(Key.Four);
+		if (var.SkillStep == 3 and var.OnFireOrWD and var.toggleRB) var.IsPressedKey = True;
 		if (var.SkillStep == 3 and var.OnFireOrWD and var.toggleRB) Wait(var.WaitButtonTime s);
-		if (var.SkillStep == 3 and var.OnFireOrWD and var.toggleRB and var.CustomActionKey == True) Release(Key.F8);
-		if (var.SkillStep == 3 and var.OnFireOrWD and var.toggleRB and var.CustomActionKey == False) Release(Key.Four);
+		if (var.IsPressedKey and var.CustomActionKey == True) Release(Key.F8);
+		if (var.IsPressedKey and var.CustomActionKey == False) Release(Key.Four);
+		var.IsPressedKey = False;
 
 		// Right Button
 		if (var.OnFireMRB) Press(Mouse.RightButton);
