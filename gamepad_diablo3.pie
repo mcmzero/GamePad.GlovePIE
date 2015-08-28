@@ -34,6 +34,7 @@
 // 모든창 닫기 및 아이템 루팅: B (누르고 케릭을 움직이면 아이템 루팅)
 
 if starting {
+	var.useSmooth = False;
 	var.CustomActionKey = True;	// 1~4 => F5~F8
 
 	//var.debug = True;
@@ -179,34 +180,36 @@ var.XI_J2X    = 0;
 var.XI_J2Y    = 0;
 var.XI_LT     = 0;
 var.XI_RT     = 0;
+/*
 if (Joystick.Count > 0) {
 	if (abs(Joystick.X) > 0 or abs(Joystick.Y) > 0 or abs(Joystick.Z) > 0 or abs(Joystick.Roll) > 0 or abs((Joystick.pitch + 1) / 2) > 0 or abs((Joystick.yaw + 1) / 2) > 0) {
-		var.JoyMode = True;
 		var.XI_J1X    = Joystick.X; 
 		var.XI_J1Y    = -Joystick.Y; 
 		var.XI_J2X    = Joystick.Z; 
 		var.XI_J2Y    = -Joystick.Roll; 
 		var.XI_LT     = (Joystick.pitch + 1) / 2;
 		var.XI_RT     = (Joystick.yaw + 1) / 2;
+		var.JoyMode = True;
 	}
 }
+*/
 if (abs(XInput.Joy1X) > 0 or abs(XInput.Joy1Y) > 0 or abs(XInput.Joy2X) > 0 or abs(XInput.Joy2Y) > 0 or abs(XInput.LeftTrigger) > 0 or abs(XInput.RightTrigger) > 0) {
-	var.JoyMode = False;
 	var.XI_J1X    = XInput.Joy1X;
 	var.XI_J1Y    = XInput.Joy1Y;
 	var.XI_J2X    = XInput.Joy2X;
 	var.XI_J2Y    = XInput.Joy2Y;
 	var.XI_LT     = XInput.LeftTrigger;
 	var.XI_RT     = XInput.RightTrigger;
+	var.JoyMode = False;
 }
 if (abs(XInput2.Joy1X) > 0 or abs(XInput2.Joy1Y) > 0 or abs(XInput2.Joy2X) > 0 or abs(XInput2.Joy2Y) > 0 or abs(XInput2.LeftTrigger) > 0 or abs(XInput2.RightTrigger) > 0) {
-	var.JoyMode = False;
 	var.XI_J1X    = XInput2.Joy1X;
 	var.XI_J1Y    = XInput2.Joy1Y;
 	var.XI_J2X    = XInput2.Joy2X;
 	var.XI_J2Y    = XInput2.Joy2Y;
 	var.XI_LT     = XInput2.LeftTrigger;
 	var.XI_RT     = XInput2.RightTrigger;
+	var.JoyMode = False;
 }
 var.XI_A      = XInput.A or XInput2.A or (var.JoyMode and Joystick.button2);
 var.XI_B      = XInput.B or XInput2.B or (var.JoyMode and Joystick.button3);
@@ -282,22 +285,42 @@ if (Pressed(var.resetCurPos)) {
 }
 
 // Stick Control
-if (var.toggleStick) {
-	// Charactor Moving
-	var.cjx = Smooth(Deadzone(var.XI_J2X,  var.dzL), 6);
-	var.cjy = Smooth(Deadzone(-var.XI_J2Y, var.dzL), 6);
+if (var.useSmooth) {
+	if (var.toggleStick) {
+		// Charactor Moving
+		var.cjx = Smooth(Deadzone(var.XI_J2X,  var.dzL), 4);
+		var.cjy = Smooth(Deadzone(-var.XI_J2Y, var.dzL), 4);
 
-	// Pointer moving
-	var.pjx = Deadzone(var.XI_J1X, var.dzR);
-	var.pjy = Deadzone(-var.XI_J1Y, var.dzR);
+		// Pointer moving
+		var.pjx = Smooth(Deadzone(var.XI_J1X, var.dzR), 4);
+		var.pjy = Smooth(Deadzone(-var.XI_J1Y, var.dzR), 4);
+	} else {
+		// Charactor Moving
+		var.cjx = Smooth(Deadzone(var.XI_J1X,  var.dzL), 4);
+		var.cjy = Smooth(Deadzone(-var.XI_J1Y, var.dzL), 4);
+
+		// Pointer moving
+		var.pjx = Smooth(Deadzone(var.XI_J2X, var.dzR), 4);
+		var.pjy = Smooth(Deadzone(-var.XI_J2Y, var.dzR), 4);
+	}
 } else {
-	// Charactor Moving
-	var.cjx = Smooth(Deadzone(var.XI_J1X,  var.dzL), 6);
-	var.cjy = Smooth(Deadzone(-var.XI_J1Y, var.dzL), 6);
+	if (var.toggleStick) {
+		// Charactor Moving
+		var.cjx = Deadzone(var.XI_J2X,  var.dzL);
+		var.cjy = Deadzone(-var.XI_J2Y, var.dzL);
 
-	// Pointer moving
-	var.pjx = Deadzone(var.XI_J2X, var.dzR);
-	var.pjy = Deadzone(-var.XI_J2Y, var.dzR);
+		// Pointer moving
+		var.pjx = Deadzone(var.XI_J1X, var.dzR);
+		var.pjy = Deadzone(-var.XI_J1Y, var.dzR);
+	} else {
+		// Charactor Moving
+		var.cjx = Deadzone(var.XI_J1X,  var.dzL);
+		var.cjy = Deadzone(-var.XI_J1Y, var.dzL);
+
+		// Pointer moving
+		var.pjx = Deadzone(var.XI_J2X, var.dzR);
+		var.pjy = Deadzone(-var.XI_J2Y, var.dzR);
+	}
 }
 
 if (var.LBShift == False) {
@@ -444,11 +467,12 @@ if (var.toggleChatMode == False and var.LBShift == False) {
 			var.mxaOff = Deadzone(var.XI_J1X, var.dzL4Root);
 			var.myaOff = Deadzone(-var.XI_J1Y, var.dzL4Root);
 		}
-		var.mxa    = Smooth(var.mxa, 6);
-		var.mya    = Smooth(var.mya, 6);
-		var.mxaOff = Smooth(var.mxaOff, 6);
-		var.myaOff = Smooth(var.myaOff, 6);
-
+		if (var.useSmooth) {
+			var.mxa    = Smooth(var.mxa, 4);
+			var.mya    = Smooth(var.mya, 4);
+			var.mxaOff = Smooth(var.mxaOff, 4);
+			var.myaOff = Smooth(var.myaOff, 4);
+		}
 		var.mxa    = EnsureMapRange(var.mxa, -1.0, 1.0, -var.circleRooting, var.circleRooting);
 		var.mya    = EnsureMapRange(var.mya, -1.0, 1.0, -var.circleRooting, var.circleRooting);
 		var.mxaOff = EnsureMapRange(var.mxaOff, -1.0, 1.0, -var.circleRooting, var.circleRooting);
