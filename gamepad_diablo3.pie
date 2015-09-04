@@ -1562,7 +1562,7 @@ if (not (var.dealerMode or var.supportMode)) {
 
 		var.goRepair = False;
 		var.RightStickLock = True;
-		Release(Key.LeftShift);
+		Press(Key.LeftShift);
 
 		// 수리
 		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 685, var.scaleY * 822];
@@ -1646,6 +1646,7 @@ if (not (var.dealerMode or var.supportMode)) {
 		Press(Mouse.LeftButton);
 		Release(Mouse.LeftButton);
 		Wait(var.repairWaitTime s);
+		Release(Key.LeftShift);
 
 		Mouse.cursorpos = [Window.Left, var.WindowTop] + [var.scaleX * 1900, var.scaleY * 770];
 		[var.cursorX, var.cursorY] = Mouse.cursorpos;
